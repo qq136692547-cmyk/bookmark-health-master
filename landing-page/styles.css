@@ -240,6 +240,34 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-github {
+  background: rgba(30, 41, 59, 0.85);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+}
+
+.btn-github:hover {
+  background: rgba(51, 65, 85, 0.95);
+  border-color: rgba(255, 255, 255, 0.38);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+.btn-outline {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.36);
+  transform: translateY(-1px);
+}
+
 .btn-lg {
   padding: 14px 28px;
   font-size: 1.05rem;
@@ -922,8 +950,8 @@ body {
 
 .footer-top {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.2fr;
-  gap: 40px;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr 1.2fr;
+  gap: 36px;
   margin-bottom: 50px;
 }
 
