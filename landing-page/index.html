@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookmark Health Master (BHM-PRO) — Zero 404s. Zero Telemetry. 100% Local.</title>
+  <title data-i18n="meta.title">Bookmark Health Master (BHM-PRO) — Zero 404s. Zero Telemetry. 100% Local.</title>
   
   <!-- SEO & Social Graph Meta Tags -->
   <meta name="description" content="The privacy-first Chrome extension that detects broken 404 bookmarks with DNS-over-HTTPS diagnostics, auto-clusters 16 tech titan ecosystems, and provides atomic undo snapshots.">
@@ -87,16 +87,32 @@
       </a>
 
       <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#architecture">Architecture</a></li>
-        <li><a href="#pricing">Pricing</a></li>
-        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#features" data-i18n="nav.features">Features</a></li>
+        <li><a href="#architecture" data-i18n="nav.architecture">Architecture</a></li>
+        <li><a href="#pricing" data-i18n="nav.pricing">Pricing</a></li>
+        <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
         <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-        <li><a href="terms.html">Terms</a></li>
-        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="terms.html" data-i18n="nav.terms">Terms</a></li>
+        <li><a href="privacy.html" data-i18n="nav.privacy">Privacy</a></li>
+        <li class="mobile-lang-item">
+          <div class="lang-switch-wrapper" role="group" aria-label="Language Selector">
+            <span class="lang-icon" aria-hidden="true">🌐</span>
+            <button type="button" class="lang-chip" data-lang="zh" title="切换为简体中文">中文</button>
+            <span class="lang-divider">/</span>
+            <button type="button" class="lang-chip active" data-lang="en" title="Switch to English">EN</button>
+          </div>
+        </li>
       </ul>
 
       <div class="nav-actions">
+        <!-- Desktop Language Switcher -->
+        <div class="lang-switch-wrapper" id="desktop-lang-switcher" role="group" aria-label="Language Selector">
+          <span class="lang-icon" aria-hidden="true">🌐</span>
+          <button type="button" class="lang-chip" data-lang="zh" title="切换为简体中文">中文</button>
+          <span class="lang-divider">/</span>
+          <button type="button" class="lang-chip active" data-lang="en" title="Switch to English">EN</button>
+        </div>
+
         <a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" class="btn btn-github" title="View Source on GitHub">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
@@ -107,7 +123,7 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
           </svg>
-          Add to Chrome (Free)
+          <span data-i18n="nav.addChrome">Add to Chrome (Free)</span>
         </a>
       </div>
 
@@ -124,15 +140,15 @@
     <div class="container">
       <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="hero-pill">
         <span class="pulse-dot"></span>
-        <span>Officially Live on Google Chrome Web Store • Manifest V3</span>
+        <span data-i18n="hero.pill">Officially Live on Google Chrome Web Store • Manifest V3</span>
       </a>
 
-      <h1 class="hero-title">
+      <h1 class="hero-title" data-i18n-html="hero.title">
         Resurrect Your Bookmarks.<br>
         <span class="gradient-text">Zero 404s. Zero Telemetry.</span>
       </h1>
 
-      <p class="hero-subtitle">
+      <p class="hero-subtitle" data-i18n-html="hero.subtitle">
         The high-performance Chrome extension that diagnoses dead bookmarks with <strong>DNS-over-HTTPS fallback</strong>, auto-clusters <strong>16 Tech Titans ecosystems</strong>, and safeguards every change with <strong>sibling-anchor atomic undo snapshots</strong>.
       </p>
 
@@ -141,15 +157,15 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
           </svg>
-          Add to Chrome — It's Free
+          <span data-i18n="hero.ctaAdd">Add to Chrome — It's Free</span>
         </a>
         <a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" class="btn btn-github btn-lg">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
           </svg>
-          Star on GitHub (MIT)
+          <span data-i18n="hero.ctaGithub">Star on GitHub (MIT)</span>
         </a>
-        <a href="#pricing" class="btn btn-secondary btn-lg">
+        <a href="#pricing" class="btn btn-secondary btn-lg" data-i18n="hero.ctaPricing">
           Explore Pro ($9.90+)
         </a>
       </div>
@@ -157,23 +173,23 @@
       <div class="hero-proof">
         <span class="proof-item">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          100% Local Processing
+          <span data-i18n="hero.proofLocal">100% Local Processing</span>
         </span>
         <span class="proof-item">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          Open Source (MIT)
+          <span data-i18n="hero.proofMit">Open Source (MIT)</span>
         </span>
         <span class="proof-item">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          Zero Cloud Telemetry
+          <span data-i18n="hero.proofTelemetry">Zero Cloud Telemetry</span>
         </span>
         <span class="proof-item">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          Native SidePanel
+          <span data-i18n="hero.proofSidepanel">Native SidePanel</span>
         </span>
         <span class="proof-item">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          14-Day Money-Back
+          <span data-i18n="hero.proofGuarantee">14-Day Money-Back</span>
         </span>
       </div>
 
@@ -197,52 +213,52 @@
   <section class="section" id="comparison">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag">Why Traditional Cleaners Break</span>
-        <h2 class="section-title">The Dangerous Flaws of Naive Bookmark Tools</h2>
-        <p class="section-desc">Why clumsy HTTP bots delete valid bookmarks, trigger false alarms, and put your browsing history at risk.</p>
+        <span class="section-tag" data-i18n="comp.tag">Why Traditional Cleaners Break</span>
+        <h2 class="section-title" data-i18n="comp.title">The Dangerous Flaws of Naive Bookmark Tools</h2>
+        <p class="section-desc" data-i18n="comp.desc">Why clumsy HTTP bots delete valid bookmarks, trigger false alarms, and put your browsing history at risk.</p>
       </div>
 
       <div class="comparison-grid">
         <div class="comparison-card bad">
-          <span class="card-badge bad">❌ Outdated Naive Cleaners</span>
+          <span class="card-badge bad" data-i18n="comp.badBadge">❌ Outdated Naive Cleaners</span>
           <ul class="comparison-list">
             <li>
               <span>⚠️</span>
-              <div><strong>False 404s from WAFs:</strong> Simple HTTP HEAD requests get blocked by Cloudflare/Akamai bot detection, mistakenly marking legitimate sites as dead.</div>
+              <div data-i18n-html="comp.bad1"><strong>False 404s from WAFs:</strong> Simple HTTP HEAD requests get blocked by Cloudflare/Akamai bot detection, mistakenly marking legitimate sites as dead.</div>
             </li>
             <li>
               <span>⚠️</span>
-              <div><strong>Cloud Telemetry Danger:</strong> Uploads your private bookmark links and intranet URLs to remote servers for "cloud scanning".</div>
+              <div data-i18n-html="comp.bad2"><strong>Cloud Telemetry Danger:</strong> Uploads your private bookmark links and intranet URLs to remote servers for "cloud scanning".</div>
             </li>
             <li>
               <span>⚠️</span>
-              <div><strong>Destructive Mass Deletions:</strong> Deletes dead links irreversibly without snapshot tracking or sibling position recording.</div>
+              <div data-i18n-html="comp.bad3"><strong>Destructive Mass Deletions:</strong> Deletes dead links irreversibly without snapshot tracking or sibling position recording.</div>
             </li>
             <li>
               <span>⚠️</span>
-              <div><strong>Messy Flat Folders:</strong> Lumps hundreds of developer consoles, cloud docs, and tools into endless disorganized lists.</div>
+              <div data-i18n-html="comp.bad4"><strong>Messy Flat Folders:</strong> Lumps hundreds of developer consoles, cloud docs, and tools into endless disorganized lists.</div>
             </li>
           </ul>
         </div>
 
         <div class="comparison-card good">
-          <span class="card-badge good">🛡️ BHM-PRO Engineering Edge</span>
+          <span class="card-badge good" data-i18n="comp.goodBadge">🛡️ BHM-PRO Engineering Edge</span>
           <ul class="comparison-list">
             <li>
               <span>✅</span>
-              <div><strong>Dual-Stage DoH Verification:</strong> Validates DNS transport via Cloudflare (1.1.1.1) and Google (8.8.8.8) to distinguish genuine dead domains from network timeouts.</div>
+              <div data-i18n-html="comp.good1"><strong>Dual-Stage DoH Verification:</strong> Validates DNS transport via Cloudflare (1.1.1.1) and Google (8.8.8.8) to distinguish genuine dead domains from network timeouts.</div>
             </li>
             <li>
               <span>✅</span>
-              <div><strong>100% Local-First & Zero Telemetry:</strong> All URL checks, pattern matching, and state journals run entirely in your local browser sandbox.</div>
+              <div data-i18n-html="comp.good2"><strong>100% Local-First & Zero Telemetry:</strong> All URL checks, pattern matching, and state journals run entirely in your local browser sandbox.</div>
             </li>
             <li>
               <span>✅</span>
-              <div><strong>Sibling-Anchor Atomic Rollback:</strong> Time-machine undo snapshots record exact indices and parent nodes for flawless one-click restoration.</div>
+              <div data-i18n-html="comp.good3"><strong>Sibling-Anchor Atomic Rollback:</strong> Time-machine undo snapshots record exact indices and parent nodes for flawless one-click restoration.</div>
             </li>
             <li>
               <span>✅</span>
-              <div><strong>16 Tech Titans Auto-Clustering:</strong> Instantly sorts AWS, Google Cloud, Azure, Cloudflare, GitHub, Apple, Meta into structured hierarchies.</div>
+              <div data-i18n-html="comp.good4"><strong>16 Tech Titans Auto-Clustering:</strong> Instantly sorts AWS, Google Cloud, Azure, Cloudflare, GitHub, Apple, Meta into structured hierarchies.</div>
             </li>
           </ul>
         </div>
@@ -254,32 +270,32 @@
   <section class="section" id="features">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag">Deep Feature Architecture</span>
-        <h2 class="section-title">Built for Power Users, Developers & Curators</h2>
-        <p class="section-desc">Explore the five core pillars that make BHM-PRO the most dependable bookmark manager in the Chrome ecosystem.</p>
+        <span class="section-tag" data-i18n="feat.tag">Deep Feature Architecture</span>
+        <h2 class="section-title" data-i18n="feat.title">Built for Power Users, Developers & Curators</h2>
+        <p class="section-desc" data-i18n="feat.desc">Explore the five core pillars that make BHM-PRO the most dependable bookmark manager in the Chrome ecosystem.</p>
       </div>
 
       <div class="features-tabs-nav">
-        <button class="tab-btn active" data-tab="tab-doh">1. DoH Dead Link Diagnostics</button>
-        <button class="tab-btn" data-tab="tab-titans">2. 16 Tech Titans Clustering</button>
-        <button class="tab-btn" data-tab="tab-ugc">3. UGC Docs Smart Isolation</button>
-        <button class="tab-btn" data-tab="tab-undo">4. Atomic Time-Machine Rollback</button>
-        <button class="tab-btn" data-tab="tab-sidepanel">5. Native SidePanel Workflow</button>
+        <button class="tab-btn active" data-tab="tab-doh" data-i18n="feat.tab1Btn">1. DoH Dead Link Diagnostics</button>
+        <button class="tab-btn" data-tab="tab-titans" data-i18n="feat.tab2Btn">2. 16 Tech Titans Clustering</button>
+        <button class="tab-btn" data-tab="tab-ugc" data-i18n="feat.tab3Btn">3. UGC Docs Smart Isolation</button>
+        <button class="tab-btn" data-tab="tab-undo" data-i18n="feat.tab4Btn">4. Atomic Time-Machine Rollback</button>
+        <button class="tab-btn" data-tab="tab-sidepanel" data-i18n="feat.tab5Btn">5. Native SidePanel Workflow</button>
       </div>
 
       <!-- Tab 1: DoH -->
       <div class="tab-panel active" id="tab-doh">
         <div class="tab-content">
-          <h3>Dual-Stage DNS-over-HTTPS (DoH) Prober</h3>
-          <p>
+          <h3 data-i18n="feat.tab1Title">Dual-Stage DNS-over-HTTPS (DoH) Prober</h3>
+          <p data-i18n="feat.tab1Desc">
             When a bookmark link fails to respond, traditional tools immediately declare it "dead". BHM-PRO triggers a secondary diagnostic handshake through Cloudflare and Google DoH endpoints to check if the authoritative domain still exists.
           </p>
           <ul class="tab-feature-bullets">
-            <li>🎯 Filters out temporary network dropouts and aggressive WAF bot challenges.</li>
-            <li>🎯 Confirms NXDOMAIN (unregistered domain) vs HTTP 404 / 500 status codes.</li>
-            <li>🎯 Smart quarantine: moves dead links into an isolated quarantine folder before any deletion.</li>
+            <li data-i18n="feat.tab1Bullet1">🎯 Filters out temporary network dropouts and aggressive WAF bot challenges.</li>
+            <li data-i18n="feat.tab1Bullet2">🎯 Confirms NXDOMAIN (unregistered domain) vs HTTP 404 / 500 status codes.</li>
+            <li data-i18n="feat.tab1Bullet3">🎯 Smart quarantine: moves dead links into an isolated quarantine folder before any deletion.</li>
           </ul>
-          <a href="#pricing" class="btn btn-primary">Try DoH Diagnostics</a>
+          <a href="#pricing" class="btn btn-primary" data-i18n="feat.tab1Cta">Try DoH Diagnostics</a>
         </div>
         <div class="tab-media">
           <img src="assets/01-health-scan-doh.png" alt="DoH Dead Link Diagnostics Preview">
@@ -289,16 +305,16 @@
       <!-- Tab 2: Titans -->
       <div class="tab-panel" id="tab-titans">
         <div class="tab-content">
-          <h3>16 Tech Titans Ecosystem Auto-Clustering</h3>
-          <p>
+          <h3 data-i18n="feat.tab2Title">16 Tech Titans Ecosystem Auto-Clustering</h3>
+          <p data-i18n="feat.tab2Desc">
             Tired of hunting for the AWS Console, Google Cloud Run, GitHub Repo, or Cloudflare DNS settings buried in bookmarks? BHM-PRO uses regex heuristics to identify official platforms and group them into pristine ecosystem folders.
           </p>
           <ul class="tab-feature-bullets">
-            <li>⚡ Ecosystems: AWS, Google, Microsoft, Cloudflare, GitHub, Apple, Meta, ByteDance, Vercel, Supabase, OpenAI, Anthropic, and more.</li>
-            <li>⚡ Smart subdomain mapping: accurately differentiates public documentation from tenant apps.</li>
-            <li>⚡ Retains custom folder structures without disturbing untouched subdirectories.</li>
+            <li data-i18n="feat.tab2Bullet1">⚡ Ecosystems: AWS, Google, Microsoft, Cloudflare, GitHub, Apple, Meta, ByteDance, Vercel, Supabase, OpenAI, Anthropic, and more.</li>
+            <li data-i18n="feat.tab2Bullet2">⚡ Smart subdomain mapping: accurately differentiates public documentation from tenant apps.</li>
+            <li data-i18n="feat.tab2Bullet3">⚡ Retains custom folder structures without disturbing untouched subdirectories.</li>
           </ul>
-          <a href="#pricing" class="btn btn-primary">Explore 16 Titans Organizer</a>
+          <a href="#pricing" class="btn btn-primary" data-i18n="feat.tab2Cta">Explore 16 Titans Organizer</a>
         </div>
         <div class="tab-media">
           <img src="assets/02-16-titans-organizer.png" alt="16 Tech Titans Organizer Preview">
@@ -308,16 +324,16 @@
       <!-- Tab 3: UGC Docs Isolation -->
       <div class="tab-panel" id="tab-ugc">
         <div class="tab-content">
-          <h3>UGC Collaborative Docs Smart Isolation</h3>
-          <p>
+          <h3 data-i18n="feat.tab3Title">UGC Collaborative Docs Smart Isolation</h3>
+          <p data-i18n="feat.tab3Desc">
             Modern workflows live in collaborative cloud documents. Clumsy cleaners often treat private Notion pages, Google Docs, Figma workspaces, or Lark/Feishu bases as broken links or lump them into generic company folders.
           </p>
           <ul class="tab-feature-bullets">
-            <li>🛡️ <strong>Zero Accidental Deletions:</strong> Dedicated isolation layer shields Notion, Google Docs, Sheets, Slides, Feishu/Lark, and Figma links from bulk quarantines.</li>
-            <li>🛡️ <strong>Authentication Awareness:</strong> Recognizes private intranet and login-required collaborative doc URLs, preventing false 401/403 "dead link" misdiagnoses.</li>
-            <li>🛡️ <strong>Workspace Preserving:</strong> Keeps shared team links pristine and accessible without disturbing custom titles or sharing parameters.</li>
+            <li data-i18n-html="feat.tab3Bullet1">🛡️ <strong>Zero Accidental Deletions:</strong> Dedicated isolation layer shields Notion, Google Docs, Sheets, Slides, Feishu/Lark, and Figma links from bulk quarantines.</li>
+            <li data-i18n-html="feat.tab3Bullet2">🛡️ <strong>Authentication Awareness:</strong> Recognizes private intranet and login-required collaborative doc URLs, preventing false 401/403 "dead link" misdiagnoses.</li>
+            <li data-i18n-html="feat.tab3Bullet3">🛡️ <strong>Workspace Preserving:</strong> Keeps shared team links pristine and accessible without disturbing custom titles or sharing parameters.</li>
           </ul>
-          <a href="#pricing" class="btn btn-primary">Protect Collaborative Docs</a>
+          <a href="#pricing" class="btn btn-primary" data-i18n="feat.tab3Cta">Protect Collaborative Docs</a>
         </div>
         <div class="tab-media">
           <img src="assets/02-16-titans-organizer.png" alt="UGC Collaborative Docs Smart Isolation Preview">
@@ -327,16 +343,16 @@
       <!-- Tab 4: Undo -->
       <div class="tab-panel" id="tab-undo">
         <div class="tab-content">
-          <h3>Sibling-Anchor Atomic Rollback Journal</h3>
-          <p>
+          <h3 data-i18n="feat.tab4Title">Sibling-Anchor Atomic Rollback Journal</h3>
+          <p data-i18n="feat.tab4Desc">
             Never fear reorganizing or cleaning bookmarks again. Every batch action taken in BHM-PRO creates a cryptographic delta snapshot in your browser's private local storage.
           </p>
           <ul class="tab-feature-bullets">
-            <li>⏳ Restores exact index positions, parent folder IDs, and sibling hierarchy.</li>
-            <li>⏳ Full history log with date, action type, and total items impacted.</li>
-            <li>⏳ Instant one-click rollback even if Chrome restarts.</li>
+            <li data-i18n="feat.tab4Bullet1">⏳ Restores exact index positions, parent folder IDs, and sibling hierarchy.</li>
+            <li data-i18n="feat.tab4Bullet2">⏳ Full history log with date, action type, and total items impacted.</li>
+            <li data-i18n="feat.tab4Bullet3">⏳ Instant one-click rollback even if Chrome restarts.</li>
           </ul>
-          <a href="#pricing" class="btn btn-primary">Experience Zero-Risk Undo</a>
+          <a href="#pricing" class="btn btn-primary" data-i18n="feat.tab4Cta">Experience Zero-Risk Undo</a>
         </div>
         <div class="tab-media">
           <img src="assets/03-time-machine-undo.png" alt="Atomic Undo Journal Preview">
@@ -346,16 +362,16 @@
       <!-- Tab 5: SidePanel -->
       <div class="tab-panel" id="tab-sidepanel">
         <div class="tab-content">
-          <h3>Native Chrome SidePanel Interface</h3>
-          <p>
+          <h3 data-i18n="feat.tab5Title">Native Chrome SidePanel Interface</h3>
+          <p data-i18n="feat.tab5Desc">
             No annoying popups that close when you click elsewhere. BHM-PRO lives seamlessly inside the official Chrome SidePanel, allowing you to audit and organize bookmarks side-by-side with your active browser tabs.
           </p>
           <ul class="tab-feature-bullets">
-            <li>📌 Zero popup dismissal — inspect bookmarks while browsing live documentation.</li>
-            <li>📌 Sleek dark glassmorphic UI matching Chrome's latest design specifications.</li>
-            <li>📌 Keyboard shortcuts and fast search filter for instant navigation.</li>
+            <li data-i18n="feat.tab5Bullet1">📌 Zero popup dismissal — inspect bookmarks while browsing live documentation.</li>
+            <li data-i18n="feat.tab5Bullet2">📌 Sleek dark glassmorphic UI matching Chrome's latest design specifications.</li>
+            <li data-i18n="feat.tab5Bullet3">📌 Keyboard shortcuts and fast search filter for instant navigation.</li>
           </ul>
-          <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-cws">Install Extension Free</a>
+          <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-cws" data-i18n="feat.tab5Cta">Install Extension Free</a>
         </div>
         <div class="tab-media">
           <img src="assets/04-native-sidepanel.png" alt="Native SidePanel Workflow Preview">
@@ -368,9 +384,9 @@
   <section class="section" id="architecture" style="background: rgba(0, 0, 0, 0.25);">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag">Engineered For Privacy</span>
-        <h2 class="section-title">Cryptographic Integrity & Local-First Design</h2>
-        <p class="section-desc">We designed BHM-PRO to provide enterprise-grade reliability without compromising your privacy.</p>
+        <span class="section-tag" data-i18n="arch.tag">Engineered For Privacy</span>
+        <h2 class="section-title" data-i18n="arch.title">Cryptographic Integrity & Local-First Design</h2>
+        <p class="section-desc" data-i18n="arch.desc">We designed BHM-PRO to provide enterprise-grade reliability without compromising your privacy.</p>
       </div>
 
       <div class="arch-grid">
@@ -378,24 +394,24 @@
           <div class="arch-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           </div>
-          <h4>Ed25519 Cryptographic Licensing</h4>
-          <p>Pro activation uses offline asymmetric digital signatures (RFC 8032). The extension verifies your license key locally using our public key in milliseconds — zero "phone-home" licensing pings.</p>
+          <h4 data-i18n="arch.card1Title">Ed25519 Cryptographic Licensing</h4>
+          <p data-i18n="arch.card1Desc">Pro activation uses offline asymmetric digital signatures (RFC 8032). The extension verifies your license key locally using our public key in milliseconds — zero "phone-home" licensing pings.</p>
         </div>
 
         <div class="arch-card">
           <div class="arch-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
           </div>
-          <h4>Zero Telemetry Architecture</h4>
-          <p>BHM-PRO has no telemetry collectors, analytics beacons, or remote logging servers. Your bookmark names, folder structures, and web history never leave your computer.</p>
+          <h4 data-i18n="arch.card2Title">Zero Telemetry Architecture</h4>
+          <p data-i18n="arch.card2Desc">BHM-PRO has no telemetry collectors, analytics beacons, or remote logging servers. Your bookmark names, folder structures, and web history never leave your computer.</p>
         </div>
 
         <div class="arch-card">
           <div class="arch-icon">
             <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
-          <h4>Chrome Manifest V3 Compliant</h4>
-          <p>Complies strictly with Google's Manifest V3 security model. No remotely hosted scripts, sandboxed execution, and memory-efficient service workers.</p>
+          <h4 data-i18n="arch.card3Title">Chrome Manifest V3 Compliant</h4>
+          <p data-i18n="arch.card3Desc">Complies strictly with Google's Manifest V3 security model. No remotely hosted scripts, sandboxed execution, and memory-efficient service workers.</p>
         </div>
       </div>
     </div>
@@ -405,109 +421,109 @@
   <section class="section" id="pricing">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag">Transparent Pricing</span>
-        <h2 class="section-title">Simple, Honest Plans for Every Workflow</h2>
-        <p class="section-desc">Start free on the Chrome Web Store, or upgrade with a one-time pass or lifetime buyout. No recurring subscriptions or hidden lock-ins.</p>
+        <span class="section-tag" data-i18n="price.tag">Transparent Pricing</span>
+        <h2 class="section-title" data-i18n="price.title">Simple, Honest Plans for Every Workflow</h2>
+        <p class="section-desc" data-i18n="price.desc">Start free on the Chrome Web Store, or upgrade with a one-time pass or lifetime buyout. No recurring subscriptions or hidden lock-ins.</p>
       </div>
 
       <div class="pricing-grid">
         <!-- Tier 1: Free -->
         <div class="pricing-card">
-          <h3 class="plan-name">Free Edition</h3>
-          <p class="plan-desc">For everyday casual bookmark audits and individual cleanups.</p>
+          <h3 class="plan-name" data-i18n="price.freeName">Free Edition</h3>
+          <p class="plan-desc" data-i18n="price.freeDesc">For everyday casual bookmark audits and individual cleanups.</p>
           <div class="plan-price">
-            <span class="currency">$</span>
-            <span class="amount">0</span>
-            <span class="period">/ forever</span>
+            <span class="currency" data-i18n="price.freeCurrency">$</span>
+            <span class="amount" data-i18n="price.freeAmount">0</span>
+            <span class="period" data-i18n="price.freePeriod">/ forever</span>
           </div>
           <ul class="plan-features">
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Full bookmark health inspection</span>
+              <span data-i18n="price.freePerk1">Full bookmark health inspection</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Single dead link quarantine</span>
+              <span data-i18n="price.freePerk2">Single dead link quarantine</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Chrome SidePanel UI</span>
+              <span data-i18n="price.freePerk3">Chrome SidePanel UI</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>100% Local-first privacy</span>
+              <span data-i18n="price.freePerk4">100% Local-first privacy</span>
             </li>
           </ul>
-          <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-block">
+          <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-block" data-i18n="price.freeBtn">
             Download from Chrome Web Store
           </a>
         </div>
 
         <!-- Tier 2: Single Wash -->
         <div class="pricing-card">
-          <h3 class="plan-name">30-Day Single Wash</h3>
-          <p class="plan-desc">Perfect for spring cleaning large bookmark libraries with batch power.</p>
+          <h3 class="plan-name" data-i18n="price.washName">30-Day Single Wash</h3>
+          <p class="plan-desc" data-i18n="price.washDesc">Perfect for spring cleaning large bookmark libraries with batch power.</p>
           <div class="plan-price">
-            <span class="currency">$</span>
-            <span class="amount">9.90</span>
-            <span class="period">/ 30 days</span>
+            <span class="currency" data-i18n="price.washCurrency">$</span>
+            <span class="amount" data-i18n="price.washAmount">9.90</span>
+            <span class="period" data-i18n="price.washPeriod">/ 30 days</span>
           </div>
           <ul class="plan-features">
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span><strong>500 dead link</strong> batch quarantine quota</span>
+              <span data-i18n-html="price.washPerk1"><strong>500 dead link</strong> batch quarantine quota</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Deep DoH DNS-over-HTTPS diagnostics</span>
+              <span data-i18n="price.washPerk2">Deep DoH DNS-over-HTTPS diagnostics</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Full atomic rollback journal</span>
+              <span data-i18n="price.washPerk3">Full atomic rollback journal</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Instant Ed25519 digital license delivery</span>
+              <span data-i18n="price.washPerk4">Instant Ed25519 digital license delivery</span>
             </li>
           </ul>
-          <button onclick="openCheckout('SINGLE_WASH')" class="btn btn-secondary btn-block">
+          <button onclick="openCheckout('SINGLE_WASH')" class="btn btn-secondary btn-block" data-i18n="price.washBtn">
             Get 30-Day Pass ($9.90)
           </button>
         </div>
 
         <!-- Tier 3: Lifetime Buyout -->
         <div class="pricing-card featured">
-          <div class="ribbon">Most Popular</div>
-          <h3 class="plan-name">Lifetime Buyout</h3>
-          <p class="plan-desc">Perpetual license for serious developers, researchers, and creators.</p>
+          <div class="ribbon" data-i18n="price.ltdRibbon">Most Popular</div>
+          <h3 class="plan-name" data-i18n="price.ltdName">Lifetime Buyout</h3>
+          <p class="plan-desc" data-i18n="price.ltdDesc">Perpetual license for serious developers, researchers, and creators.</p>
           <div class="plan-price">
-            <span class="currency">$</span>
-            <span class="amount">24.90</span>
-            <span class="period">/ one-time pay</span>
+            <span class="currency" data-i18n="price.ltdCurrency">$</span>
+            <span class="amount" data-i18n="price.ltdAmount">24.90</span>
+            <span class="period" data-i18n="price.ltdPeriod">/ one-time pay</span>
           </div>
           <ul class="plan-features">
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span><strong>Unlimited</strong> dead link batch quarantines</span>
+              <span data-i18n-html="price.ltdPerk1"><strong>Unlimited</strong> dead link batch quarantines</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span><strong>Unlimited 16 Tech Titans</strong> auto-clustering</span>
+              <span data-i18n-html="price.ltdPerk2"><strong>Unlimited 16 Tech Titans</strong> auto-clustering</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Multi-device Chrome profile activation</span>
+              <span data-i18n="price.ltdPerk3">Multi-device Chrome profile activation</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Lifetime free software updates</span>
+              <span data-i18n="price.ltdPerk4">Lifetime free software updates</span>
             </li>
             <li>
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-              <span>Priority developer support (<a href="mailto:qq136692547@gmail.com" style="color:#60a5fa;">24hr SLA</a>)</span>
+              <span data-i18n-html="price.ltdPerk5">Priority developer support (<a href="mailto:qq136692547@gmail.com" style="color:#60a5fa;">24hr SLA</a>)</span>
             </li>
           </ul>
-          <button onclick="openCheckout('LIFETIME')" class="btn btn-primary btn-block">
+          <button onclick="openCheckout('LIFETIME')" class="btn btn-primary btn-block" data-i18n="price.ltdBtn">
             Buy Lifetime License ($24.90)
           </button>
         </div>
@@ -515,17 +531,17 @@
 
       <div class="guarantee-bar">
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-        <span><strong>14-Day 100% Money-Back Guarantee:</strong> If BHM-PRO doesn't save you hours of bookmark frustration, email us for a full refund.</span>
+        <span data-i18n-html="price.guarantee"><strong>14-Day 100% Money-Back Guarantee:</strong> If BHM-PRO doesn't save you hours of bookmark frustration, email us for a full refund.</span>
       </div>
 
       <!-- Self-service license lookup box -->
       <div class="lookup-section" id="license-lookup">
-        <h3>Already Purchased? Retrieve Your License</h3>
-        <p>Lost your activation key? Enter your Paddle Order ID and purchase Email below for instant recovery.</p>
+        <h3 data-i18n="lookup.title">Already Purchased? Retrieve Your License</h3>
+        <p data-i18n="lookup.desc">Lost your activation key? Enter your Paddle Order ID and purchase Email below for instant recovery.</p>
         <form id="license-lookup-form" class="lookup-form">
-          <input type="text" id="lookup-order-id" class="lookup-input" placeholder="Paddle Order ID (e.g. txn_...)" required>
-          <input type="email" id="lookup-email" class="lookup-input" placeholder="Your purchase email" required>
-          <button type="submit" class="btn btn-secondary">Retrieve Key</button>
+          <input type="text" id="lookup-order-id" class="lookup-input" placeholder="Paddle Order ID (e.g. txn_...)" required data-i18n-placeholder="lookup.orderPlaceholder">
+          <input type="email" id="lookup-email" class="lookup-input" placeholder="Your purchase email" required data-i18n-placeholder="lookup.emailPlaceholder">
+          <button type="submit" class="btn btn-secondary" data-i18n="lookup.btn">Retrieve Key</button>
         </form>
         <div id="lookup-result" class="lookup-result"></div>
       </div>
@@ -536,59 +552,59 @@
   <section class="section" id="faq">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag">Frequently Asked Questions</span>
-        <h2 class="section-title">Everything You Need to Know</h2>
-        <p class="section-desc">Have questions about BHM-PRO? Find quick answers right here.</p>
+        <span class="section-tag" data-i18n="faq.tag">Frequently Asked Questions</span>
+        <h2 class="section-title" data-i18n="faq.title">Everything You Need to Know</h2>
+        <p class="section-desc" data-i18n="faq.desc">Have questions about BHM-PRO? Find quick answers right here.</p>
       </div>
 
       <div class="faq-list">
         <div class="faq-item">
           <button class="faq-question">
-            <span>Does BHM-PRO send my bookmarks to your servers?</span>
+            <span data-i18n="faq.q1">Does BHM-PRO send my bookmarks to your servers?</span>
             <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div class="faq-answer">
-            <p><strong>Absolutely NOT.</strong> BHM-PRO operates with a strict 100% local-first architecture. All bookmark reading, probing, pattern clustering, and snapshot tracking occur locally on your machine. We never collect or transmit your bookmark URLs or browsing history.</p>
+            <p data-i18n-html="faq.a1"><strong>Absolutely NOT.</strong> BHM-PRO operates with a strict 100% local-first architecture. All bookmark reading, probing, pattern clustering, and snapshot tracking occur locally on your machine. We never collect or transmit your bookmark URLs or browsing history.</p>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question">
-            <span>How does the DNS-over-HTTPS (DoH) diagnostic work?</span>
+            <span data-i18n="faq.q2">How does the DNS-over-HTTPS (DoH) diagnostic work?</span>
             <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div class="faq-answer">
-            <p>Many anti-bot systems (like Cloudflare Turnstile or Akamai) return 403 or 503 HTTP errors to browser probes, making active websites look dead. BHM-PRO performs a secondary DoH lookup directly against Cloudflare (1.1.1.1) and Google (8.8.8.8) to verify if the domain still resolves at the DNS level. Only genuine dead links (such as NXDOMAIN or true 404s) are flagged.</p>
+            <p data-i18n-html="faq.a2">Many anti-bot systems (like Cloudflare Turnstile or Akamai) return 403 or 503 HTTP errors to browser probes, making active websites look dead. BHM-PRO performs a secondary DoH lookup directly against Cloudflare (1.1.1.1) and Google (8.8.8.8) to verify if the domain still resolves at the DNS level. Only genuine dead links (such as NXDOMAIN or true 404s) are flagged.</p>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question">
-            <span>How is my license key activated?</span>
+            <span data-i18n="faq.q3">How is my license key activated?</span>
             <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div class="faq-answer">
-            <p>Immediately after checkout via Paddle, your Order ID is processed and an Ed25519 cryptographic license token is generated. You receive this token on screen, via email, and can retrieve it anytime using our self-service lookup box above. Simply copy and paste the key into the BHM-PRO SidePanel settings to unlock Pro features instantly.</p>
+            <p data-i18n-html="faq.a3">Immediately after checkout via Paddle, your Order ID is processed and an Ed25519 cryptographic license token is generated. You receive this token on screen, via email, and can retrieve it anytime using our self-service lookup box above. Simply copy and paste the key into the BHM-PRO SidePanel settings to unlock Pro features instantly.</p>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question">
-            <span>Can I use my Lifetime Buyout license on multiple computers?</span>
+            <span data-i18n="faq.q4">Can I use my Lifetime Buyout license on multiple computers?</span>
             <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div class="faq-answer">
-            <p>Yes! Your Lifetime Buyout license is valid for all personal Chrome browser profiles and computers (Mac, Windows, Linux) that you personally own and operate.</p>
+            <p data-i18n-html="faq.a4">Yes! Your Lifetime Buyout license is valid for all personal Chrome browser profiles and computers (Mac, Windows, Linux) that you personally own and operate.</p>
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question">
-            <span>What is your refund policy?</span>
+            <span data-i18n="faq.q5">What is your refund policy?</span>
             <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div class="faq-answer">
-            <p>We provide a <strong>14-day 100% money-back guarantee</strong> on all paid plans. If you are not satisfied for any reason, email us at <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a> with your Paddle Order ID, and your payment will be refunded immediately without friction.</p>
+            <p data-i18n-html="faq.a5">We provide a <strong>14-day 100% money-back guarantee</strong> on all paid plans. If you are not satisfied for any reason, email us at <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a> with your Paddle Order ID, and your payment will be refunded immediately without friction.</p>
           </div>
         </div>
       </div>
@@ -604,48 +620,48 @@
             <img src="assets/icon-128.png" alt="BHM-PRO Logo" width="32" height="32">
             <span>Bookmark Health Master</span>
           </div>
-          <p>The privacy-first Chrome extension that resurrects broken bookmarks, clusters tech ecosystems, and guarantees zero data leakage.</p>
+          <p data-i18n="footer.brandDesc">The privacy-first Chrome extension that resurrects broken bookmarks, clusters tech ecosystems, and guarantees zero data leakage.</p>
         </div>
 
         <div class="footer-col">
-          <h5>Product</h5>
+          <h5 data-i18n="footer.colProduct">Product</h5>
           <ul>
-            <li><a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer">Chrome Web Store</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#pricing">Pricing Plans</a></li>
-            <li><a href="#license-lookup">Retrieve License</a></li>
+            <li><a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" data-i18n="footer.cws">Chrome Web Store</a></li>
+            <li><a href="#features" data-i18n="footer.features">Features</a></li>
+            <li><a href="#pricing" data-i18n="footer.pricing">Pricing Plans</a></li>
+            <li><a href="#license-lookup" data-i18n="footer.retrieve">Retrieve License</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h5>Legal & Policy</h5>
+          <h5 data-i18n="footer.colLegal">Legal & Policy</h5>
           <ul>
-            <li><a href="terms.html">Terms of Service</a></li>
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="refund.html">Refund Policy</a></li>
+            <li><a href="terms.html" data-i18n="footer.terms">Terms of Service</a></li>
+            <li><a href="privacy.html" data-i18n="footer.privacy">Privacy Policy</a></li>
+            <li><a href="refund.html" data-i18n="footer.refund">Refund Policy</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h5>Open Source</h5>
+          <h5 data-i18n="footer.colOpenSource">Open Source</h5>
           <ul>
-            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer">GitHub Repo</a></li>
-            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a></li>
-            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
-            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master/releases" target="_blank" rel="noopener noreferrer">Releases (v2.1.0)</a></li>
+            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" data-i18n="footer.github">GitHub Repo</a></li>
+            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" data-i18n="footer.mit">MIT License</a></li>
+            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master/issues" target="_blank" rel="noopener noreferrer" data-i18n="footer.issues">Issue Tracker</a></li>
+            <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master/releases" target="_blank" rel="noopener noreferrer" data-i18n="footer.releases">Releases (v2.1.0)</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h5>Merchant & Support</h5>
+          <h5 data-i18n="footer.colSupport">Merchant & Support</h5>
           <ul>
             <li><a href="mailto:qq136692547@gmail.com">qq136692547@gmail.com</a></li>
-            <li><span style="font-size: 12px; color: var(--text-muted);">Operator: L.D. Studio (Pudong, Shanghai)</span></li>
-            <li><span style="font-size: 12px; color: var(--text-muted);">Fulfillment: 100% Instant Digital Delivery</span></li>
+            <li><span style="font-size: 12px; color: var(--text-muted);" data-i18n="footer.operator">Operator: L.D. Studio (Pudong, Shanghai)</span></li>
+            <li><span style="font-size: 12px; color: var(--text-muted);" data-i18n="footer.fulfillment">Fulfillment: 100% Instant Digital Delivery</span></li>
             <li style="margin-top: 8px;">
               <div class="paddle-compliance-badge">
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.707 6.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                <span>Merchant: Paddle.com</span>
+                <span data-i18n="footer.merchant">Merchant: Paddle.com</span>
               </div>
             </li>
           </ul>
@@ -653,13 +669,14 @@
       </div>
 
       <div class="footer-bottom">
-        <p>© 2026 Bookmark Health Master (BHM-PRO) by L.D. Studio. All rights reserved. Merchant of Record: Paddle.com Market Ltd.</p>
-        <p>Chrome is a registered trademark of Google LLC. BHM-PRO is an independent extension built for Google Chrome.</p>
+        <p data-i18n="footer.copyright">© 2026 Bookmark Health Master (BHM-PRO) by L.D. Studio. All rights reserved. Merchant of Record: Paddle.com Market Ltd.</p>
+        <p data-i18n="footer.disclaimer">Chrome is a registered trademark of Google LLC. BHM-PRO is an independent extension built for Google Chrome.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Application Logic -->
+  <!-- Application Logic & Internationalization -->
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

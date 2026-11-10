@@ -185,6 +185,82 @@ body {
 }
 
 /* ==========================================================================
+   Language Switcher (i18n)
+   ========================================================================== */
+.lang-switch-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 4px 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.lang-switch-wrapper:hover {
+  border-color: rgba(96, 165, 250, 0.45);
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.25);
+}
+
+.lang-switch-wrapper .lang-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 2px;
+  opacity: 0.85;
+}
+
+.lang-chip {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  line-height: 1.3;
+}
+
+.lang-chip:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lang-chip.active {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.4);
+}
+
+.lang-divider {
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+/* Mobile language switcher */
+.mobile-lang-item {
+  display: none;
+  list-style: none;
+  padding: 10px 0 0 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.mobile-lang-item .lang-switch-wrapper {
+  width: fit-content;
+}
+
+/* ==========================================================================
    Button System
    ========================================================================== */
 .btn {
@@ -1041,6 +1117,9 @@ body {
   .mobile-menu-btn {
     display: block;
   }
+  .mobile-lang-item {
+    display: block;
+  }
   .nav-links.active {
     display: flex;
     flex-direction: column;
@@ -1060,10 +1139,23 @@ body {
   }
 }
 
+@media (max-width: 640px) {
+  .nav-actions .btn-github {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .nav-container .btn-cws {
     padding: 8px 12px;
     font-size: 0.85rem;
+  }
+  .lang-switch-wrapper {
+    padding: 2px 6px;
+  }
+  .lang-chip {
+    padding: 2px 6px;
+    font-size: 0.78rem;
   }
   .tab-btn {
     padding: 8px 14px;
