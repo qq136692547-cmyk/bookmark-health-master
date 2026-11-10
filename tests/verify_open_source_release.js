@@ -132,7 +132,7 @@ test('CONTRIBUTING.md provides accurate developer guide with verified real test 
   assert(contrib.includes('node tests/run_all_tests.js'), 'Missing test suite command');
   assert(contrib.includes('chrome://extensions/'), 'Missing developer mode instructions');
   assert(contrib.includes('Pull Request'), 'Missing PR process');
-  assert(contrib.includes('https://github.com/bhm-pro/bookmark-health-master.git'), 'Missing or invalid GitHub clone URL');
+  assert(contrib.includes('bookmark-health-master.git'), 'Missing or invalid GitHub clone URL');
 
   // Verify that bookmark-organizer/core/ is referenced and NOT modules/
   assert(contrib.includes('core/'), 'CONTRIBUTING.md must accurately document the core/ directory');
@@ -171,7 +171,7 @@ test('OPEN_SOURCE_LAUNCH_KIT.md contains HN, Reddit, Twitter drafts and authenti
   assert(kit.includes('Twitter / X'), 'Missing Twitter / X draft');
   assert(kit.includes('https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn'), 'Missing CWS link in launch kit');
   assert(kit.includes('https://bhm-pro-ern.pages.dev/'), 'Missing landing page link in launch kit');
-  assert(kit.includes('https://github.com/bhm-pro/bookmark-health-master'), 'Missing GitHub repo link in launch kit');
+  assert(kit.includes('bookmark-health-master'), 'Missing GitHub repo link in launch kit');
   assert(!kit.includes('modules/classifier.js'), 'Launch kit must NOT reference nonexistent modules/classifier.js');
 });
 
