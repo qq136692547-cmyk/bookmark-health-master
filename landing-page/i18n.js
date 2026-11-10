@@ -17,6 +17,8 @@ const BHM_I18N_DICT = {
     "nav.faq": "FAQ",
     "nav.terms": "Terms",
     "nav.privacy": "Privacy",
+    "nav.refunds": "Refunds",
+    "nav.home": "Home",
     "nav.addChrome": "Add to Chrome (Free)",
 
     // Hero Section
@@ -213,6 +215,8 @@ const BHM_I18N_DICT = {
     "nav.faq": "常见问题",
     "nav.terms": "服务条款",
     "nav.privacy": "隐私协议",
+    "nav.refunds": "退款政策",
+    "nav.home": "首页",
     "nav.addChrome": "免费添加至 Chrome",
 
     // Hero Section
@@ -463,14 +467,48 @@ function applyLanguage(lang) {
 
   const dict = BHM_I18N_DICT[lang] || BHM_I18N_DICT.en;
 
-  // Title & Meta
-  if (dict["meta.title"] && typeof document.title !== 'undefined') {
-    document.title = dict["meta.title"];
+  // Title & Meta (aware of legal subpages)
+  const pathname = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : '';
+  const isTerms = pathname.includes('terms.html');
+  const isPrivacy = pathname.includes('privacy.html');
+  const isRefund = pathname.includes('refund.html');
+
+  if (typeof document !== 'undefined') {
+    if (isTerms) {
+      document.title = (lang === 'zh')
+        ? "服务条款 (Terms of Service) - 书签健康卫士 (BHM-PRO)"
+        : "Terms of Service - Bookmark Health Master (BHM-PRO)";
+    } else if (isPrivacy) {
+      document.title = (lang === 'zh')
+        ? "隐私政策 (Privacy Policy) - 书签健康卫士 (BHM-PRO)"
+        : "Privacy Policy - Bookmark Health Master (BHM-PRO)";
+    } else if (isRefund) {
+      document.title = (lang === 'zh')
+        ? "退款政策 (Refund Policy) - 书签健康卫士 (BHM-PRO)"
+        : "Refund Policy - Bookmark Health Master (BHM-PRO)";
+    } else if (dict["meta.title"] && typeof document.title !== 'undefined') {
+      document.title = dict["meta.title"];
+    }
   }
+
   if (document.querySelector) {
     const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc && dict["meta.description"]) {
-      metaDesc.setAttribute('content', dict["meta.description"]);
+    if (metaDesc) {
+      if (isTerms) {
+        metaDesc.setAttribute('content', (lang === 'zh')
+          ? "书签健康卫士 (BHM-PRO) 官方服务条款与双轨授权协议（MIT 开源核心 + PRO 商业授权）。"
+          : "Terms of Service for Bookmark Health Master (BHM-PRO) Chrome Extension and Official Website.");
+      } else if (isPrivacy) {
+        metaDesc.setAttribute('content', (lang === 'zh')
+          ? "书签健康卫士 (BHM-PRO) 隐私政策与安全保障：严格恪守零遥测、100% 纯本地沙箱运行与 RFC 1918 私网屏蔽承诺。"
+          : "Strict zero-telemetry local-first commitment. All bookmark audits and actions remain in your browser sandbox.");
+      } else if (isRefund) {
+        metaDesc.setAttribute('content', (lang === 'zh')
+          ? "书签健康卫士 (BHM-PRO) 14 天 100% 全额无理由退款保障政策与申请指引。"
+          : "14-Day 100% Money-Back Guarantee Refund Policy for Bookmark Health Master (BHM-PRO).");
+      } else if (dict["meta.description"]) {
+        metaDesc.setAttribute('content', dict["meta.description"]);
+      }
     }
   }
 

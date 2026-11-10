@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy - Bookmark Health Master (BHM-PRO)</title>
-  <meta name="description" content="Privacy Policy for Bookmark Health Master (BHM-PRO) Chrome Extension. Strict zero-telemetry local-first commitment.">
+  <meta name="description" content="Strict zero-telemetry local-first commitment. All bookmark audits and actions remain in your browser sandbox.">
   <link rel="canonical" href="https://bhm-pro-ern.pages.dev/privacy.html">
 
   <!-- OpenGraph / Social Meta Tags -->
@@ -20,98 +20,310 @@
 
   <link rel="icon" type="image/png" href="assets/icon-128.png">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .legal-content {
-      max-width: 860px;
-      margin: 40px auto 80px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 48px;
-      backdrop-filter: blur(12px);
-    }
-    .legal-content h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
-    .legal-content .last-updated { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); }
-    .legal-content h2 { font-size: 1.35rem; font-weight: 700; color: #10b981; margin: 32px 0 14px; }
-    .legal-content p, .legal-content li { color: #cbd5e1; font-size: 0.98rem; line-height: 1.7; margin-bottom: 12px; }
-    .legal-content ul { padding-left: 24px; margin-bottom: 16px; }
-    .privacy-highlight { background: rgba(16, 185, 129, 0.08); border-left: 4px solid var(--accent-emerald); padding: 18px 22px; border-radius: 6px; margin: 24px 0; }
-  </style>
 </head>
 <body>
   <div class="ambient-glow"></div>
 
-  <!-- Navbar -->
-  <nav class="navbar">
+  <!-- Navigation Bar -->
+  <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="brand">
-        <img src="assets/icon-128.png" alt="BHM-PRO Logo">
+        <img src="assets/icon-128.png" alt="BHM-PRO Logo" width="36" height="36">
         <span>BHM-PRO</span>
         <span class="brand-badge">OFFICIAL</span>
       </a>
+
       <ul class="nav-links">
-        <li><a href="index.html#features">Features</a></li>
-        <li><a href="index.html#pricing">Pricing</a></li>
-        <li><a href="index.html#faq">FAQ</a></li>
-        <li><a href="terms.html">Terms</a></li>
-        <li><a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-        <li><a href="refund.html">Refunds</a></li>
+        <li><a href="index.html#features" data-i18n="nav.features">Features</a></li>
+        <li><a href="index.html#pricing" data-i18n="nav.pricing">Pricing</a></li>
+        <li><a href="index.html#faq" data-i18n="nav.faq">FAQ</a></li>
+        <li><a href="terms.html" data-i18n="nav.terms">Terms</a></li>
+        <li><a href="privacy.html" class="active" data-i18n="nav.privacy">Privacy</a></li>
+        <li><a href="refund.html" data-i18n="nav.refunds">Refunds</a></li>
+        <li class="mobile-lang-item">
+          <div class="lang-switch-wrapper" role="group" aria-label="Language Selector">
+            <span class="lang-icon" aria-hidden="true">🌐</span>
+            <button type="button" class="lang-chip" data-lang="zh" title="切换为简体中文">中文</button>
+            <span class="lang-divider">/</span>
+            <button type="button" class="lang-chip active" data-lang="en" title="Switch to English">EN</button>
+          </div>
+        </li>
       </ul>
+
       <div class="nav-actions">
-        <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" class="btn btn-cws">Add to Chrome</a>
+        <!-- Desktop Language Switcher -->
+        <div class="lang-switch-wrapper" id="desktop-lang-switcher" role="group" aria-label="Language Selector">
+          <span class="lang-icon" aria-hidden="true">🌐</span>
+          <button type="button" class="lang-chip" data-lang="zh" title="切换为简体中文">中文</button>
+          <span class="lang-divider">/</span>
+          <button type="button" class="lang-chip active" data-lang="en" title="Switch to English">EN</button>
+        </div>
+
+        <a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" class="btn btn-github" title="View Source on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-cws">
+          <span data-i18n="nav.addChrome">Add to Chrome</span>
+        </a>
       </div>
+
+      <button class="mobile-menu-btn" aria-label="Toggle Navigation">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+        </svg>
+      </button>
     </div>
-  </nav>
+  </header>
 
   <!-- Content -->
   <main class="container">
-    <div class="legal-content">
-      <h1>Privacy Policy</h1>
-      <div class="last-updated">Last Updated: November 9, 2026 • Manifest V3 Compliant</div>
+    <div class="legal-content" data-legal-mode="en">
+      <script>
+        (function(){
+          try {
+            var p = new URLSearchParams(window.location.search).get('lang');
+            var s = localStorage.getItem('bhm_lang');
+            var n = (navigator.language || '').toLowerCase();
+            var lang = p || s || (n.startsWith('zh') ? 'zh' : 'en');
+            document.currentScript.parentElement.setAttribute('data-legal-mode', lang === 'zh' ? 'zh' : 'en');
+          } catch(e){}
+        })();
+      </script>
 
-      <div class="privacy-highlight">
-        <strong style="color: #34d399; font-size: 1.1rem; display: block; margin-bottom: 6px;">Zero Telemetry & 100% Local Processing Guarantee</strong>
-        Bookmark Health Master (BHM-PRO) is engineered from day one to operate completely inside your local browser. 
-        <strong>We do NOT collect, transmit, store, track, or sell your bookmark URLs, titles, browsing history, or personal identifiers.</strong>
+      <!-- Legal Header & View Mode Switcher -->
+      <div class="legal-header">
+        <div class="lang-en">
+          <h1>Privacy Policy</h1>
+        </div>
+        <div class="lang-zh">
+          <h1>隐私政策与安全架构承诺</h1>
+        </div>
+
+        <div class="legal-meta-row">
+          <div class="legal-last-updated">
+            <span class="lang-en">Last Updated: November 10, 2026 • Manifest V3 Compliant • Zero Telemetry</span>
+            <span class="lang-zh">最近更新：2026年11月10日 • 遵循 Chrome MV3 规范 • 严格零遥测</span>
+          </div>
+
+          <!-- In-document View Switcher -->
+          <div class="legal-view-switcher" role="group" aria-label="Article View Selector">
+            <button type="button" class="legal-view-btn" data-view-mode="zh">🇨🇳 简体中文</button>
+            <button type="button" class="legal-view-btn active" data-view-mode="en">🇺🇸 English</button>
+            <button type="button" class="legal-view-btn" data-view-mode="bilingual">⚖️ 中英双语对照</button>
+          </div>
+        </div>
       </div>
 
-      <h2>1. Information We Do NOT Collect</h2>
-      <p>Unlike cloud-based bookmark managers, BHM-PRO operates with zero remote telemetry:</p>
-      <ul>
-        <li><strong>No Bookmark Synchronizing:</strong> Your bookmarks remain strictly in your browser's native SQLite store (<code>chrome.bookmarks</code>).</li>
-        <li><strong>No Analytics or Trackers:</strong> We do not embed Google Analytics, Mixpanel, Segment, Hotjar, or any user tracking SDKs.</li>
-        <li><strong>No Browsing Fingerprinting:</strong> No cookies, device fingerprinting, or browsing activity profiling.</li>
-      </ul>
+      <!-- Privacy Highlight Box -->
+      <div class="privacy-highlight">
+        <div class="lang-en">
+          <span class="lang-badge lang-badge-en">EN</span>
+          <strong style="color: #34d399; font-size: 1.1rem; display: block; margin-bottom: 6px;">Zero Telemetry & 100% Local Processing Guarantee</strong>
+          Bookmark Health Master (BHM-PRO) is engineered from day one to operate completely inside your local browser sandbox.
+          <strong>We do NOT collect, transmit, store, track, or sell your bookmark URLs, titles, browsing history, or personal identifiers.</strong>
+        </div>
+        <div class="lang-zh">
+          <span class="lang-badge lang-badge-zh">中文</span>
+          <strong style="color: #34d399; font-size: 1.1rem; display: block; margin-bottom: 6px;">零遥测与 100% 本地运算安全承诺</strong>
+          书签健康卫士（BHM-PRO）自立项之初即采用纯本地离线优先架构。
+          <strong>我们绝不收集、绝不传输、绝不存储、绝不跟踪、绝不出售您的任何书签 URL、网页标题、浏览历史或个人身份标识信息。</strong>
+        </div>
+      </div>
 
-      <h2>2. How Local Features Operate</h2>
-      <ul>
-        <li><strong>Dead Link Probing:</strong> HTTP HEAD/GET probes are executed directly by your browser (or optional Cloudflare/Google public DNS-over-HTTPS endpoints for DNS resolution). No list of checked URLs is ever sent to our servers.</li>
-        <li><strong>16 Tech Titans Organization:</strong> Pattern matching and clustering algorithms run in-memory within the Chrome SidePanel / Extension background worker.</li>
-        <li><strong>Atomic Undo Snapshots:</strong> Snapshots and rollback journals are stored exclusively in your browser's private <code>chrome.storage.local</code> partition.</li>
-      </ul>
+      <!-- Section 1: Information We Do NOT Collect -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>1. Information We Do NOT Collect</h2>
+            <p>Unlike cloud-based bookmark aggregators, BHM-PRO operates with zero remote telemetry:</p>
+            <ul>
+              <li><strong>No Bookmark Synchronizing:</strong> Your bookmarks remain strictly inside your browser's native SQLite storage (<code>chrome.bookmarks</code>). We operate zero remote user bookmark databases.</li>
+              <li><strong>No Analytics or Trackers:</strong> We do not embed Google Analytics, Mixpanel, Segment, Hotjar, or any user tracking SDKs within the extension or official landing page.</li>
+              <li><strong>No Browsing Fingerprinting:</strong> No tracking cookies, device canvas fingerprinting, or browsing activity profiling.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>1. 我们绝不收集的隐私信息</h2>
+            <p>与依赖云端同步的传统书签清理工具截然不同，BHM-PRO 坚持纯粹的零遥测原则：</p>
+            <ul>
+              <li><strong>无云端同步与存储：</strong>您的所有书签数据均严格保存在本地浏览器的原生 SQLite 存储区（<code>chrome.bookmarks</code>）。我们不设立任何远程书签云端数据库。</li>
+              <li><strong>无埋点与跟踪代码：</strong>扩展程序本体及官方落地页绝不集成 Google Analytics、Mixpanel、Segment、Hotjar 或任何第三方用户画像追踪 SDK。</li>
+              <li><strong>无设备指纹与浏览追踪：</strong>不使用跟踪 Cookie、不生成 Canvas 硬件指纹、不对您的日常网络浏览行为进行任何形式的分析与留存。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <h2>3. Payment & Merchant Data (Paddle)</h2>
-      <p>When you purchase a Pro license (Single Wash Pass or Lifetime Buyout), transactions are securely processed by <strong>Paddle.com Market Ltd</strong> as our Merchant of Record:</p>
-      <ul>
-        <li>Payment details (credit card number, PayPal account, billing address) are collected and processed directly by Paddle under strict PCI-DSS Level 1 compliance. We never see or store your payment card numbers.</li>
-        <li>Paddle communicates with our automated license issuance gateway via secure Webhooks to mint an Ed25519 digital license token for your order.</li>
-        <li>The only customer information processed for licensing is your Order ID, email address, and purchased tier, solely for delivering your license key and enabling self-service retrieval.</li>
-      </ul>
+      <!-- Section 2: RFC 1918 Private Subnet Shielding -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>2. RFC 1918 Private Subnet Shielding & Local Network Protection</h2>
+            <p>To eliminate Server-Side Request Forgery (SSRF) and intranet data leakage, BHM-PRO incorporates strict address filtering before executing any network probes:</p>
+            <ul>
+              <li><strong>Private Subnets Skipped:</strong> Probes are completely blocked and skipped for RFC 1918 addresses: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>, loopback <code>127.0.0.0/8</code>, link-local <code>169.254.0.0/16</code>, <code>localhost</code>, and internal hostnames (e.g. <code>.local</code>, <code>.lan</code>, <code>.internal</code>).</li>
+              <li><strong>Dangerous Scheme Shielding:</strong> Internal browser schemes (<code>javascript:</code>, <code>chrome:</code>, <code>file:</code>, <code>data:</code>, <code>about:</code>) are strictly shielded from HTTP probing to prevent accidental script triggers.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>2. RFC 1918 内网与私有地址屏蔽保护</h2>
+            <p>为从根源上杜绝内网穿透（SSRF）与私有网络资产泄露风险，BHM-PRO 在发起任何探针前内置了严密的网络边界过滤机制：</p>
+            <ul>
+              <li><strong>私有地址自动跳过：</strong>全面屏蔽并跳过 RFC 1918 私有 IP 网段的探查：<code>10.0.0.0/8</code>、<code>172.16.0.0/12</code>、<code>192.168.0.0/16</code>、本地环回 <code>127.0.0.0/8</code>、链路本地 <code>169.254.0.0/16</code>、<code>localhost</code> 以及企业内部专属域名（如 <code>.local</code>、<code>.lan</code>、<code>.internal</code> 等）。</li>
+              <li><strong>危险协议拦截保护：</strong>对于 <code>javascript:</code>、<code>chrome:</code>、<code>file:</code>、<code>data:</code>、<code>about:</code> 等内置协议书签，严格禁止发起网络探针，杜绝意外脚本执行与本地文件暴露风险。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <h2>4. Chrome Permissions Justification</h2>
-      <p>BHM-PRO requests only the minimal permissions required to function:</p>
-      <ul>
-        <li><code>bookmarks</code>: Required to read, audit, organize, and restore your bookmarks.</li>
-        <li><code>storage</code>: Required to save undo journals and your Pro activation status locally.</li>
-        <li><code>sidePanel</code>: Required to display the official Chrome SidePanel interface.</li>
-      </ul>
+      <!-- Section 3: How Local Features Operate -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>3. How Local Features Operate & Dual-Stage DoH</h2>
+            <ul>
+              <li><strong>Dead Link Probing:</strong> HTTP HEAD/GET probes are executed directly by your browser. When DNS-over-HTTPS (DoH) diagnostics is enabled, only the bare Fully Qualified Domain Name (FQDN, e.g. <code>example.com</code>) is queried via public Cloudflare (<code>1.1.1.1</code>) or Google (<code>8.8.8.8</code>) DoH endpoints to distinguish NXDOMAIN (deregistered domains) from server rate limits. Full paths, query strings, and fragments are NEVER transmitted.</li>
+              <li><strong>16 Tech Titans Organization:</strong> Pattern matching and clustering algorithms run entirely in-memory within the Chrome SidePanel / Extension background service worker.</li>
+              <li><strong>Atomic Undo Snapshots:</strong> Snapshots and rollback journals are stored exclusively in your browser's private <code>chrome.storage.local</code> partition.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>3. 本地功能运行原理与双阶段 DoH 探针机制</h2>
+            <ul>
+              <li><strong>死链状态探测：</strong>HTTP HEAD/GET 探针直接由您的本地浏览器发起。当启用 DNS-over-HTTPS (DoH) 辅助诊断时，仅会将裸域名（FQDN，例如 <code>example.com</code>）提交至公开权威的 Cloudflare (<code>1.1.1.1</code>) 或 Google (<code>8.8.8.8</code>) DoH 服务端以鉴别域名是否注销（NXDOMAIN），绝不传输完整 URL 路径、查询参数（Query）或身份 Token。</li>
+              <li><strong>16 大科技巨头生态整理：</strong>归类与正则启发式算法完全在 Chrome 侧边栏（SidePanel）及 Service Worker 内存中本地运行，无需任何外部分析接口。</li>
+              <li><strong>同级锚点原子级快照回滚：</strong>所有历史事务日志与撤销快照均完全密封于您本地浏览器的私有存储区 <code>chrome.storage.local</code> 中。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <h2>5. Data Retention & Deletion</h2>
-      <p>Because all bookmark data resides on your machine, uninstalling the BHM-PRO extension immediately and permanently wipes all local logs, journals, and cache from your device without leaving residual files.</p>
+      <!-- Section 4: Pure Offline Ed25519 Cryptographic Verification -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>4. Pure Offline Ed25519 Cryptographic Verification</h2>
+            <p>BHM-PRO Pro licenses are verified <strong>100% offline</strong> using an embedded Ed25519 asymmetric public key:</p>
+            <ul>
+              <li><strong>Zero Phone-Home:</strong> The extension never makes network calls or background heartbeat pings to verify your license status.</li>
+              <li><strong>Air-Gapped Operation:</strong> Pro features remain fully functional indefinitely without an active internet connection after entering your key.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>4. 纯离线 Ed25519 密码学校验架构</h2>
+            <p>BHM-PRO 专业版许可证采用内置的 Ed25519 非对称公钥进行 <strong>100% 纯本地离线验真</strong>：</p>
+            <ul>
+              <li><strong>零联网验真（Zero Phone-Home）：</strong>扩展程序在校验激活码时绝不向任何外部服务器发送心跳请求或验证请求。</li>
+              <li><strong>支持物理离线使用：</strong>许可证激活完成后，在断网甚至局域网隔离（Air-Gapped）环境下，所有专业版功能依然永久正常运行。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <h2>6. Contact Us</h2>
-      <p>If you have any questions about this Privacy Policy or our security design, please contact:</p>
-      <p><strong>Lead Engineer & Support:</strong> <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a></p>
+      <!-- Section 5: Payment & Merchant Data (Paddle) -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>5. Payment & Merchant Data (Paddle)</h2>
+            <p>When you purchase a Pro license (Single Wash Pass or Lifetime Buyout), transactions are securely processed by <strong>Paddle.com Market Ltd ("Paddle")</strong> as our Merchant of Record:</p>
+            <ul>
+              <li>Payment details (credit card number, PayPal account, billing address) are collected and processed directly by Paddle under strict <strong>PCI-DSS Level 1</strong> compliance. We never see or store your payment card numbers.</li>
+              <li>Paddle communicates with our automated license issuance gateway via secure Webhooks to mint an Ed25519 digital license token for your order.</li>
+              <li>The only customer information processed for licensing is your Order ID, email address, and purchased tier, solely for delivering your license key and enabling self-service retrieval.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>5. 支付与商户数据规范（Paddle）</h2>
+            <p>当您购买专业版授权（单次清洗体验卡或终身买断授权）时，所有交易均由全球法定商户 <strong>Paddle.com Market Ltd（“Paddle”）</strong>安全托管：</p>
+            <ul>
+              <li>您的支付敏感信息（信用卡号、PayPal 账户、账单地址等）由 Paddle 在严格的 <strong>PCI-DSS Level 1</strong> 国际金融最高安全标准下直接处理。我们绝无权限查看或存储您的银行卡信息。</li>
+              <li>Paddle 仅在支付授权成功后，通过端到端加密的 Webhook 向我们的自动化发码网关传递必要参数，用于签发对应的 Ed25519 密码学许可密钥。</li>
+              <li>我们处理的客户信息仅限于订单号（Order ID）、收据电子邮箱及购买版本，其用途仅为向您交付授权凭单并在官网提供自助密钥找回。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: Chrome Permissions Justification -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>6. Chrome Permissions Justification</h2>
+            <p>BHM-PRO strictly adheres to the principle of least privilege, requesting only the minimal permissions required to function:</p>
+            <ul>
+              <li><code>bookmarks</code>: Required to read, audit, organize, and restore your bookmarks.</li>
+              <li><code>storage</code>: Required to save local undo journals and your Pro activation status locally.</li>
+              <li><code>sidePanel</code>: Required to display the official Chrome SidePanel interface.</li>
+              <li><code>declarativeNetRequest</code>: Utilized during link health checks to strip Origin and Referer request headers, shielding your browsing privacy from checked hosts.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>6. Chrome 扩展权限最小化合规声明</h2>
+            <p>BHM-PRO 严格遵循最小权限原则（Least Privilege），仅申请实现核心功能所不可或缺的权限项：</p>
+            <ul>
+              <li><code>bookmarks</code>：用于读取书签元数据、诊断死链状态、执行生态聚类归纳及快照回滚写入。</li>
+              <li><code>storage</code>：用于在本地沙箱保存历史撤销事务日志及离线专业版激活凭据。</li>
+              <li><code>sidePanel</code>：用于唤起并展示 Google Chrome 原生侧边栏常驻工作台。</li>
+              <li><code>declarativeNetRequest</code>：仅用于在死链探查期间动态剔除请求头中的 Origin 和 Referer，防止目标站点获取您的浏览上下文。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 7: Data Retention & Deletion -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>7. Data Retention & Permanent Deletion</h2>
+            <p>Because all bookmark diagnostics, logs, and undo history reside exclusively on your machine, uninstalling the BHM-PRO extension immediately and permanently wipes all local logs, journals, and cache from your device without leaving residual files.</p>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>7. 数据留存与永久清除说明</h2>
+            <p>鉴于所有书签分析记录、操作日志和快照数据均 100% 存储于您的本地设备，一旦您在 Chrome 中卸载 BHM-PRO 扩展程序，浏览器将立即永久清空本地沙箱内的全部历史记录与缓存，不留任何残留文件。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 8: Contact Us -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>8. Contact Information</h2>
+            <p>If you have any questions about this Privacy Policy, our zero-telemetry architecture, or our security design, please contact:</p>
+            <ul>
+              <li><strong>Lead Engineer & Support:</strong> <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a></li>
+              <li><strong>Official Website:</strong> <a href="index.html" style="color: #60a5fa;">https://bhm-pro-ern.pages.dev/</a></li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>8. 联络方式与安全反馈</h2>
+            <p>如果您对本隐私政策、零遥测安全架构或权限设计有任何疑问或安全建议，欢迎通过以下方式与核心团队联系：</p>
+            <ul>
+              <li><strong>首席安全与技术支持：</strong><a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a></li>
+              <li><strong>官方主站：</strong><a href="index.html" style="color: #60a5fa;">https://bhm-pro-ern.pages.dev/</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -119,13 +331,67 @@
   <footer class="footer">
     <div class="container footer-bottom">
       <p>© 2026 Bookmark Health Master (BHM-PRO). All rights reserved.</p>
-      <div style="display: flex; gap: 20px;">
-        <a href="terms.html" style="color: var(--text-muted); text-decoration: none;">Terms of Service</a>
-        <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;">Privacy Policy</a>
-        <a href="refund.html" style="color: var(--text-muted); text-decoration: none;">Refund Policy</a>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <a href="terms.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.terms">Terms of Service</a>
+        <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.privacy">Privacy Policy</a>
+        <a href="refund.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.refunds">Refund Policy</a>
         <a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;">GitHub</a>
       </div>
     </div>
   </footer>
+
+  <!-- i18n & Legal Interaction Scripts -->
+  <script src="i18n.js"></script>
+  <script>
+    (function(){
+      function updateLegalView(mode) {
+        var content = document.querySelector('.legal-content');
+        if (!content) return;
+        content.setAttribute('data-legal-mode', mode);
+
+        document.querySelectorAll('.legal-view-btn').forEach(function(btn){
+          var btnMode = btn.getAttribute('data-view-mode');
+          if (btnMode === mode) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
+          } else {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-pressed', 'false');
+          }
+        });
+      }
+
+      window.addEventListener('bhm-lang-changed', function(e){
+        var content = document.querySelector('.legal-content');
+        var curMode = content ? content.getAttribute('data-legal-mode') : null;
+        if (curMode !== 'bilingual') {
+          updateLegalView(e.detail.lang);
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.legal-view-btn').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var mode = btn.getAttribute('data-view-mode');
+            updateLegalView(mode);
+            if ((mode === 'zh' || mode === 'en') && window.BHM_LANDING_I18N && typeof window.BHM_LANDING_I18N.setLang === 'function') {
+              window.BHM_LANDING_I18N.setLang(mode);
+            }
+          });
+        });
+
+        var menuBtn = document.querySelector('.mobile-menu-btn');
+        var navLinks = document.querySelector('.nav-links');
+        if (menuBtn && navLinks) {
+          menuBtn.addEventListener('click', function(){
+            navLinks.classList.toggle('active');
+          });
+        }
+
+        var initialLang = (window.BHM_CURRENT_LANG || (localStorage && localStorage.getItem('bhm_lang')) || (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en');
+        updateLegalView(initialLang);
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -20,102 +20,232 @@
 
   <link rel="icon" type="image/png" href="assets/icon-128.png">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .legal-content {
-      max-width: 860px;
-      margin: 40px auto 80px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 48px;
-      backdrop-filter: blur(12px);
-    }
-    .legal-content h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
-    .legal-content .last-updated { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); }
-    .legal-content h2 { font-size: 1.35rem; font-weight: 700; color: #38bdf8; margin: 32px 0 14px; }
-    .legal-content p, .legal-content li { color: #cbd5e1; font-size: 0.98rem; line-height: 1.7; margin-bottom: 12px; }
-    .legal-content ul, .legal-content ol { padding-left: 24px; margin-bottom: 16px; }
-    .guarantee-box {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(37, 99, 235, 0.12));
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      margin: 24px 0;
-      text-align: center;
-    }
-    .guarantee-box h3 { font-size: 1.35rem; color: #34d399; margin-bottom: 8px; }
-  </style>
 </head>
 <body>
   <div class="ambient-glow"></div>
 
-  <!-- Navbar -->
-  <nav class="navbar">
+  <!-- Navigation Bar -->
+  <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="brand">
-        <img src="assets/icon-128.png" alt="BHM-PRO Logo">
+        <img src="assets/icon-128.png" alt="BHM-PRO Logo" width="36" height="36">
         <span>BHM-PRO</span>
         <span class="brand-badge">OFFICIAL</span>
       </a>
+
       <ul class="nav-links">
-        <li><a href="index.html#features">Features</a></li>
-        <li><a href="index.html#pricing">Pricing</a></li>
-        <li><a href="index.html#faq">FAQ</a></li>
-        <li><a href="terms.html">Terms</a></li>
-        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="index.html#features" data-i18n="nav.features">Features</a></li>
+        <li><a href="index.html#pricing" data-i18n="nav.pricing">Pricing</a></li>
+        <li><a href="index.html#faq" data-i18n="nav.faq">FAQ</a></li>
+        <li><a href="terms.html" data-i18n="nav.terms">Terms</a></li>
+        <li><a href="privacy.html" data-i18n="nav.privacy">Privacy</a></li>
+        <li><a href="refund.html" class="active" data-i18n="nav.refunds">Refunds</a></li>
+        <li class="mobile-lang-item">
+          <div class="lang-switch-wrapper" role="group" aria-label="Language Selector">
+            <span class="lang-icon" aria-hidden="true">🌐</span>
+            <button type="button" class="lang-chip" data-lang="zh" title="切换为简体中文">中文</button>
+            <span class="lang-divider">/</span>
+            <button type="button" class="lang-chip active" data-lang="en" title="Switch to English">EN</button>
+          </div>
+        </li>
       </ul>
+
       <div class="nav-actions">
-        <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" class="btn btn-cws">Add to Chrome</a>
+        <!-- Desktop Language Switcher -->
+        <div class="lang-switch-wrapper" id="desktop-lang-switcher" role="group" aria-label="Language Selector">
+          <span class="lang-icon" aria-hidden="true">🌐</span>
+          <button type="button" class="lang-chip" data-lang="zh" title="切换为简体中文">中文</button>
+          <span class="lang-divider">/</span>
+          <button type="button" class="lang-chip active" data-lang="en" title="Switch to English">EN</button>
+        </div>
+
+        <a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" class="btn btn-github" title="View Source on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-cws">
+          <span data-i18n="nav.addChrome">Add to Chrome</span>
+        </a>
       </div>
+
+      <button class="mobile-menu-btn" aria-label="Toggle Navigation">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+        </svg>
+      </button>
     </div>
-  </nav>
+  </header>
 
   <!-- Content -->
   <main class="container">
-    <div class="legal-content">
-      <h1>Refund Policy</h1>
-      <div class="last-updated">Last Updated: November 9, 2026 • 14-Day Money-Back Guarantee</div>
+    <div class="legal-content" data-legal-mode="en">
+      <script>
+        (function(){
+          try {
+            var p = new URLSearchParams(window.location.search).get('lang');
+            var s = localStorage.getItem('bhm_lang');
+            var n = (navigator.language || '').toLowerCase();
+            var lang = p || s || (n.startsWith('zh') ? 'zh' : 'en');
+            document.currentScript.parentElement.setAttribute('data-legal-mode', lang === 'zh' ? 'zh' : 'en');
+          } catch(e){}
+        })();
+      </script>
 
-      <div class="guarantee-box">
-        <h3>🛡️ 14-Day 100% Money-Back Guarantee</h3>
-        <p style="color: #e2e8f0; font-size: 1rem; margin-bottom: 0;">We stand firmly behind BHM-PRO. If you are not completely satisfied with your purchase for any reason, you are entitled to a full, no-questions-asked refund within 14 calendar days of your order date.</p>
+      <!-- Legal Header & View Mode Switcher -->
+      <div class="legal-header">
+        <div class="lang-en">
+          <h1>Refund Policy</h1>
+        </div>
+        <div class="lang-zh">
+          <h1>退款政策与权益保障承诺</h1>
+        </div>
+
+        <div class="legal-meta-row">
+          <div class="legal-last-updated">
+            <span class="lang-en">Last Updated: November 10, 2026 • 14-Day Money-Back Guarantee</span>
+            <span class="lang-zh">最近更新：2026年11月10日 • 14 天 100% 全额退款保障</span>
+          </div>
+
+          <!-- In-document View Switcher -->
+          <div class="legal-view-switcher" role="group" aria-label="Article View Selector">
+            <button type="button" class="legal-view-btn" data-view-mode="zh">🇨🇳 简体中文</button>
+            <button type="button" class="legal-view-btn active" data-view-mode="en">🇺🇸 English</button>
+            <button type="button" class="legal-view-btn" data-view-mode="bilingual">⚖️ 中英双语对照</button>
+          </div>
+        </div>
       </div>
 
-      <h2>1. Eligibility for a Refund</h2>
-      <p>All paid license tiers are covered under our 14-day policy:</p>
-      <ul>
-        <li><strong>BHM-PRO 30-Day Single Wash Pass ($9.90 USD)</strong></li>
-        <li><strong>BHM-PRO Lifetime Buyout ($24.90 USD)</strong></li>
-      </ul>
-      <p>Whether you encountered a browser compatibility issue, decided the features didn't fit your workflow, or purchased by mistake, you can request a 100% refund within 14 days of the initial transaction timestamp.</p>
+      <!-- Guarantee Box Banner -->
+      <div class="guarantee-box">
+        <div class="lang-en">
+          <span class="lang-badge lang-badge-en">EN</span>
+          <h3>🛡️ 14-Day 100% Money-Back Guarantee</h3>
+          <p style="color: #e2e8f0; font-size: 1rem; margin-bottom: 0;">We stand firmly behind BHM-PRO. If you are not completely satisfied with your purchase for any reason, you are entitled to a full, no-questions-asked refund within 14 calendar days of your order date.</p>
+        </div>
+        <div class="lang-zh">
+          <span class="lang-badge lang-badge-zh">中文</span>
+          <h3>🛡️ 14 天 100% 全额无理由退款承诺</h3>
+          <p style="color: #e2e8f0; font-size: 1rem; margin-bottom: 0;">我们对 BHM-PRO 的工程品质与实用价值抱有充分信心。如果您在购买后因任何原因对软件不完全满意，您均有权在订单支付之日起 14 个自然日内申请无理由全额退款，零手续费、极速原路返还。</p>
+        </div>
+      </div>
 
-      <h2>2. How to Request a Refund (Two Easy Options)</h2>
-      
-      <p><strong>Option A: Direct Email Support (Fastest)</strong></p>
-      <ol>
-        <li>Send an email to <strong>qq136692547@gmail.com</strong> from the email address used during purchase.</li>
-        <li>Include your <strong>Paddle Order ID</strong> (found in your Paddle purchase receipt email).</li>
-        <li>We will review and trigger the refund through Paddle Billing within <strong>24 business hours</strong>.</li>
-      </ol>
+      <!-- Section 1: Eligibility -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>1. Eligibility for a Refund</h2>
+            <p>All paid license tiers are fully covered under our 14-day refund policy:</p>
+            <ul>
+              <li><strong>BHM-PRO 30-Day Single Wash Pass ($9.90 USD / ¥68 RMB)</strong></li>
+              <li><strong>BHM-PRO Lifetime Buyout ($24.90 USD / ¥168 RMB)</strong></li>
+            </ul>
+            <p>Whether you encountered a browser compatibility issue, decided the features didn't fit your workflow, or purchased by mistake, you can request a 100% refund within 14 days of the initial transaction timestamp.</p>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>1. 退款适用范围与权益资格</h2>
+            <p>所有付费许可证版本均全额受 14 天退款保障政策覆盖：</p>
+            <ul>
+              <li><strong>BHM-PRO 30 天单次清洗体验卡（$9.90 美元 / ¥68 元人民币）</strong></li>
+              <li><strong>BHM-PRO 终身买断授权（$24.90 美元 / ¥168 元人民币）</strong></li>
+            </ul>
+            <p>无论您是遇到了浏览器版本兼容性问题、觉得功能特性不符合您的工作流预期，还是操作失误多购，只要在交易完成之日起 14 个自然日内提出申请，您均可获得 100% 全额退款。</p>
+          </div>
+        </div>
+      </section>
 
-      <p><strong>Option B: Via Paddle Buyer Support Portal</strong></p>
-      <ol>
-        <li>Open the receipt email sent by <strong>Paddle.com</strong> immediately after payment.</li>
-        <li>Click on the <strong>"Contact Support"</strong> or <strong>"View Order"</strong> link inside your receipt.</li>
-        <li>Submit your refund request directly to Paddle's 24/7 buyer support team.</li>
-      </ol>
+      <!-- Section 2: How to Request a Refund -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>2. How to Request a Refund (Two Easy Options)</h2>
+            <p><strong>Option A: Direct Email Support (Fastest)</strong></p>
+            <ol>
+              <li>Send an email to <strong>qq136692547@gmail.com</strong> from the email address used during purchase.</li>
+              <li>Include your <strong>Paddle Order ID</strong> (found in your Paddle purchase receipt email, e.g. <code>#12345678</code> or <code>ORD-XXXXX</code>).</li>
+              <li>We will review and trigger the full refund through Paddle Billing within <strong>24 business hours</strong>.</li>
+            </ol>
+            <p><strong>Option B: Via Paddle Buyer Support Portal</strong></p>
+            <ol>
+              <li>Open the receipt email sent by <strong>Paddle.com</strong> immediately after payment.</li>
+              <li>Click on the <strong>"Contact Support"</strong> or <strong>"View Order"</strong> link inside your receipt.</li>
+              <li>Submit your refund request directly to Paddle's 24/7 buyer support team.</li>
+            </ol>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>2. 如何申请退款（两种极简途径）</h2>
+            <p><strong>途径 A：官方邮件极速支持（最快捷）</strong></p>
+            <ol>
+              <li>使用购买时填写的电子邮箱发送邮件至 <strong>qq136692547@gmail.com</strong>。</li>
+              <li>邮件中附带您的 <strong>Paddle 订单编号</strong>（可在 Paddle 发送的电子收据邮件中查询，形如 <code>#12345678</code> 或 <code>ORD-XXXXX</code>）。</li>
+              <li>我们将在 <strong>24 个工作小时</strong>内核实并在 Paddle 商家后台直接发起全额退款。</li>
+            </ol>
+            <p><strong>途径 B：通过 Paddle 官方买家支持门户</strong></p>
+            <ol>
+              <li>打开支付成功后由 <strong>Paddle.com</strong> 发送的电子收据邮件。</li>
+              <li>点击收据下方的<strong>“联系客服 (Contact Support)”</strong>或<strong>“查看订单 (View Order)”</strong>链接。</li>
+              <li>直接向 Paddle 7×24 小时全球买家支持团队提交退款申请。</li>
+            </ol>
+          </div>
+        </div>
+      </section>
 
-      <h2>3. Refund Processing & Timelines</h2>
-      <ul>
-        <li>Once approved, the refund is processed immediately by Paddle back to your original payment method (Credit Card, PayPal, Apple Pay, Google Pay).</li>
-        <li>Depending on your card issuer or bank, the credit typically appears on your account statement within <strong>3 to 5 business days</strong>.</li>
-        <li>Upon refund completion, the associated cryptographic license key is permanently revoked.</li>
-      </ul>
+      <!-- Section 3: Refund Processing & Timelines -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>3. Refund Processing & Timelines</h2>
+            <ul>
+              <li><strong>Original Payment Method:</strong> Once approved, the refund is processed immediately by Paddle back to your original payment method (Credit Card, PayPal, Apple Pay, Google Pay).</li>
+              <li><strong>Posting Timeline:</strong> Depending on your card issuer or bank, the credit typically appears on your account statement within <strong>3 to 5 business days</strong>.</li>
+              <li><strong>Zero Deductions:</strong> No handling fees, gateway fees, or restocking fees will ever be deducted. You receive 100% of the paid amount.</li>
+              <li><strong>License Status:</strong> Upon refund completion, the associated cryptographic license key is permanently revoked and deactivated.</li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>3. 退款到账时限与资金原路返还说明</h2>
+            <ul>
+              <li><strong>资金原路返还：</strong>退款申请一旦确认，Paddle 将立即通过原支付渠道（信用卡、PayPal、Apple Pay、Google Pay 等）原路退回款项。</li>
+              <li><strong>到账结算周期：</strong>取决于发卡行或本地银行的结算流程，退款通常在 <strong>3 至 5 个工作日</strong>内体现在您的账户账单中。</li>
+              <li><strong>零扣款承诺：</strong>绝无任何通道手续费、取消费或隐藏费用，您将 100% 获得所支付的全部金额。</li>
+              <li><strong>密钥失效注销：</strong>退款执行完毕后，该订单对应的 Ed25519 密码学许可密钥将自动被注销失效。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <h2>4. Contact Us</h2>
-      <p>Have questions about your purchase or need help before requesting a refund? We are glad to help:</p>
-      <p><strong>Customer Support:</strong> <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a></p>
-      <p><strong>Merchant of Record:</strong> Paddle.com Market Ltd</p>
+      <!-- Section 4: Contact & Merchant Information -->
+      <section class="legal-section">
+        <div class="legal-pair">
+          <div class="lang-en">
+            <span class="lang-badge lang-badge-en">EN</span>
+            <h2>4. Contact Us & Merchant Information</h2>
+            <p>Have questions about your purchase or need assistance before requesting a refund? We are glad to help:</p>
+            <ul>
+              <li><strong>Customer Support:</strong> <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a> (SLA: 24 business hours)</li>
+              <li><strong>Merchant of Record:</strong> Paddle.com Market Ltd, Judd House, 18-29 Mora Street, London, EC1V 8BT, United Kingdom</li>
+              <li><strong>Official Website:</strong> <a href="index.html" style="color: #60a5fa;">https://bhm-pro-ern.pages.dev/</a></li>
+            </ul>
+          </div>
+          <div class="lang-zh">
+            <span class="lang-badge lang-badge-zh">中文</span>
+            <h2>4. 联络我们与商户信息</h2>
+            <p>对购买有任何疑问、或在申请退款前需要技术支持？欢迎随时与我们取得联络：</p>
+            <ul>
+              <li><strong>客户与技术支持：</strong><a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a>（SLA 响应承诺：24 个工作小时内）</li>
+              <li><strong>法定商户 (Merchant of Record)：</strong>Paddle.com Market Ltd, Judd House, 18-29 Mora Street, London, EC1V 8BT, United Kingdom</li>
+              <li><strong>官方主站：</strong><a href="index.html" style="color: #60a5fa;">https://bhm-pro-ern.pages.dev/</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -123,13 +253,67 @@
   <footer class="footer">
     <div class="container footer-bottom">
       <p>© 2026 Bookmark Health Master (BHM-PRO). All rights reserved.</p>
-      <div style="display: flex; gap: 20px;">
-        <a href="terms.html" style="color: var(--text-muted); text-decoration: none;">Terms of Service</a>
-        <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;">Privacy Policy</a>
-        <a href="refund.html" style="color: var(--text-muted); text-decoration: none;">Refund Policy</a>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <a href="terms.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.terms">Terms of Service</a>
+        <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.privacy">Privacy Policy</a>
+        <a href="refund.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.refunds">Refund Policy</a>
         <a href="https://github.com/qq136692547-cmyk/bookmark-health-master" target="_blank" rel="noopener noreferrer" style="color: var(--text-muted); text-decoration: none;">GitHub</a>
       </div>
     </div>
   </footer>
+
+  <!-- i18n & Legal Interaction Scripts -->
+  <script src="i18n.js"></script>
+  <script>
+    (function(){
+      function updateLegalView(mode) {
+        var content = document.querySelector('.legal-content');
+        if (!content) return;
+        content.setAttribute('data-legal-mode', mode);
+
+        document.querySelectorAll('.legal-view-btn').forEach(function(btn){
+          var btnMode = btn.getAttribute('data-view-mode');
+          if (btnMode === mode) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
+          } else {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-pressed', 'false');
+          }
+        });
+      }
+
+      window.addEventListener('bhm-lang-changed', function(e){
+        var content = document.querySelector('.legal-content');
+        var curMode = content ? content.getAttribute('data-legal-mode') : null;
+        if (curMode !== 'bilingual') {
+          updateLegalView(e.detail.lang);
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.legal-view-btn').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var mode = btn.getAttribute('data-view-mode');
+            updateLegalView(mode);
+            if ((mode === 'zh' || mode === 'en') && window.BHM_LANDING_I18N && typeof window.BHM_LANDING_I18N.setLang === 'function') {
+              window.BHM_LANDING_I18N.setLang(mode);
+            }
+          });
+        });
+
+        var menuBtn = document.querySelector('.mobile-menu-btn');
+        var navLinks = document.querySelector('.nav-links');
+        if (menuBtn && navLinks) {
+          menuBtn.addEventListener('click', function(){
+            navLinks.classList.toggle('active');
+          });
+        }
+
+        var initialLang = (window.BHM_CURRENT_LANG || (localStorage && localStorage.getItem('bhm_lang')) || (navigator.language || '').toLowerCase().startsWith('zh') ? 'zh' : 'en');
+        updateLegalView(initialLang);
+      });
+    })();
+  </script>
 </body>
 </html>

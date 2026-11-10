@@ -45,7 +45,8 @@ async function main() {
     { id: "SUITE-12", name: "Bilingual i18n (en/zh_CN), Prod Ed25519 Keygen/Webhook & Privacy Parity", fn: runScriptFile("test_step1_i18n_and_keygen.js") },
     { id: "SUITE-13", name: "Round 2 Adversarial Regression & Hardened Invariants", fn: runScriptFile("test_round2_adversarial.js") },
     { id: "SUITE-14", name: "Lemon Squeezy Webhook & Automated Issuance E2E Suite", fn: runScriptFile("test_lemon_squeezy_webhook_e2e.js") },
-    { id: "SUITE-15", name: "Open Source Compliance & Repository Security Audit", fn: runScriptFile("verify_open_source_release.js") }
+    { id: "SUITE-15", name: "Open Source Compliance & Repository Security Audit", fn: runScriptFile("verify_open_source_release.js") },
+    { id: "SUITE-16", name: "Official Landing Page Bilingual i18n & Client-Side Localization", fn: runScriptFile("test_landing_i18n_e2e.js") }
   ];
 
   const results = [];
