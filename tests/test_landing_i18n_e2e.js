@@ -113,21 +113,21 @@ console.log('\n[Sub-test 1] Intelligent Default: Browser language zh-CN');
   assert(heroTitle.innerHTML.includes('让沉睡的书签重获新生'), 'Hero title must be translated to Chinese');
 
   const washAmount = env.elements.find(e => e.key === 'price.washAmount');
-  assert.strictEqual(washAmount.textContent, '68', 'Wash amount must be 68 (RMB)');
+  assert.strictEqual(washAmount.textContent, '35', 'Wash amount must be 35 (RMB, Option A)');
 
   const ltdAmount = env.elements.find(e => e.key === 'price.ltdAmount');
-  assert.strictEqual(ltdAmount.textContent, '168', 'Lifetime amount must be 168 (RMB)');
+  assert.strictEqual(ltdAmount.textContent, '99', 'Lifetime amount must be 99 (RMB, Option A)');
 
   const washBtn = env.elements.find(e => e.key === 'price.washBtn');
-  assert(washBtn.textContent.includes('30 天体验卡') && washBtn.textContent.includes('¥68'), 'Wash button text in Chinese');
+  assert(washBtn.textContent.includes('30 天体验卡') && washBtn.textContent.includes('¥35'), 'Wash button text in Chinese with Option A price');
 
   const placeholder = env.elements.find(e => e.key === 'lookup.orderPlaceholder');
-  assert(placeholder.placeholder.includes('Paddle 订单号'), 'Order ID placeholder in Chinese');
+  assert(placeholder.placeholder.includes('订单号'), 'Order ID placeholder in Chinese');
 
   assert(env.chipElements[0].classList.contains('active'), 'Chinese chip must have active class');
   assert(!env.chipElements[1].classList.contains('active'), 'English chip must NOT have active class');
 
-  console.log('  ✓ Browser zh-CN correctly rendered full Chinese site (prices ¥68 / ¥168, active chips updated)');
+  console.log('  ✓ Browser zh-CN correctly rendered full Chinese site (Option A prices ¥35 / ¥99, active chips updated)');
 }
 
 // Sub-test 2: Query param ?lang=en override
@@ -149,15 +149,15 @@ console.log('\n[Sub-test 2] URL param ?lang=en override');
   assert(heroTitle.innerHTML.includes('Resurrect Your Bookmarks'), 'Hero title must be in English');
 
   const washAmount = env.elements.find(e => e.key === 'price.washAmount');
-  assert.strictEqual(washAmount.textContent, '9.90', 'Wash amount must be 9.90 (USD)');
+  assert.strictEqual(washAmount.textContent, '4.90', 'Wash amount must be 4.90 (USD, Option A)');
 
   const ltdAmount = env.elements.find(e => e.key === 'price.ltdAmount');
-  assert.strictEqual(ltdAmount.textContent, '24.90', 'Lifetime amount must be 24.90 (USD)');
+  assert.strictEqual(ltdAmount.textContent, '14.90', 'Lifetime amount must be 14.90 (USD, Option A)');
 
   assert(!env.chipElements[0].classList.contains('active'), 'Chinese chip must NOT be active');
   assert(env.chipElements[1].classList.contains('active'), 'English chip must be active');
 
-  console.log('  ✓ ?lang=en correctly forced English site ($9.90 / $24.90)');
+  console.log('  ✓ ?lang=en correctly forced English site (Option A: $4.90 / $14.90)');
 }
 
 // Sub-test 3: Smooth Toggle & Persistence
@@ -213,8 +213,8 @@ console.log('\n[Sub-test 4] Dictionary Completeness & Section Parity');
   assert(BHM_I18N_DICT.zh['feat.tab3Title'].includes('UGC 协同文档'));
   assert(BHM_I18N_DICT.zh['feat.tab4Title'].includes('同级锚点事务日志'));
   assert(BHM_I18N_DICT.zh['arch.card1Title'].includes('Ed25519 纯本地离线密码学验真'));
-  assert(BHM_I18N_DICT.zh['price.washAmount'] === '68');
-  assert(BHM_I18N_DICT.zh['price.ltdAmount'] === '168');
+  assert(BHM_I18N_DICT.zh['price.washAmount'] === '35');
+  assert(BHM_I18N_DICT.zh['price.ltdAmount'] === '99');
   assert(BHM_I18N_DICT.zh['faq.q1'].includes('上传到服务器'));
   assert(BHM_I18N_DICT.zh['footer.brandDesc'].includes('守护隐私'));
 

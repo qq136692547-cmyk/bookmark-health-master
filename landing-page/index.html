@@ -71,8 +71,9 @@
   }
   </script>
 
-  <!-- Paddle.js v2 CDN -->
+  <!-- Payment Gateways: Paddle.js v2 CDN & Gumroad Overlay CDN -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script src="https://gumroad.com/js/gumroad.js"></script>
 </head>
 <body>
   <div class="ambient-glow"></div>
@@ -465,7 +466,7 @@
           <p class="plan-desc" data-i18n="price.washDesc">Perfect for spring cleaning large bookmark libraries with batch power.</p>
           <div class="plan-price">
             <span class="currency" data-i18n="price.washCurrency">$</span>
-            <span class="amount" data-i18n="price.washAmount">9.90</span>
+            <span class="amount" data-i18n="price.washAmount">4.90</span>
             <span class="period" data-i18n="price.washPeriod">/ 30 days</span>
           </div>
           <ul class="plan-features">
@@ -486,19 +487,19 @@
               <span data-i18n="price.washPerk4">Instant Ed25519 digital license delivery</span>
             </li>
           </ul>
-          <button onclick="openCheckout('SINGLE_WASH')" class="btn btn-secondary btn-block" data-i18n="price.washBtn">
-            Get 30-Day Pass ($9.90)
-          </button>
+          <a href="https://dengli.gumroad.com/l/bhm-pro-30day" data-gumroad-single-product="true" onclick="openCheckout('SINGLE_WASH', event)" class="btn btn-secondary btn-block gumroad-button" data-i18n="price.washBtn">
+            Get 30-Day Pass ($4.90)
+          </a>
         </div>
 
         <!-- Tier 3: Lifetime Buyout -->
         <div class="pricing-card featured">
-          <div class="ribbon" data-i18n="price.ltdRibbon">Most Popular</div>
+          <div class="ribbon" data-i18n="price.ltdRibbon">Most Popular · Early Bird</div>
           <h3 class="plan-name" data-i18n="price.ltdName">Lifetime Buyout</h3>
           <p class="plan-desc" data-i18n="price.ltdDesc">Perpetual license for serious developers, researchers, and creators.</p>
           <div class="plan-price">
             <span class="currency" data-i18n="price.ltdCurrency">$</span>
-            <span class="amount" data-i18n="price.ltdAmount">24.90</span>
+            <span class="amount" data-i18n="price.ltdAmount">14.90</span>
             <span class="period" data-i18n="price.ltdPeriod">/ one-time pay</span>
           </div>
           <ul class="plan-features">
@@ -523,9 +524,9 @@
               <span data-i18n-html="price.ltdPerk5">Priority developer support (<a href="mailto:qq136692547@gmail.com" style="color:#60a5fa;">24hr SLA</a>)</span>
             </li>
           </ul>
-          <button onclick="openCheckout('LIFETIME')" class="btn btn-primary btn-block" data-i18n="price.ltdBtn">
-            Buy Lifetime License ($24.90)
-          </button>
+          <a href="https://dengli.gumroad.com/l/bhm-pro-lifetime" data-gumroad-single-product="true" onclick="openCheckout('LIFETIME', event)" class="btn btn-primary btn-block gumroad-button" data-i18n="price.ltdBtn">
+            Buy Lifetime License ($14.90)
+          </a>
         </div>
       </div>
 

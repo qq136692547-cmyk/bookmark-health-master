@@ -4,7 +4,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: interest-cohort=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://*.paddle.com; style-src 'self' 'unsafe-inline' https://*.paddle.com; img-src 'self' data: https://bhm-pro-ern.pages.dev https://*.paddle.com; connect-src 'self' https://bhm-pro-license-worker.geo-score.workers.dev https://*.paddle.com https://api.paddle.com https://checkout.paddle.com; frame-src 'self' https://*.paddle.com https://checkout.paddle.com https://buy.paddle.com; font-src 'self' data: https://*.paddle.com; object-src 'none'; base-uri 'self';
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.paddle.com https://*.paddle.com https://gumroad.com https://*.gumroad.com; style-src 'self' 'unsafe-inline' https://*.paddle.com https://gumroad.com https://*.gumroad.com; img-src 'self' data: https://bhm-pro-ern.pages.dev https://*.paddle.com https://gumroad.com https://*.gumroad.com; connect-src 'self' https://bhm-pro-license-worker.geo-score.workers.dev https://*.paddle.com https://api.paddle.com https://checkout.paddle.com https://gumroad.com https://*.gumroad.com; frame-src 'self' https://*.paddle.com https://checkout.paddle.com https://buy.paddle.com https://gumroad.com https://*.gumroad.com; font-src 'self' data: https://*.paddle.com https://gumroad.com https://*.gumroad.com; object-src 'none'; base-uri 'self';
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

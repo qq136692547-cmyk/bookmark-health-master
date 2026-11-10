@@ -388,6 +388,15 @@ export default {
             });
           }
         }
+
+        // Fallback: Check email index directly (Gumroad & direct sales)
+        const emailKey = await env.BHM_LICENSES_KV.get(`email:${email}`);
+        if (emailKey) {
+          return new Response(JSON.stringify({ success: true, licenseKey: emailKey, tier: "LTD" }), {
+            status: 200,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
       }
       return new Response(JSON.stringify({ error: "Order not found or email mismatch" }), {
         status: 404,
@@ -395,7 +404,86 @@ export default {
       });
     }
 
-    // Webhook receiver
+    // Gumroad Webhook / Ping receiver (Auto issuance & KV recording)
+    if (request.method === "POST" && (url.pathname === "/webhook/gumroad" || url.pathname === "/gumroad")) {
+      try {
+        const contentType = request.headers.get("content-type") || "";
+        let data = {};
+        if (contentType.includes("application/json")) {
+          data = await request.json();
+        } else {
+          const rawText = await request.text();
+          const params = new URLSearchParams(rawText);
+          for (const [k, v] of params.entries()) {
+            data[k] = v;
+          }
+        }
+
+        const email = (data.email || "").trim().toLowerCase();
+        const orderId = (data.sale_id || data.order_number || `gum_${Date.now()}`).toString().trim();
+        const permalink = (data.product_permalink || data.permalink || data.product_name || "").toLowerCase();
+        const tier = (permalink.includes("wash") || permalink.includes("30day")) ? "SINGLE_WASH" : "LTD";
+
+        if (!email) {
+          return new Response(JSON.stringify({ error: "Missing email in Gumroad ping" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        // Idempotency: check if order already minted
+        if (env.BHM_LICENSES_KV) {
+          const existing = await env.BHM_LICENSES_KV.get(`order:${orderId}`);
+          if (existing) {
+            const parsed = JSON.parse(existing);
+            return new Response(JSON.stringify({ success: true, licenseKey: parsed.licenseKey, tier: parsed.tier, duplicate: true }), {
+              status: 200,
+              headers: { "Content-Type": "application/json", ...corsHeaders }
+            });
+          }
+        }
+
+        const privateKey = await getEd25519PrivateKey(env.ED25519_PRIVATE_KEY_B64);
+        const { licenseKey, payload } = await mintLicense(privateKey, {
+          orderId,
+          email,
+          tier
+        });
+
+        if (env.BHM_LICENSES_KV) {
+          const orderRecord = {
+            orderId,
+            email,
+            tier,
+            licenseKey,
+            payload,
+            source: "gumroad",
+            status: "active",
+            createdAt: new Date().toISOString()
+          };
+          await env.BHM_LICENSES_KV.put(`order:${orderId}`, JSON.stringify(orderRecord));
+          await env.BHM_LICENSES_KV.put(`key:${licenseKey}`, JSON.stringify({
+            orderId,
+            email,
+            tier,
+            status: "active"
+          }));
+          await env.BHM_LICENSES_KV.put(`email:${email}`, licenseKey);
+        }
+
+        return new Response(JSON.stringify({ success: true, licenseKey, tier, orderId }), {
+          status: 200,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        });
+      }
+    }
+
+    // Webhook receiver (Paddle)
     if (request.method === "POST" && (url.pathname === "/webhook" || url.pathname === "/")) {
       const signature = request.headers.get("Paddle-Signature");
       const rawBody = await request.text();

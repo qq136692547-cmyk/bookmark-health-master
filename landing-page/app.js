@@ -2,11 +2,20 @@
  * BHM-PRO Official Landing Page Logic & Paddle.js v2 Integration
  */
 
+// Active Payment Gateway Configuration
+const PRIMARY_PAYMENT = 'gumroad'; // 'gumroad' (Instant live) or 'paddle'
+
+// Gumroad Direct & Overlay Links
+const GUMROAD_URLS = {
+  SINGLE_WASH: 'https://dengli.gumroad.com/l/bhm-pro-30day',
+  LIFETIME: 'https://dengli.gumroad.com/l/bhm-pro-lifetime'
+};
+
 // Paddle Production Client Token & Price IDs
 const PADDLE_CLIENT_TOKEN = 'live_5b5b8dd066fd28efac60f909dcc';
 const PRICE_IDS = {
-  SINGLE_WASH: 'pri_01m708ecngjxf937bz9zcs9m6f', // $9.90 USD
-  LIFETIME: 'pri_01m708eevn06vvarffpabpyprd'     // $24.90 USD
+  SINGLE_WASH: 'pri_01m708ecngjxf937bz9zcs9m6f', // $4.90 USD (Special Offer)
+  LIFETIME: 'pri_01m708eevn06vvarffpabpyprd'     // $14.90 USD (Early Bird)
 };
 
 // Helper: Escape HTML to prevent Reflected DOM XSS (LND-01, LND-08)
@@ -150,7 +159,30 @@ function showCheckoutFallback(priceId, reason) {
 }
 
 // Global Checkout Opener
-window.openCheckout = function(priceKeyOrId) {
+window.openCheckout = function(priceKeyOrId, event) {
+  const isWash = (priceKeyOrId === 'SINGLE_WASH' || priceKeyOrId === PRICE_IDS.SINGLE_WASH);
+  const gumroadUrl = isWash ? GUMROAD_URLS.SINGLE_WASH : GUMROAD_URLS.LIFETIME;
+
+  // 1. If PRIMARY_PAYMENT is gumroad, route directly to Gumroad
+  if (PRIMARY_PAYMENT === 'gumroad') {
+    if (typeof GumroadOverlay !== 'undefined' && GumroadOverlay.open) {
+      if (event && event.preventDefault) event.preventDefault();
+      GumroadOverlay.open({ url: gumroadUrl });
+      return;
+    }
+    // If event is present on an <a> tag, native link opens Gumroad
+    if (event) {
+      return;
+    }
+    window.open(gumroadUrl, '_blank');
+    return;
+  }
+
+  // 2. Otherwise route to Paddle
+  openPaddleCheckout(priceKeyOrId);
+};
+
+window.openPaddleCheckout = function(priceKeyOrId) {
   const priceId = PRICE_IDS[priceKeyOrId] || priceKeyOrId;
   activeCheckoutPriceId = priceId;
   const tier = (priceKeyOrId === 'SINGLE_WASH' || priceId === PRICE_IDS.SINGLE_WASH) ? 'SINGLE_WASH' : 'LTD';
@@ -161,7 +193,6 @@ window.openCheckout = function(priceKeyOrId) {
 
   if (typeof Paddle !== 'undefined' && Paddle.Checkout) {
     try {
-      // LND-03: Set 8-second fallback timer in case checkout modal fails or hangs
       if (checkoutOpenTimer) clearTimeout(checkoutOpenTimer);
       checkoutOpenTimer = setTimeout(() => {
         showCheckoutFallback(priceId, window.BHM_CURRENT_LANG === 'zh'
@@ -169,7 +200,6 @@ window.openCheckout = function(priceKeyOrId) {
           : 'The checkout modal is taking longer than expected to load. This may be due to ad-blockers or temporary gateway maintenance.');
       }, 8000);
 
-      // LND-04: Explicitly pass customData with tier to prevent discount misclassification
       Paddle.Checkout.open({
         items: [
           {
