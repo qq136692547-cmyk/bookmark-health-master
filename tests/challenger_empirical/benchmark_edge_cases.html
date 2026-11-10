@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+  <pre id="output"></pre>
+  <script>
+    const output = document.getElementById('output');
+    function log(m) { output.textContent += m + '\n'; }
+
+    function parseDl(dl) {
+      const nodes = [];
+      const children = Array.from(dl.children);
+      for (let i = 0; i < children.length; i++) {
+        const el = children[i];
+        if (el.tagName.toUpperCase() === 'DT') {
+          const h3 = el.querySelector(':scope > h3');
+          const a = el.querySelector(':scope > a');
+          if (h3) {
+            const folderTitle = h3.textContent || 'Untitled Folder';
+            const nextEl = children[i + 1];
+            let subDl = el.querySelector(':scope > dl');
+            if (!subDl && nextEl && nextEl.tagName.toUpperCase() === 'DL') {
+              subDl = nextEl;
+              i++;
+            }
+            nodes.push({
+              title: folderTitle,
+              children: subDl ? parseDl(subDl) : []
+            });
+          } else if (a) {
+            nodes.push({ title: a.textContent || '', url: a.getAttribute('HREF') || '' });
+          }
+        }
+      }
+      return nodes;
+    }
+
+    // Test 1: Deep nesting (500 levels)
+    log('--- Test 1: Deep nesting (500 levels) ---');
+    let deepHtml = '<!DOCTYPE NETSCAPE-Bookmark-file-1><DL><p>';
+    for (let i = 0; i < 500; i++) {
+      deepHtml += `<DT><H3>Level ${i}</H3><DL><p>`;
+    }
+    deepHtml += '<DT><A HREF="https://deep.com">Deep Bookmark</A>';
+    for (let i = 0; i < 500; i++) {
+      deepHtml += '</DL><p>';
+    }
+    deepHtml += '</DL><p>';
+
+    try {
+      const doc = new DOMParser().parseFromString(deepHtml, 'text/html');
+      const rootDl = doc.querySelector('dl');
+      const res = parseDl(rootDl);
+      log(`Deep nesting 500 parsed successfully! Depth reached.`);
+    } catch (err) {
+      log(`Deep nesting FAILED: ${err.name} - ${err.message}`);
+    }
+
+    // Test 2: Deep nesting (5,000 levels - Stack Overflow test)
+    log('--- Test 2: Deep nesting (5,000 levels) ---');
+    let extremeHtml = '<!DOCTYPE NETSCAPE-Bookmark-file-1><DL><p>';
+    for (let i = 0; i < 5000; i++) {
+      extremeHtml += `<DT><H3>L${i}</H3><DL><p>`;
+    }
+    extremeHtml += '<DT><A HREF="https://extreme.com">Deep</A>';
+    for (let i = 0; i < 5000; i++) {
+      extremeHtml += '</DL><p>';
+    }
+    extremeHtml += '</DL><p>';
+
+    try {
+      const doc = new DOMParser().parseFromString(extremeHtml, 'text/html');
+      const rootDl = doc.querySelector('dl');
+      const res = parseDl(rootDl);
+      log(`Deep nesting 5,000 parsed successfully!`);
+    } catch (err) {
+      log(`Deep nesting 5,000 FAILED: ${err.name} - ${err.message}`);
+    }
+
+    // Test 3: Malformed HTML (Broken tags, XSS payload in Title/URL)
+    log('--- Test 3: Malformed HTML & XSS Injection in Bookmark ---');
+    const xssHtml = `<!DOCTYPE NETSCAPE-Bookmark-file-1><DL><p>
+      <DT><A HREF="javascript:alert('XSS')">Click XSS</A>
+      <DT><A HREF="https://safe.com" onclick="alert(1)">Click Onclick <img src=x onerror=alert(2)></A>
+      <DT><A HREF="data:text/html,<script>alert(3)</script>">Data URI</A>
+      <DT><A HREF="vbscript:msgbox(4)">VBScript URI</A>
+    </DL><p>`;
+    const xssDoc = new DOMParser().parseFromString(xssHtml, 'text/html');
+    const xssNodes = parseDl(xssDoc.querySelector('dl'));
+    log(`XSS parsed count: ${xssNodes.length}`);
+    for (const n of xssNodes) {
+      log(`  Title: "${n.title}" | URL: "${n.url}"`);
+    }
+
+    log('BENCHMARK_COMPLETED');
+  </script>
+</body>
+</html>

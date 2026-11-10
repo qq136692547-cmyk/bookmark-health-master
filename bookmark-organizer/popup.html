@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bookmark Health Master (BHM-PRO)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+      --amber: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 320px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      font-size: 13px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .title-box h1 { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .title-box p { font-size: 11px; color: var(--muted); }
+    .lang-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .lang-btn:hover {
+      background: #283548;
+      border-color: var(--primary);
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .stat-row:last-child { margin-bottom: 0; }
+    .stat-label { color: var(--muted); font-size: 12px; }
+    .stat-val { font-weight: 600; font-size: 13px; }
+    .btn {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      margin-bottom: 8px;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--card); color: var(--text); border-color: var(--border); }
+    .btn-secondary:hover { background: #283548; }
+    .tag-pro {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .tag-pro.free {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+      border-color: rgba(148, 163, 184, 0.3);
+    }
+    .tag-pro.ltd {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-brand">
+      <div class="logo-icon">🛡️</div>
+      <div class="title-box">
+        <h1 data-i18n="popup.title">Bookmark Health Master</h1>
+        <p data-i18n="popup.subtitle">Dead Link Cleaner & Titans Organizer</p>
+      </div>
+    </div>
+    <button id="langToggleBtn" class="lang-btn" title="Switch language">🌐 中文</button>
+  </div>
+
+  <div class="card">
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="popup.totalBookmarks">Total Bookmarks</span>
+      <span class="stat-val" id="totalCount" data-i18n="popup.loading">Loading...</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="popup.ecoIdentified">Titans Ecosystems</span>
+      <span class="stat-val" style="color: #60a5fa;" id="ecoCount">-</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label" data-i18n="popup.licenseStatus">License Tier</span>
+      <span class="tag-pro free" id="proBadge">Free Edition</span>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="openSidePanelBtn">
+    <span>📑</span> <span data-i18n="popup.openSidePanel">Open Side Panel</span>
+  </button>
+  <button class="btn btn-secondary" id="openDashboardBtn">
+    <span>📊</span> <span data-i18n="popup.openDashboard">Open Full Dashboard</span>
+  </button>
+
+  <script src="core/i18n.js"></script>
+  <script src="core/license.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screenshot 4 - Native Chrome Side Panel Companion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    body {
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0b0f19 50%, #050811 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 36px 30px;
+      justify-content: space-between;
+    }
+
+    /* 顶部宣传标头 */
+    .promo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+      margin-bottom: 12px;
+    }
+    .promo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(14, 165, 233, 0.35);
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .promo-title {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #ffffff 0%, #e2e8f0 50%, #7dd3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 4px;
+    }
+    .promo-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #111a2e;
+      border: 1px solid #1e293b;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+
+    /* 真实 Chrome 浏览器外框 */
+    .chrome-browser-window {
+      width: 100%;
+      height: 686px;
+      background: #0f172a;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Chrome 标签栏 */
+    .chrome-tabbar {
+      height: 38px;
+      background: #101726;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 12px;
+      gap: 6px;
+    }
+    .chrome-tab {
+      height: 30px;
+      padding: 0 14px;
+      border-radius: 8px 8px 0 0;
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+      background: transparent;
+    }
+    .chrome-tab.active {
+      background: #1a2438;
+      color: #f1f5f9;
+      font-weight: 600;
+      border-top: 1px solid #334155;
+      border-left: 1px solid #334155;
+      border-right: 1px solid #334155;
+    }
+    .tab-close { font-size: 11px; color: #64748b; margin-left: 4px; }
+
+    /* Chrome 地址栏 */
+    .chrome-urlbar {
+      height: 38px;
+      background: #1a2438;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 10px;
+    }
+    .nav-arrow { font-size: 12px; color: #64748b; }
+    .url-input-box {
+      flex: 1;
+      height: 26px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 6px;
+      font-size: 11px;
+      color: #94a3b8;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .sidepanel-toggle-btn {
+      height: 26px;
+      padding: 0 9px;
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-radius: 6px;
+      color: #60a5fa;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 左右分栏视图 */
+    .browser-split {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      background: #090d16;
+    }
+
+    /* 左侧：日常开发者网页工作区 */
+    .web-workspace {
+      flex: 1;
+      background: #0d131f;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-right: 1px solid #1e293b;
+      overflow: hidden;
+    }
+    .workspace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .workspace-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .gcp-logo {
+      font-size: 20px;
+    }
+    .workspace-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .workspace-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: #1e293b;
+      border-radius: 4px;
+      color: #94a3b8;
+    }
+    .dashboard-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .dash-metric-card {
+      background: #131c2e;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .dash-metric-label { font-size: 10.5px; color: #64748b; }
+    .dash-metric-val { font-size: 18px; font-weight: 700; color: #f1f5f9; margin-top: 3px; }
+    .dash-metric-status { font-size: 10px; color: #10b981; margin-top: 2px; }
+
+    .service-table {
+      background: #131c2e;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .service-th {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #16233a;
+      border-bottom: 1px solid #1e293b;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .service-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+      font-size: 11px;
+    }
+    .status-active { color: #10b981; font-weight: 600; }
+
+    /* 右侧：Chrome 原生侧边栏 Side Panel (380px) */
+    .native-sidepanel {
+      width: 380px;
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      border-left: 2px solid #2563eb;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+    .sidepanel-header {
+      padding: 10px 14px;
+      background: #131d31;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sidepanel-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .sidepanel-tools {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .tool-btn {
+      padding: 3px 7px;
+      border-radius: 5px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      font-size: 10.5px;
+      color: #94a3b8;
+    }
+
+    /* 搜索栏 */
+    .sidepanel-search {
+      padding: 10px 12px;
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+    }
+    .search-input-wrap {
+      background: #1a2438;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    }
+    .search-text {
+      font-size: 11.5px;
+      color: #ffffff;
+      font-weight: 500;
+      flex: 1;
+    }
+    .cursor-blink {
+      width: 2px;
+      height: 14px;
+      background: #60a5fa;
+      display: inline-block;
+      margin-left: 1px;
+    }
+    .search-match-badge {
+      font-size: 10px;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* 生态筛选标签 */
+    .sidepanel-tabs {
+      display: flex;
+      gap: 5px;
+      padding: 7px 12px;
+      background: #111a2e;
+      border-bottom: 1px solid #1e293b;
+      overflow-x: auto;
+    }
+    .eco-pill {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #64748b;
+      background: #1e293b;
+      white-space: nowrap;
+    }
+    .eco-pill.active {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    /* 搜索结果列表 */
+    .sidepanel-list {
+      flex: 1;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      overflow-y: auto;
+    }
+    .bm-card {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 7px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s;
+    }
+    .bm-card:hover {
+      border-color: #3b82f6;
+      background: #17243c;
+    }
+    .bm-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+    .bm-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .bm-hl {
+      background: rgba(59, 130, 246, 0.35);
+      color: #93c5fd;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+    .bm-url {
+      font-size: 9.5px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .bm-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bm-dot {
+      width: 5px;
+      height: 5px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+    .bm-open-btn {
+      padding: 3px 6px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      color: #94a3b8;
+      font-size: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部精炼卖点标题栏 -->
+  <div class="promo-header">
+    <div>
+      <div class="promo-tag">📑 High-Frequency Workflow Companion</div>
+      <div class="promo-title">Built for Daily Speed: Native Chrome Side Panel & Instant Search</div>
+      <div class="promo-sub">Docked alongside active web tabs • 16-ecosystem category pills • Millisecond fuzzy keyword matching</div>
+    </div>
+    <div class="header-badges">
+      <div class="feature-pill">📑 Native Side Panel</div>
+      <div class="feature-pill">⚡ Instant Fuzzy Match</div>
+    </div>
+  </div>
+
+  <!-- 模拟真实 Chrome 浏览器窗口 -->
+  <div class="chrome-browser-window">
+    
+    <!-- Chrome 顶部多标签栏 -->
+    <div class="chrome-tabbar">
+      <div class="chrome-tab active">
+        <span>🌐 Google Cloud Platform - Welcome</span>
+        <span class="tab-close">✕</span>
+      </div>
+      <div class="chrome-tab">
+        <span>🐙 GitHub - Pull Requests</span>
+        <span class="tab-close">✕</span>
+      </div>
+      <div class="chrome-tab">
+        <span>🛡️ BHM-PRO Dashboard</span>
+        <span class="tab-close">✕</span>
+      </div>
+    </div>
+
+    <!-- Chrome 地址与工具栏 -->
+    <div class="chrome-urlbar">
+      <span class="nav-arrow">◀</span>
+      <span class="nav-arrow">▶</span>
+      <span class="nav-arrow">⟳</span>
+      <div class="url-input-box">
+        <span>🔒</span>
+        <span>https://console.cloud.google.com/welcome?project=production-cluster-01</span>
+      </div>
+      <div class="sidepanel-toggle-btn">
+        <span>📑</span>
+        <span>Side Panel Active</span>
+      </div>
+    </div>
+
+    <!-- 左右分栏视图 -->
+    <div class="browser-split">
+      
+      <!-- 左侧：日常工作网页 -->
+      <div class="web-workspace">
+        <div class="workspace-header">
+          <div class="workspace-brand">
+            <span class="gcp-logo">☁️</span>
+            <div>
+              <div class="workspace-title">Google Cloud Console</div>
+              <div style="font-size: 10.5px; color: #64748b;">Project: production-cluster-01 (us-central1)</div>
+            </div>
+          </div>
+          <span class="workspace-badge">Production Environment</span>
+        </div>
+
+        <div class="dashboard-metrics">
+          <div class="dash-metric-card">
+            <div class="dash-metric-label">Compute Engine</div>
+            <div class="dash-metric-val">12 VM Instances</div>
+            <div class="dash-metric-status">● 100% Operational</div>
+          </div>
+          <div class="dash-metric-card">
+            <div class="dash-metric-label">Cloud Run Services</div>
+            <div class="dash-metric-val">4 Deployed</div>
+            <div class="dash-metric-status">● Auto-scaled Active</div>
+          </div>
+          <div class="dash-metric-card">
+            <div class="dash-metric-label">Cloud DNS Zones</div>
+            <div class="dash-metric-val">8 Public Zones</div>
+            <div class="dash-metric-status">● Health Check OK</div>
+          </div>
+        </div>
+
+        <div class="service-table">
+          <div class="service-th">
+            <span>Service Name</span>
+            <span>Region</span>
+            <span>Health Status</span>
+          </div>
+          <div class="service-row">
+            <span style="font-weight: 600; color: #f1f5f9;">api-gateway-prod-v2</span>
+            <span style="color: #64748b;">us-central1</span>
+            <span class="status-active">Healthy (200 OK)</span>
+          </div>
+          <div class="service-row">
+            <span style="font-weight: 600; color: #f1f5f9;">worker-event-pipeline</span>
+            <span style="color: #64748b;">us-east1</span>
+            <span class="status-active">Healthy (200 OK)</span>
+          </div>
+          <div class="service-row">
+            <span style="font-weight: 600; color: #f1f5f9;">redis-cache-cluster</span>
+            <span style="color: #64748b;">us-central1</span>
+            <span class="status-active">Healthy (200 OK)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：Chrome 原生侧边栏 (380px) -->
+      <div class="native-sidepanel">
+        
+        <!-- 侧边栏顶部 -->
+        <div class="sidepanel-header">
+          <div class="sidepanel-brand">
+            <span>🛡️</span>
+            <span>Bookmark Health Master</span>
+          </div>
+          <div class="sidepanel-tools">
+            <span class="tool-btn">🌐 EN</span>
+            <span class="tool-btn">⚙️</span>
+            <span class="tool-btn">🗖</span>
+          </div>
+        </div>
+
+        <!-- 实时搜索框 -->
+        <div class="sidepanel-search">
+          <div class="search-input-wrap">
+            <span style="font-size: 11px;">🔍</span>
+            <span class="search-text">cloud console<span class="cursor-blink"></span></span>
+            <span class="search-match-badge">5 matches</span>
+          </div>
+        </div>
+
+        <!-- 生态筛选胶囊 -->
+        <div class="sidepanel-tabs">
+          <span class="eco-pill">All</span>
+          <span class="eco-pill active">Google (28)</span>
+          <span class="eco-pill">AWS (31)</span>
+          <span class="eco-pill">OpenAI (22)</span>
+          <span class="eco-pill">Docs (63)</span>
+        </div>
+
+        <!-- 检索结果列表 -->
+        <div class="sidepanel-list">
+          
+          <div class="bm-card">
+            <div class="bm-info">
+              <span class="bm-title">Google <span class="bm-hl">Cloud Console</span> - IAM & Admin</span>
+              <span class="bm-url">https://console.cloud.google.com/iam-admin</span>
+            </div>
+            <div class="bm-actions">
+              <span class="bm-dot" title="Healthy"></span>
+              <button class="bm-open-btn">↗ Open</button>
+            </div>
+          </div>
+
+          <div class="bm-card">
+            <div class="bm-info">
+              <span class="bm-title">Google <span class="bm-hl">Cloud Console</span> - Cloud Run Services</span>
+              <span class="bm-url">https://console.cloud.google.com/run</span>
+            </div>
+            <div class="bm-actions">
+              <span class="bm-dot" title="Healthy"></span>
+              <button class="bm-open-btn">↗ Open</button>
+            </div>
+          </div>
+
+          <div class="bm-card">
+            <div class="bm-info">
+              <span class="bm-title">Google <span class="bm-hl">Cloud Console</span> - BigQuery Studio</span>
+              <span class="bm-url">https://console.cloud.google.com/bigquery</span>
+            </div>
+            <div class="bm-actions">
+              <span class="bm-dot" title="Healthy"></span>
+              <button class="bm-open-btn">↗ Open</button>
+            </div>
+          </div>
+
+          <div class="bm-card">
+            <div class="bm-info">
+              <span class="bm-title">Google <span class="bm-hl">Cloud Console</span> - VPC Networks</span>
+              <span class="bm-url">https://console.cloud.google.com/networking</span>
+            </div>
+            <div class="bm-actions">
+              <span class="bm-dot" title="Healthy"></span>
+              <button class="bm-open-btn">↗ Open</button>
+            </div>
+          </div>
+
+          <div class="bm-card">
+            <div class="bm-info">
+              <span class="bm-title">Google <span class="bm-hl">Cloud Console</span> - Vertex AI Studio</span>
+              <span class="bm-url">https://console.cloud.google.com/vertex-ai</span>
+            </div>
+            <div class="bm-actions">
+              <span class="bm-dot" title="Healthy"></span>
+              <button class="bm-open-btn">↗ Open</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body>
+  <pre id="output">[chrome://bookmarks] THREW EXCEPTION: TypeError - Failed to fetch | Time: 1.4ms
+[chrome://settings] THREW EXCEPTION: TypeError - Failed to fetch | Time: 0.1ms
+[file:///C:/Windows/win.ini] THREW EXCEPTION: TypeError - Failed to fetch | Time: 23.9ms
+[javascript:(function(){alert(1)})()] THREW EXCEPTION: TypeError - Failed to fetch | Time: 0.1ms
+[about:blank] THREW EXCEPTION: TypeError - Failed to fetch | Time: 0.1ms
+[data:text/html,&lt;h1&gt;Hello&lt;/h1&gt;] Status: 200 | Time: 10.0ms
+[http://127.0.0.1:9999/not_running] THREW EXCEPTION: TypeError - Failed to fetch | Time: 10.0ms
+[http://192.168.1.1] THREW EXCEPTION: TypeError - Failed to fetch | Time: 10.0ms
+SCHEME_TEST_COMPLETED
+</pre>
+  <script>
+    const output = document.getElementById('output');
+    function log(m) { output.textContent += m + '\n'; }
+
+    const schemes = [
+      'chrome://bookmarks',
+      'chrome://settings',
+      'file:///C:/Windows/win.ini',
+      'javascript:(function(){alert(1)})()',
+      'about:blank',
+      'data:text/html,<h1>Hello</h1>',
+      'http://127.0.0.1:9999/not_running',
+      'http://192.168.1.1'
+    ];
+
+    async function testSchemes() {
+      for (const u of schemes) {
+        const start = performance.now();
+        try {
+          const res = await fetch(u, { method: 'HEAD', signal: AbortSignal.timeout(1500) });
+          log(`[${u}] Status: ${res.status} | Time: ${(performance.now() - start).toFixed(1)}ms`);
+        } catch (err) {
+          log(`[${u}] THREW EXCEPTION: ${err.name} - ${err.message} | Time: ${(performance.now() - start).toFixed(1)}ms`);
+        }
+      }
+      log('SCHEME_TEST_COMPLETED');
+    }
+
+    testSchemes();
+  </script>
+
+
+</body></html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+  <pre id="output"></pre>
+  <script>
+    const output = document.getElementById('output');
+    function log(m) { output.textContent += m + '\n'; }
+
+    const schemes = [
+      'chrome://bookmarks',
+      'chrome://settings',
+      'file:///C:/Windows/win.ini',
+      'javascript:(function(){alert(1)})()',
+      'about:blank',
+      'data:text/html,<h1>Hello</h1>',
+      'http://127.0.0.1:9999/not_running',
+      'http://192.168.1.1'
+    ];
+
+    async function testSchemes() {
+      for (const u of schemes) {
+        const start = performance.now();
+        try {
+          const res = await fetch(u, { method: 'HEAD', signal: AbortSignal.timeout(1500) });
+          log(`[${u}] Status: ${res.status} | Time: ${(performance.now() - start).toFixed(1)}ms`);
+        } catch (err) {
+          log(`[${u}] THREW EXCEPTION: ${err.name} - ${err.message} | Time: ${(performance.now() - start).toFixed(1)}ms`);
+        }
+      }
+      log('SCHEME_TEST_COMPLETED');
+    }
+
+    testSchemes();
+  </script>
+</body>
+</html>

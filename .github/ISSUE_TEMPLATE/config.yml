@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability Reporting
+    url: https://github.com/bhm-pro/bookmark-health-master/security/advisories/new
+    about: Please report security vulnerabilities privately according to SECURITY.md.
+  - name: Priority Support & Licensing Inquiries
+    url: mailto:qq136692547@gmail.com
+    about: For inquiries regarding commercial licenses or custom enterprise deployments.

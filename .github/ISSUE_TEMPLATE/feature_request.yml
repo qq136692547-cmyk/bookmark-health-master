@@ -1,0 +1,41 @@
+name: Feature Request
+description: Propose a new feature, rule, or enhancement for Bookmark Health Master
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping make Bookmark Health Master better! We value local-first, privacy-respecting enhancements.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of the pain point (e.g., "I find it hard to...").
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution or Enhancement
+      description: Describe what you would like to happen and how it fits into the local-first architecture.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered other approaches or workarounds?
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      options:
+        - "Ecosystem Clustering Rule (Add/Refine domain rules)"
+        - "Dead Link Prober & DNS Diagnostic Enhancement"
+        - "User Experience & UI (SidePanel / Options UI)"
+        - "Performance & Throttling Optimization"
+        - "Export / Import & Sync"
+        - "Other"
+    validations:
+      required: true

@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "Bookmark Health Master - Dead Link Cleaner & Organizer",
+    "description": "Extension name in Chrome Web Store (<= 75 chars)"
+  },
+  "extDescription": {
+    "message": "Local-first Chrome bookmark dead link checker, 16 tech ecosystem organizer, Side Panel search & Netscape HTML backup.",
+    "description": "Extension description in Chrome Web Store (<= 132 chars)"
+  },
+  "actionTitle": {
+    "message": "Bookmark Health Master (BHM-PRO)",
+    "description": "Toolbar action tooltip"
+  }
+}

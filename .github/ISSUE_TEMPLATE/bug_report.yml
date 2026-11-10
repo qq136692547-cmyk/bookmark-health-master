@@ -1,0 +1,73 @@
+name: Bug Report
+description: Report an issue or unexpected behavior in Bookmark Health Master
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please ensure you are running the latest version of Bookmark Health Master (v2.1.0+).
+  - type: input
+    id: version
+    attributes:
+      label: Extension Version
+      description: What version of Bookmark Health Master are you running?
+      placeholder: "e.g., 2.1.0"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & Operating System
+      description: Your browser name/version and OS platform.
+      placeholder: "e.g., Chrome 124 on macOS Sonoma / Windows 11 / Ubuntu 24.04"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: A clear and concise description of what happened.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can maintainers or contributors reproduce this issue?
+      placeholder: |
+        1. Open SidePanel or Dashboard
+        2. Run dead link probe on bookmarks folder
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      options:
+        - "Dual-Stage Dead Link Prober / DoH"
+        - "16 Tech Titans Ecosystem Classifier"
+        - "Move Journal & Atomic Undo"
+        - "UGC Docs Protection"
+        - "SidePanel / Popup / Dashboard UI"
+        - "Offline Ed25519 License Verification"
+        - "Other"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I verified that no private bookmark URLs or credentials are leaked in this report.
+          required: true
+        - label: I searched existing GitHub issues and confirmed this is not a duplicate.
+          required: true

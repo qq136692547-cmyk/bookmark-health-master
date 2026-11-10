@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bookmark Health Master - Side Panel</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 100%;
+      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      overflow: hidden;
+    }
+    .header {
+      padding: 10px 12px;
+      background: #131d31;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .actions-top { display: flex; gap: 4px; align-items: center; }
+    .icon-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 7px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .icon-btn:hover { background: #2d3d54; border-color: var(--primary); }
+    .lang-toggle-btn {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    /* 搜索栏 */
+    .search-box {
+      padding: 8px 12px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .search-input {
+      width: 100%;
+      padding: 7px 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); }
+
+    /* 生态标签导航栏 */
+    .eco-tabs {
+      display: flex;
+      overflow-x: auto;
+      padding: 6px 12px;
+      gap: 6px;
+      background: #111a2e;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+    .eco-tabs::-webkit-scrollbar { display: none; }
+    .eco-tab {
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .eco-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* 主内容列表区 */
+    .content-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+    }
+    .item-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .item-card:hover {
+      border-color: #475569;
+      transform: translateY(-1px);
+      background: #243247;
+    }
+    .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .item-title {
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-url {
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    /* 快捷悬浮操作与键盘导航 */
+    .item-card.keyboard-highlight {
+      background: #1e3a5f;
+      border-color: #3b82f6;
+      outline: 1px solid #3b82f6;
+    }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .item-card:hover .card-actions,
+    .item-card.keyboard-highlight .card-actions {
+      opacity: 1;
+    }
+    .card-action-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--muted);
+      border-radius: 4px;
+      padding: 3px 5px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+    .card-action-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    .card-action-btn.btn-delete:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.5);
+    }
+    .load-more-btn {
+      width: 100%;
+      padding: 7px 10px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .load-more-btn:hover {
+      background: #243247;
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    /* 底部状态栏 */
+    .footer {
+      padding: 8px 12px;
+      background: #111a2e;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <span>🛡️</span> <span data-i18n="sidepanel.brand">BHM Companion</span>
+    </div>
+    <div class="actions-top">
+      <button class="icon-btn" id="bookmarkCurrentBtn" data-i18n="sidepanel.bookmarkCurrent" data-i18n-title="sidepanel.bookmarkCurrentTitle" title="Bookmark currently active browser tab">⭐ Bookmark Tab</button>
+      <button class="icon-btn" id="refreshSideBtn" data-i18n="sidepanel.refresh" data-i18n-title="sidepanel.refreshTitle" title="Manually refresh bookmark tree">🔄 Refresh</button>
+      <button class="icon-btn" id="fullDashboardBtn" data-i18n="sidepanel.fullDashboard">📊 Dashboard</button>
+      <button class="icon-btn lang-toggle-btn" id="langToggleBtn" title="Switch language">🌐 中文</button>
+    </div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" class="search-input" id="searchInput" data-i18n-placeholder="sidepanel.searchPlaceholder" placeholder="🔍 Search all bookmarks or ecosystems..." />
+  </div>
+
+  <div class="eco-tabs" id="ecoTabs">
+    <div class="eco-tab active" data-eco="all" data-i18n="sidepanel.tabAll">🌟 All</div>
+    <!-- 动态从 16 大生态规则库载入 -->
+  </div>
+
+  <div class="content-list" id="contentList">
+    <div style="text-align: center; color: var(--muted); padding: 40px 0;" data-i18n="sidepanel.loading">
+      Loading bookmarks and ecosystem data...
+    </div>
+  </div>
+
+  <div class="footer">
+    <span id="statusText" data-i18n="sidepanel.statusText">Loaded 16 Global & China Tech Titans Ecosystems</span>
+    <span style="color: var(--success); font-weight: 500;" data-i18n="sidepanel.nativeActive">● Native Ready</span>
+  </div>
+
+  <script src="core/ecosystem_rules.js"></script>
+  <script src="core/classifier.js"></script>
+  <script src="core/license.js"></script>
+  <script src="core/i18n.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

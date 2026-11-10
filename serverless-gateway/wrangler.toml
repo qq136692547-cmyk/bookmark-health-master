@@ -1,0 +1,14 @@
+name = "quicknote-gateway"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# DeepSeek 官方 Base URL（支持自建镜像代理或官方端点）
+DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
+
+# 生产环境配置 KV 命名空间（按需绑定，实现多实例分布式每日额度防刷）
+# 1. 运行 wrangler kv:namespace create QUICKNOTE_KV 获取 ID
+# 2. 解除下方注释并填入分配的 ID
+# [[kv_namespaces]]
+# binding = "QUICKNOTE_KV"
+# id = "your-kv-namespace-id-here"

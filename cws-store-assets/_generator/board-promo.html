@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Small Promo Tile - 440x280</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    body {
+      width: 440px;
+      height: 280px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0c1222 55%, #050811 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      text-align: center;
+    }
+
+    /* 背景装饰光晕 */
+    .glow-circle {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.22) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 70%);
+      top: -20px;
+      left: 90px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* 品牌盾牌图标 */
+    .icon-wrapper {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
+      margin-bottom: 14px;
+    }
+    .icon-symbol {
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    /* 主标题 */
+    .promo-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      background: linear-gradient(90deg, #ffffff 0%, #f1f5f9 60%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    /* 副标题卖点 */
+    .promo-subtitle {
+      font-size: 11px;
+      font-weight: 600;
+      color: #93c5fd;
+      letter-spacing: 0.1px;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    /* 底部徽章 */
+    .promo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #34d399;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 5px;
+      height: 5px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #10b981;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-circle"></div>
+
+  <!-- 盾牌书签图标 -->
+  <div class="icon-wrapper">
+    <span class="icon-symbol">🛡️</span>
+  </div>
+
+  <!-- 大标题 -->
+  <h1 class="promo-title">Bookmark Health Master</h1>
+
+  <!-- 三合一副标题 -->
+  <p class="promo-subtitle">Dead Link Cleaner • 16-Ecosystem Organizer • Atomic Undo</p>
+
+  <!-- 本地优先与隐私合规徽章 -->
+  <div class="promo-badge">
+    <span class="badge-dot"></span>
+    <span>100% Local-First & Zero Telemetry</span>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,828 @@
+[
+  {
+    "url": "https://www.google.com/",
+    "title": "Google 搜索首页",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://myaccount.google.com/",
+    "title": "Google 账号与安全中心",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://maps.google.com/",
+    "title": "Google 地图",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://translate.google.com/",
+    "title": "Google 翻译",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://trends.google.com/",
+    "title": "Google 趋势 (Trends)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://earth.google.com/",
+    "title": "Google 地球 (Earth)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://mail.google.com/",
+    "title": "Gmail 邮箱",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://drive.google.com/",
+    "title": "Google 云端硬盘 (Drive)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://docs.google.com/",
+    "title": "Google 文档 (Docs)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://sheets.google.com/",
+    "title": "Google 表格 (Sheets)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://slides.google.com/",
+    "title": "Google 幻灯片 (Slides)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://forms.google.com/",
+    "title": "Google 表单 (Forms)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://calendar.google.com/",
+    "title": "Google 日历 (Calendar)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://meet.google.com/",
+    "title": "Google 会议 (Meet)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://keep.google.com/",
+    "title": "Google 便签 (Keep)",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://gemini.google.com/",
+    "title": "Gemini 官方对话中枢",
+    "status": "ERROR",
+    "code": null,
+    "error": "read ECONNRESET"
+  },
+  {
+    "url": "https://aistudio.google.com/",
+    "title": "Google AI Studio 开发者平台",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://deepmind.google/",
+    "title": "Google DeepMind 官方研究站",
+    "status": "ERROR",
+    "code": null,
+    "error": "Client network socket disconnected before secure TLS connection was established"
+  },
+  {
+    "url": "https://notebooklm.google.com/",
+    "title": "NotebookLM 智能笔记与播客生成",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://colab.research.google.com/",
+    "title": "Google Colab 云端 Python 实验室",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://www.kaggle.com/",
+    "title": "Kaggle 机器学习竞赛与数据社区",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://console.cloud.google.com/",
+    "title": "Google Cloud Platform (GCP) 控制台",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://developers.google.com/",
+    "title": "Google Developers 开发者中心",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://developer.android.com/",
+    "title": "Android 开发者官方网站",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://firebase.google.com/",
+    "title": "Firebase 移动与全栈开发平台",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://developer.chrome.com/",
+    "title": "Chrome 开发者官方中心",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://chromewebstore.google.com/",
+    "title": "Chrome 扩展网上应用店",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://go.dev/",
+    "title": "Go 语言官网 (Golang)",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://flutter.dev/",
+    "title": "Flutter 跨平台开发官方平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.youtube.com/",
+    "title": "YouTube 视频平台",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://studio.youtube.com/",
+    "title": "YouTube Studio 创作者中心",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://play.google.com/store",
+    "title": "Google Play 官方应用与内容商店",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://store.google.com/",
+    "title": "Google Store 官方硬件商城",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://www.huawei.com/cn/",
+    "title": "华为官方门户",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.vmall.com/",
+    "title": "华为商城 VMALL 官方直营",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://consumer.huawei.com/cn/support/",
+    "title": "华为消费者服务与支持",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://club.huawei.com/",
+    "title": "花粉俱乐部 (华为官方粉丝社群)",
+    "status": "OK",
+    "code": 301,
+    "location": "https://cn.club.vmall.com/mhw/consumer/cn/community/mhwnews/allcirclehome/"
+  },
+  {
+    "url": "https://appgallery.huawei.com/",
+    "title": "华为应用市场 (AppGallery Web)",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.huaweicloud.com/",
+    "title": "华为云官网首页",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://console.huaweicloud.com/ecm/",
+    "title": "华为云管理控制台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://marketplace.huaweicloud.com/",
+    "title": "华为云云市场",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://edu.huaweicloud.com/",
+    "title": "华为云开发者学堂与认证",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.harmonyos.com/",
+    "title": "HarmonyOS 鸿蒙官方门户",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://developer.huawei.com/consumer/cn/harmony/",
+    "title": "鸿蒙生态开发者联盟",
+    "status": "ERROR",
+    "code": 404,
+    "location": null
+  },
+  {
+    "url": "https://developer.huawei.com/consumer/cn/deveco-studio/",
+    "title": "DevEco Studio 官方下载与指南",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://developer.huawei.com/consumer/cn/doc/",
+    "title": "HarmonyOS 官方文档与 ArkUI 体系",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://developer.huawei.com/consumer/cn/service/josp/agc/index.html",
+    "title": "AppGallery Connect 应用分发管理后台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.hiascend.com/",
+    "title": "华为昇腾社区 (Ascend AI 计算生态)",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.mindspore.cn/",
+    "title": "昇思 MindSpore 全场景深度学习框架",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.hikunpeng.com/",
+    "title": "华为鲲鹏社区 (Kunpeng 通用计算生态)",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://cangjie-lang.cn/",
+    "title": "仓颉编程语言官方网站 (Cangjie)",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.openharmony.cn/",
+    "title": "OpenHarmony 开源鸿蒙社区",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://cloud.huawei.com/",
+    "title": "华为云空间 Web 个人中心",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://petalsearch.com/",
+    "title": "Petal Search 花瓣搜索",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://petalmaps.com/",
+    "title": "Petal Maps 花瓣地图",
+    "status": "OK",
+    "code": 301,
+    "location": "https://www.petalmaps.com/"
+  },
+  {
+    "url": "https://www.microsoft.com/zh-cn",
+    "title": "Microsoft 官方门户",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.bing.com/",
+    "title": "必应搜索 (Bing)",
+    "status": "OK",
+    "code": 302,
+    "location": "https://cn.bing.com/"
+  },
+  {
+    "url": "https://www.microsoft365.com/",
+    "title": "Microsoft 365 办公中枢",
+    "status": "OK",
+    "code": 302,
+    "location": "HTTPS://m365.cloud.microsoft/"
+  },
+  {
+    "url": "https://outlook.live.com/",
+    "title": "Outlook 邮件与日历",
+    "status": "OK",
+    "code": 301,
+    "location": "https://outlook.live.com/mail/"
+  },
+  {
+    "url": "https://onedrive.live.com/",
+    "title": "OneDrive 云端存储",
+    "status": "TIMEOUT",
+    "code": null,
+    "error": "Request Timeout"
+  },
+  {
+    "url": "https://teams.microsoft.com/",
+    "title": "Microsoft Teams 协作中枢",
+    "status": "OK",
+    "code": 302,
+    "location": "https://teams.microsoft.com/v2"
+  },
+  {
+    "url": "https://copilot.microsoft.com/",
+    "title": "Microsoft Copilot 官方平台",
+    "status": "ERROR",
+    "code": null,
+    "error": "read ECONNRESET"
+  },
+  {
+    "url": "https://designer.microsoft.com/",
+    "title": "Microsoft Designer 智能视觉设计",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://oai.azure.com/",
+    "title": "Azure OpenAI Studio 智能平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://github.com/",
+    "title": "GitHub 代码托管与开源社区",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://portal.azure.com/",
+    "title": "Azure 云服务管理控制台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://vscode.dev/",
+    "title": "VS Code 网页在线版",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://learn.microsoft.com/",
+    "title": "Microsoft Learn 官方技术学习库",
+    "status": "OK",
+    "code": 302,
+    "location": "/zh-cn/"
+  },
+  {
+    "url": "https://developer.microsoft.com/",
+    "title": "Windows 开发者官方中心",
+    "status": "OK",
+    "code": 302,
+    "location": "/zh-cn/"
+  },
+  {
+    "url": "https://www.apple.com.cn/",
+    "title": "Apple 中国官方门户",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.apple.com.cn/shop",
+    "title": "Apple 官方在线商城",
+    "status": "OK",
+    "code": 301,
+    "location": "/store"
+  },
+  {
+    "url": "https://support.apple.com/zh-cn",
+    "title": "Apple 官方支持与保修查询",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://appleid.apple.com/",
+    "title": "Apple 账户与安全管理",
+    "status": "OK",
+    "code": 302,
+    "location": "https://account.apple.com/"
+  },
+  {
+    "url": "https://www.icloud.com/",
+    "title": "iCloud 云端控制中心",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.icloud.com/find",
+    "title": "查找我的设备 (Find My Web)",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.icloud.com/pages",
+    "title": "Pages 文稿网页版",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.icloud.com/numbers",
+    "title": "Numbers 表格网页版",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.icloud.com/keynote",
+    "title": "Keynote 讲演网页版",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://developer.apple.com/",
+    "title": "Apple Developer 开发者官网",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://appstoreconnect.apple.com/",
+    "title": "App Store Connect 应用上架管理平台",
+    "status": "OK",
+    "code": 302,
+    "location": "/login?targetUrl=%2Fapps&authResult=FAILED"
+  },
+  {
+    "url": "https://developer.apple.com/documentation/",
+    "title": "Apple 官方技术文档与 API 索引",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.swift.org/",
+    "title": "Swift 编程语言官方社区",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://mp.weixin.qq.com/",
+    "title": "微信公众平台后台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://developers.weixin.qq.com/miniprogram/dev/framework/",
+    "title": "微信小程序开发者文档",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://open.weixin.qq.com/",
+    "title": "微信开放平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://weread.qq.com/",
+    "title": "微信读书 Web 端",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://docs.qq.com/",
+    "title": "腾讯文档官方平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://work.weixin.qq.com/",
+    "title": "企业微信管理后台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://meeting.tencent.com/",
+    "title": "腾讯会议控制中枢",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://wj.qq.com/",
+    "title": "腾讯问卷系统",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://lexiangla.com/",
+    "title": "腾讯乐享企业社区",
+    "status": "OK",
+    "code": 302,
+    "location": "https://lexiangla.com/home"
+  },
+  {
+    "url": "https://cloud.tencent.com/",
+    "title": "腾讯云官方平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://console.cloud.tencent.com/",
+    "title": "腾讯云管理控制台",
+    "status": "OK",
+    "code": 302,
+    "location": "https://cloud.tencent.com/login?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2F"
+  },
+  {
+    "url": "https://www.dnspod.cn/",
+    "title": "DNSPod 域名与解析服务",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://coding.net/",
+    "title": "CODING 一站式研发管理平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://yuanbao.tencent.com/",
+    "title": "腾讯元宝 AI 对话中心",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://hunyuan.tencent.com/",
+    "title": "腾讯混元大模型开放平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.aliyun.com/",
+    "title": "阿里云官网首页",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://home.console.aliyun.com/",
+    "title": "阿里云管理控制台",
+    "status": "OK",
+    "code": 302,
+    "location": "https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fhome.console.aliyun.com%2F&clearRedirectCookie=1&lang=zh"
+  },
+  {
+    "url": "https://developer.aliyun.com/",
+    "title": "阿里云开发者社区",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://wanwang.aliyun.com/",
+    "title": "万网域名与服务器服务",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://tongyi.aliyun.com/",
+    "title": "通义千问官方对话平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://modelscope.cn/",
+    "title": "魔搭社区 (ModelScope 开源大模型社区)",
+    "status": "OK",
+    "code": 302,
+    "location": "/home"
+  },
+  {
+    "url": "https://tianchi.aliyun.com/",
+    "title": "天池大数据与算法竞赛平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.dingtalk.com/",
+    "title": "钉钉企业工作台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.yuque.com/",
+    "title": "语雀云端知识库",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://open.taobao.com/",
+    "title": "淘宝开放平台",
+    "status": "OK",
+    "code": 302,
+    "location": "http://open.taobao.com/index.htm"
+  },
+  {
+    "url": "https://myseller.taobao.com/",
+    "title": "千牛商家工作台",
+    "status": "OK",
+    "code": 302,
+    "location": "https://loginmyseller.taobao.com/?from=taobaoindex&f=top&style=&sub=true&redirect_url=https%3A%2F%2Fmyseller.taobao.com%2F"
+  },
+  {
+    "url": "https://www.feishu.cn/",
+    "title": "飞书官方门户",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://feishu.cn/admin",
+    "title": "飞书管理后台",
+    "status": "OK",
+    "code": 301,
+    "location": "https://www.feishu.cn/admin"
+  },
+  {
+    "url": "https://open.feishu.cn/",
+    "title": "飞书开放平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.volcengine.com/",
+    "title": "火山引擎云服务官网",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://console.volcengine.com/",
+    "title": "火山引擎管理控制台",
+    "status": "OK",
+    "code": 302,
+    "location": "/home"
+  },
+  {
+    "url": "https://doubao.com/",
+    "title": "豆包 AI 官方对话平台",
+    "status": "OK",
+    "code": 301,
+    "location": "https://www.doubao.com/"
+  },
+  {
+    "url": "https://www.coze.cn/",
+    "title": "扣子 Coze 智能体开发平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://creator.douyin.com/",
+    "title": "抖音创作者服务平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://www.oceanengine.com/",
+    "title": "巨量引擎商业化投放平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  },
+  {
+    "url": "https://open.douyin.com/",
+    "title": "抖音开放平台",
+    "status": "OK",
+    "code": 200,
+    "location": null
+  }
+]

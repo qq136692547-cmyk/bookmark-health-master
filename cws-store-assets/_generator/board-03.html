@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screenshot 3 - Time Machine & Atomic Undo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    body {
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0b0f19 50%, #050811 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 36px 30px;
+      justify-content: space-between;
+    }
+
+    /* 顶部宣传标头 */
+    .promo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+      margin-bottom: 12px;
+    }
+    .promo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #34d399;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .promo-title {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #ffffff 0%, #e2e8f0 50%, #6ee7b7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 4px;
+    }
+    .promo-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #111a2e;
+      border: 1px solid #1e293b;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+
+    /* 主大盘窗口框架 */
+    .app-window {
+      width: 100%;
+      height: 686px;
+      background: #0f172a;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 窗口标题栏 */
+    .window-topbar {
+      height: 42px;
+      background: #131d31;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .window-controls {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .window-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .window-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .brand-icon {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .window-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* 内部内容区 */
+    .window-content {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      background: #0b0f19;
+    }
+
+    /* Tab 导航 */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 10px;
+    }
+    .nav-tab {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-tab.active {
+      background: #059669;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+    }
+
+    /* 顶部动作卡片 */
+    .safety-card {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .safety-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .safety-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .btn-snapshot {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #e2e8f0;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    /* 事务日志与快照两栏布局 */
+    .panels-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .section-badge {
+      font-size: 10px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    /* 事务日志列表 */
+    .journal-box {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    .journal-item {
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .journal-item:last-child { border-bottom: none; }
+    .journal-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .journal-type-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .journal-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .badge-reorg {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #a5b4fc;
+    }
+    .badge-quarantine {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+    .journal-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .journal-time {
+      font-size: 10.5px;
+      color: #64748b;
+    }
+    .journal-anchor {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .journal-anchor strong {
+      color: #38bdf8;
+    }
+    .journal-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-undo {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+    .btn-details {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+
+    /* 快照列表 */
+    .snapshot-box {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 9px;
+      overflow: hidden;
+    }
+    .snapshot-item {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.7);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .snapshot-item:last-child { border-bottom: none; }
+    .snapshot-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .snapshot-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .snapshot-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .snapshot-tag {
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .snapshot-meta {
+      font-size: 10px;
+      color: #64748b;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .snapshot-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-export {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #38bdf8;
+      padding: 5px 12px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部精炼卖点标题栏 -->
+  <div class="promo-header">
+    <div>
+      <div class="promo-tag">⏱️ Safety Baseline & Recovery</div>
+      <div class="promo-title">100% Reversible: Pre-Action HTML Snapshots & Exact Original-Slot Rollback</div>
+      <div class="promo-sub">Atomic Move Journal transaction logs • Parent & sibling slot index preservation • Standard Netscape HTML exports</div>
+    </div>
+    <div class="header-badges">
+      <div class="feature-pill">↩️ Sibling-Slot Undo</div>
+      <div class="feature-pill">💾 Netscape HTML</div>
+    </div>
+  </div>
+
+  <!-- 主大盘窗口框架 -->
+  <div class="app-window">
+    <!-- 窗口标题栏 -->
+    <div class="window-topbar">
+      <div class="window-controls">
+        <span class="window-dot dot-red"></span>
+        <span class="window-dot dot-yellow"></span>
+        <span class="window-dot dot-green"></span>
+      </div>
+      <div class="window-brand">
+        <div class="brand-icon">🛡️</div>
+        <span>Bookmark Health Master (BHM-PRO) — Manifest V3 Production</span>
+      </div>
+      <div class="window-status">
+        <span class="status-badge">
+          <span class="pulse-dot"></span>
+          Chrome Native Ready
+        </span>
+      </div>
+    </div>
+
+    <!-- 窗口内容区 -->
+    <div class="window-content">
+      
+      <!-- Tab 导航 -->
+      <div class="nav-tabs">
+        <div class="nav-tab">🩺 Health & Dead Links</div>
+        <div class="nav-tab">🏛️ 16 Titans Ecosystems</div>
+        <div class="nav-tab active">⏱️ Time Machine & Rollback</div>
+        <div class="nav-tab">💎 Pro Privileges</div>
+      </div>
+
+      <!-- 顶部安全动作卡片 -->
+      <div class="safety-card">
+        <div>
+          <div class="safety-title">
+            <span>🛡️ Zero-Data-Loss Safety Time Machine & Atomic Move Journals</span>
+          </div>
+          <div class="safety-desc">Captures pre-move parent directory & slot index before any quarantine or reorganization, guaranteeing 100% in-place atomic rollback.</div>
+        </div>
+        <button class="btn-snapshot">📸 Create Full HTML Snapshot</button>
+      </div>
+
+      <div class="panels-container">
+        
+        <!-- 增量事务日志 -->
+        <div>
+          <div class="section-title">
+            <span>📜 Incremental Move Journals (Atomic in-place rollback supported)</span>
+            <span class="section-badge">2 Active Transactions Recorded</span>
+          </div>
+          <div class="journal-box">
+            
+            <div class="journal-item">
+              <div class="journal-info">
+                <div class="journal-type-row">
+                  <span class="journal-badge badge-reorg">ECOSYSTEM_REORGANIZE</span>
+                  <span class="journal-name">285 bookmarks organized into 16 Titans directories</span>
+                  <span class="journal-time">Today at 14:32:05 • tx_9a8f21</span>
+                </div>
+                <div class="journal-anchor">
+                  <strong>Parent:</strong> Bookmarks Bar • <strong>Preserved slot order:</strong> 100% original hierarchy • <strong>Flow control:</strong> 50ms batch
+                </div>
+              </div>
+              <div class="journal-actions">
+                <button class="btn-details">📄 Details (285)</button>
+                <button class="btn-undo">↩️ Atomic 1-Click Undo</button>
+              </div>
+            </div>
+
+            <div class="journal-item">
+              <div class="journal-info">
+                <div class="journal-type-row">
+                  <span class="journal-badge badge-quarantine">QUARANTINE_DEAD</span>
+                  <span class="journal-name">118 broken links soft-moved to Trash folder</span>
+                  <span class="journal-time">Today at 14:28:11 • tx_4c1e02</span>
+                </div>
+                <div class="journal-anchor">
+                  <strong>Parent:</strong> Bookmarks Bar • <strong>Anchor:</strong> Original Slot #4 • <strong>Restoration target:</strong> Exact original index
+                </div>
+              </div>
+              <div class="journal-actions">
+                <button class="btn-details">📄 Details (118)</button>
+                <button class="btn-undo">↩️ Atomic 1-Click Undo</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 全量 HTML 快照备份 -->
+        <div>
+          <div class="section-title">
+            <span>💾 Netscape HTML Full Offline Backup Snapshots</span>
+            <span class="section-badge">Stored in chrome.storage.local</span>
+          </div>
+          <div class="snapshot-box">
+            
+            <div class="snapshot-item">
+              <div class="snapshot-info">
+                <div class="snapshot-title-row">
+                  <span class="snapshot-name">Pre-Reorganize Baseline Snapshot</span>
+                  <span class="snapshot-tag">AUTO-BACKUP</span>
+                </div>
+                <div class="snapshot-meta">
+                  bookmark_backup_pre_reorg_20261107_143202.html • 1,724 Bookmarks • 152 Folders • 236 KB
+                </div>
+              </div>
+              <div class="snapshot-actions">
+                <button class="btn-export">💾 Export .html</button>
+              </div>
+            </div>
+
+            <div class="snapshot-item">
+              <div class="snapshot-info">
+                <div class="snapshot-title-row">
+                  <span class="snapshot-name">Pre-Quarantine Netscape HTML Snapshot</span>
+                  <span class="snapshot-tag">MANDATORY PRE-MOVE</span>
+                </div>
+                <div class="snapshot-meta">
+                  bookmark_backup_pre_quarantine_20261107_142809.html • 1,842 Bookmarks • 148 Folders • 248 KB
+                </div>
+              </div>
+              <div class="snapshot-actions">
+                <button class="btn-export">💾 Export .html</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

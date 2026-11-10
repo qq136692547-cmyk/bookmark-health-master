@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screenshot 1 - Health Scan & DoH</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    body {
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0b0f19 50%, #050811 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 36px 30px;
+      justify-content: space-between;
+    }
+
+    /* 顶部宣传标头 */
+    .promo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+      margin-bottom: 12px;
+    }
+    .promo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #60a5fa;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .promo-title {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 50%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 4px;
+    }
+    .promo-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #111a2e;
+      border: 1px solid #1e293b;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+
+    /* 主大盘窗口框架 */
+    .app-window {
+      width: 100%;
+      height: 686px;
+      background: #0f172a;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 窗口标题栏 */
+    .window-topbar {
+      height: 42px;
+      background: #131d31;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .window-controls {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+    .window-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .window-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .brand-icon {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .window-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* 内部内容区 */
+    .window-content {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      background: #0b0f19;
+    }
+
+    /* Tab 导航 */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 10px;
+    }
+    .nav-tab {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-tab.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* 指标卡片网格 */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .metric-card {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 9px;
+      padding: 10px 14px;
+    }
+    .metric-card.alert {
+      border-color: rgba(239, 68, 68, 0.35);
+      background: rgba(239, 68, 68, 0.05);
+    }
+    .metric-card.success {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.05);
+    }
+    .metric-label {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .metric-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 2px;
+      letter-spacing: -0.5px;
+    }
+    .metric-card.alert .metric-value { color: #f87171; }
+    .metric-card.success .metric-value { color: #34d399; }
+    .metric-desc {
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* 探测动作区 */
+    .action-panel {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 9px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .action-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .action-sub {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 1px;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #93c5fd;
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      border: none;
+      color: white;
+      box-shadow: 0 2px 10px rgba(220, 38, 38, 0.4);
+    }
+
+    /* 进度条 */
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+    .progress-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+    }
+
+    /* 结果列表区 */
+    .results-panel {
+      background: #131d31;
+      border: 1px solid #1e293b;
+      border-radius: 9px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+    .results-header {
+      padding: 9px 14px;
+      background: #16223b;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+    }
+    .chip {
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #94a3b8;
+      background: #1e293b;
+    }
+    .chip.active {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+    }
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.7);
+    }
+    .result-row:last-child { border-bottom: none; }
+    .item-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+    .item-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .item-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .item-url {
+      font-size: 10px;
+      color: #64748b;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .item-path {
+      font-size: 10px;
+      color: #94a3b8;
+    }
+    .item-status-badge {
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .status-dead {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+    .status-doh {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      color: #fb923c;
+    }
+    .status-protected {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+    .status-shielded {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部精炼卖点标题栏 -->
+  <div class="promo-header">
+    <div>
+      <div class="promo-tag">🩺 High-Accuracy Diagnostics</div>
+      <div class="promo-title">Zero False Positives: Dual-Stage HTTP Probing + Cloudflare DoH Verification</div>
+      <div class="promo-sub">Smart HEAD probes & Range GET fallback • RFC1918 intranet shields • Cloudflare NXDOMAIN DNS cross-validation</div>
+    </div>
+    <div class="header-badges">
+      <div class="feature-pill">🛡️ 100% Local-First</div>
+      <div class="feature-pill">⚡ Chrome Manifest V3</div>
+    </div>
+  </div>
+
+  <!-- 主大盘窗口框架 -->
+  <div class="app-window">
+    <!-- 窗口标题栏 -->
+    <div class="window-topbar">
+      <div class="window-controls">
+        <span class="window-dot dot-red"></span>
+        <span class="window-dot dot-yellow"></span>
+        <span class="window-dot dot-green"></span>
+      </div>
+      <div class="window-brand">
+        <div class="brand-icon">🛡️</div>
+        <span>Bookmark Health Master (BHM-PRO) — Manifest V3 Production</span>
+      </div>
+      <div class="window-status">
+        <span class="status-badge">
+          <span class="pulse-dot"></span>
+          Chrome Native Ready
+        </span>
+      </div>
+    </div>
+
+    <!-- 窗口内容区 -->
+    <div class="window-content">
+      
+      <!-- Tab 导航 -->
+      <div class="nav-tabs">
+        <div class="nav-tab active">🩺 Health & Dead Links</div>
+        <div class="nav-tab">🏛️ 16 Titans Ecosystems</div>
+        <div class="nav-tab">⏱️ Time Machine & Rollback</div>
+        <div class="nav-tab">💎 Pro Privileges</div>
+      </div>
+
+      <!-- 指标卡片网格 -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Bookmarks</div>
+          <div class="metric-value">1,842</div>
+          <div class="metric-desc">Read directly from Chrome tree</div>
+        </div>
+        <div class="metric-card success">
+          <div class="metric-label">Health Score</div>
+          <div class="metric-value">92.0%</div>
+          <div class="metric-desc">1,695 / 1,842 active & reachable</div>
+        </div>
+        <div class="metric-card alert">
+          <div class="metric-label">Confirmed Dead Links</div>
+          <div class="metric-value">118</div>
+          <div class="metric-desc">404 Not Found & NXDOMAIN verified</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Protected / Shielded</div>
+          <div class="metric-value">29</div>
+          <div class="metric-desc">Intranet RFC1918 & action parameters</div>
+        </div>
+      </div>
+
+      <!-- 探测动作卡片 -->
+      <div class="action-panel">
+        <div class="action-row">
+          <div>
+            <div class="action-title">
+              <span>🩺 Two-Stage Adaptive Dead Link Health Probe</span>
+              <span style="font-size: 10px; color: #10b981; font-weight: normal; margin-left: 6px;">● Scan Complete (100%)</span>
+            </div>
+            <div class="action-sub">HEAD probe + Range GET fallback, Cloudflare DoH NXDOMAIN cross-validation active</div>
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-primary">🚀 Re-Scan Library</button>
+            <button class="btn btn-danger">🗑️ Quarantine Dead Links to Trash (118 links)</button>
+          </div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- 结果列表区 -->
+      <div class="results-panel">
+        <div class="results-header">
+          <span style="font-size: 11px; font-weight: 700; color: #e2e8f0;">🚨 Diagnostic Results & Quarantine Queue</span>
+          <div class="filter-chips">
+            <span class="chip">All (1,842)</span>
+            <span class="chip active">Dead Links (118)</span>
+            <span class="chip">🛡️ Protected (29)</span>
+            <span class="chip">Healthy (1,695)</span>
+          </div>
+        </div>
+        <div class="results-list">
+          
+          <div class="result-row">
+            <div class="item-main">
+              <div class="item-title-row">
+                <span class="item-title">Legacy API v1 Documentation & Reference</span>
+                <span class="item-path">Parent: Bookmarks Bar / Dev Resources • Slot #12</span>
+              </div>
+              <span class="item-url">https://api.legacy-dev.org/v1/reference</span>
+            </div>
+            <span class="item-status-badge status-dead">HTTP 404 NOT FOUND</span>
+          </div>
+
+          <div class="result-row">
+            <div class="item-main">
+              <div class="item-title-row">
+                <span class="item-title">Matthew's Personal Cloud Engineering Blog 2021</span>
+                <span class="item-path">Parent: Tech Blogs / Architecture • Slot #5</span>
+              </div>
+              <span class="item-url">https://blog.matthew-cloud-archive.io</span>
+            </div>
+            <span class="item-status-badge status-doh">DNS NXDOMAIN (DoH VERIFIED)</span>
+          </div>
+
+          <div class="result-row">
+            <div class="item-main">
+              <div class="item-title-row">
+                <span class="item-title">Local Gateway & OpenWrt Router Administration</span>
+                <span class="item-path">Parent: HomeLab / Network Tools • Slot #2</span>
+              </div>
+              <span class="item-url">http://192.168.1.10:8080/admin</span>
+            </div>
+            <span class="item-status-badge status-protected">🛡️ PROTECTED: INTRANET 192.168.1.10</span>
+          </div>
+
+          <div class="result-row">
+            <div class="item-main">
+              <div class="item-title-row">
+                <span class="item-title">Enterprise SSO Central Sign Out Portal</span>
+                <span class="item-path">Parent: Work Portals / SSO • Slot #9</span>
+              </div>
+              <span class="item-url">https://sso.enterprise-hub.com/auth/logout</span>
+            </div>
+            <span class="item-status-badge status-shielded">🛡️ PROTECTED: SENSITIVE /logout URL</span>
+          </div>
+
+          <div class="result-row">
+            <div class="item-main">
+              <div class="item-title-row">
+                <span class="item-title">Static CDN JavaScript Bundle Package</span>
+                <span class="item-path">Parent: Web Dev / Assets • Slot #14</span>
+              </div>
+              <span class="item-url">https://cdn.static-assets-pkg.com/bundles/legacy.js</span>
+            </div>
+            <span class="item-status-badge status-dead">HTTP 410 GONE</span>
+          </div>
+
+          <div class="result-row">
+            <div class="item-main">
+              <div class="item-title-row">
+                <span class="item-title">Staging Cluster Grafana Performance Dashboard</span>
+                <span class="item-path">Parent: Monitoring / Metrics • Slot #8</span>
+              </div>
+              <span class="item-url">https://grafana.internal-testing-deprecate.net</span>
+            </div>
+            <span class="item-status-badge status-doh">DNS NXDOMAIN (DoH VERIFIED)</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

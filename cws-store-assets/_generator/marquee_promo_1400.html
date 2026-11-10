@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1400px;
+    height: 560px;
+    overflow: hidden;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Inter, system-ui, sans-serif;
+    background: #050811;
+    color: #ffffff;
+  }
+  .marquee {
+    position: relative;
+    width: 1400px;
+    height: 560px;
+    background:
+      radial-gradient(circle at 16% 24%, rgba(37, 99, 235, 0.45) 0%, transparent 48%),
+      radial-gradient(circle at 82% 72%, rgba(16, 185, 129, 0.35) 0%, transparent 50%),
+      radial-gradient(circle at 68% 18%, rgba(99, 102, 241, 0.38) 0%, transparent 42%),
+      linear-gradient(125deg, #050811 0%, #0B132B 48%, #071324 100%);
+    padding: 54px 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+  }
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+  .left-hero {
+    position: relative;
+    z-index: 2;
+    width: 680px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.24);
+    border: 1.5px solid rgba(96, 165, 250, 0.6);
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #93C5FD;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .pulse-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #34D399;
+    box-shadow: 0 0 12px #34D399;
+  }
+  .hero-title-1 {
+    font-size: 58px;
+    font-weight: 900;
+    line-height: 1.06;
+    letter-spacing: -1.6px;
+    color: #FFFFFF;
+    white-space: nowrap;
+    text-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+  }
+  .hero-title-2 {
+    font-size: 54px;
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    white-space: nowrap;
+    background: linear-gradient(90deg, #38BDF8 0%, #60A5FA 48%, #34D399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: 6px;
+  }
+  .hero-desc {
+    margin-top: 22px;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.48;
+    color: #CBD5E1;
+    max-width: 650px;
+  }
+  .hero-desc strong {
+    color: #FFFFFF;
+    font-weight: 800;
+  }
+  .pill-row {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+  .feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 17px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.88);
+    border: 1.5px solid rgba(96, 165, 250, 0.38);
+    font-size: 16px;
+    font-weight: 800;
+    color: #F8FAFC;
+    white-space: nowrap;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  }
+  .feature-pill.green {
+    border-color: rgba(52, 211, 153, 0.55);
+    background: rgba(6, 78, 59, 0.38);
+  }
+
+  /* Right Showcase Stage */
+  .right-stage {
+    position: relative;
+    z-index: 2;
+    width: 550px;
+    height: 444px;
+  }
+  /* Main Glass Dashboard Card */
+  .dash-card {
+    position: absolute;
+    top: 6px;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.94);
+    border: 2px solid rgba(96, 165, 250, 0.42);
+    border-radius: 20px;
+    padding: 22px 24px 36px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.78);
+  }
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  }
+  .dash-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #F8FAFC;
+    white-space: nowrap;
+  }
+  .status-badge {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(52, 211, 153, 0.6);
+    color: #34D399;
+    font-size: 12.5px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .kpi-box {
+    background: rgba(30, 41, 59, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .kpi-box.dead {
+    background: rgba(127, 29, 29, 0.28);
+    border-color: rgba(248, 113, 113, 0.5);
+  }
+  .kpi-box.health {
+    background: rgba(6, 78, 59, 0.28);
+    border-color: rgba(52, 211, 153, 0.5);
+  }
+  .kpi-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94A3B8;
+    text-transform: uppercase;
+  }
+  .kpi-val {
+    font-size: 34px;
+    font-weight: 900;
+    margin-top: 4px;
+    color: #FFFFFF;
+  }
+  .kpi-box.health .kpi-val { color: #34D399; }
+  .kpi-box.dead .kpi-val { color: #F87171; }
+
+  .probe-rows {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .probe-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 15px;
+    border-radius: 11px;
+    background: rgba(2, 6, 23, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #E2E8F0;
+  }
+  .tag-404 {
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.22);
+    border: 1px solid #F87171;
+    color: #FCA5A5;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .tag-doh {
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(245, 158, 11, 0.22);
+    border: 1px solid #FBBF24;
+    color: #FDE68A;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .tag-safe {
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.22);
+    border: 1px solid #34D399;
+    color: #A7F3D0;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* Floating Bottom Ecosystem Strip */
+  .eco-floating {
+    position: absolute;
+    bottom: 4px;
+    left: -14px;
+    right: -6px;
+    background: linear-gradient(90deg, #1E293B 0%, #0F172A 100%);
+    border: 2px solid #38BDF8;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+  }
+  .eco-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #FFFFFF;
+    white-space: nowrap;
+  }
+  .eco-badges {
+    display: flex;
+    gap: 7px;
+  }
+  .eco-chip {
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.25);
+    border: 1px solid rgba(96, 165, 250, 0.55);
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #BAE6FD;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="marquee">
+    <div class="grid-overlay"></div>
+
+    <div class="left-hero">
+      <div class="top-badge">
+        <span class="pulse-dot"></span>
+        BOOKMARK HEALTH MASTER PRO • MANIFEST V3
+      </div>
+      <div class="hero-title-1">Kill Dead 404 Links.</div>
+      <div class="hero-title-2">Organize 16 Ecosystems.</div>
+      <div class="hero-desc">
+        <strong>100% Local-First</strong> Chrome bookmark diagnostic prober, 16 tech giant auto-clustering, native Side Panel search &amp; atomic undo.
+      </div>
+      <div class="pill-row">
+        <div class="feature-pill">🩺 Cloudflare DoH Verified</div>
+        <div class="feature-pill">📑 Native Side Panel</div>
+        <div class="feature-pill green">↩️ 100% Atomic Undo</div>
+      </div>
+    </div>
+
+    <div class="right-stage">
+      <div class="dash-card">
+        <div class="dash-header">
+          <div class="dash-title">
+            <span>🛡️</span> Dual-Stage Health Diagnostic Radar
+          </div>
+          <div class="status-badge">● Zero False Positives</div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-label">Total Scanned</div>
+            <div class="kpi-val">1,842</div>
+          </div>
+          <div class="kpi-box health">
+            <div class="kpi-label">Active &amp; Healthy</div>
+            <div class="kpi-val">92.0%</div>
+          </div>
+          <div class="kpi-box dead">
+            <div class="kpi-label">404 Dead Links</div>
+            <div class="kpi-val">118</div>
+          </div>
+        </div>
+
+        <div class="probe-rows">
+          <div class="probe-item">
+            <span>api.legacy-dev.org/v1/reference</span>
+            <span class="tag-404">HTTP 404 QUARANTINED</span>
+          </div>
+          <div class="probe-item">
+            <span>blog.matthew-cloud-archive.io</span>
+            <span class="tag-doh">DNS NXDOMAIN (DoH)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="eco-floating">
+        <div class="eco-left">
+          <span>🏛️</span> 16 Ecosystems Clustered
+        </div>
+        <div class="eco-badges">
+          <span class="eco-chip">Google (84)</span>
+          <span class="eco-chip">AWS (47)</span>
+          <span class="eco-chip">OpenAI (39)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

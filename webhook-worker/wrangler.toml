@@ -1,0 +1,14 @@
+name = "bhm-pro-license-worker"
+main = "src/paddle-worker.js"
+compatibility_date = "2024-09-23"
+
+# Binding to Cloudflare KV for idempotent order tracking and customer self-service retrieval
+[[kv_namespaces]]
+binding = "BHM_LICENSES_KV"
+id = "da44bda9619347ae8800b9090b19cd4e"
+
+[vars]
+ENVIRONMENT = "production"
+EXTENSION_ID = "nomieaphhhhhikklfhmhhjcdgicaikgn"
+SUPPORT_EMAIL = "qq136692547@gmail.com"
+FROM_EMAIL = "BHM-PRO Licensing <licenses@bhm-pro.com>"

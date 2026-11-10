@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DOMParser Scale Benchmark</title>
+</head>
+<body>
+  <h1>Running 20,000 Bookmark DOMParser Benchmark...</h1>
+  <pre id="output">Benchmarking...</pre>
+  <script>
+    const output = document.getElementById('output');
+    function log(msg) {
+      output.textContent += msg + '\n';
+      console.log(msg);
+    }
+
+    // 1. Generate 20,000 Netscape HTML string
+    const count = 20000;
+    log(`Generating ${count} Netscape bookmarks HTML...`);
+    let html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks</H1>
+<DL><p>
+    <DT><H3 ADD_DATE="1700000000">Imported Folder</H3>
+    <DL><p>
+`;
+
+    for (let i = 1; i <= count; i++) {
+      html += `        <DT><A HREF="https://example.com/page/${i}" ADD_DATE="1700000000">Bookmark Title Number ${i} With Long Text Description</A>\n`;
+    }
+
+    html += `    </DL><p>\n</DL><p>`;
+
+    log(`Generated HTML length: ${(html.length / 1024 / 1024).toFixed(2)} MB`);
+
+    // 2. Measure DOMParser time
+    const startParse = performance.now();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const parseTime = performance.now() - startParse;
+    log(`DOMParser.parseFromString time: ${parseTime.toFixed(2)} ms`);
+
+    // 3. Measure NetscapeParser.parseDl implementation from MV3_ARCHITECTURE.md
+    function parseDl(dl) {
+      const nodes = [];
+      const children = Array.from(dl.children);
+
+      for (let i = 0; i < children.length; i++) {
+        const el = children[i];
+        if (el.tagName.toUpperCase() === 'DT') {
+          const h3 = el.querySelector(':scope > h3');
+          const a = el.querySelector(':scope > a');
+
+          if (h3) {
+            const folderTitle = h3.textContent || 'Untitled Folder';
+            const nextEl = children[i + 1];
+            let subDl = el.querySelector(':scope > dl');
+            
+            if (!subDl && nextEl && nextEl.tagName.toUpperCase() === 'DL') {
+              subDl = nextEl;
+              i++; // skip dl in loop
+            }
+
+            nodes.push({
+              title: folderTitle,
+              dateAdded: Number(h3.getAttribute('ADD_DATE')) * 1000 || Date.now(),
+              children: subDl ? parseDl(subDl) : []
+            });
+          } else if (a) {
+            nodes.push({
+              title: a.textContent || 'Untitled Bookmark',
+              url: a.getAttribute('HREF') || '',
+              dateAdded: Number(a.getAttribute('ADD_DATE')) * 1000 || Date.now()
+            });
+          }
+        }
+      }
+      return nodes;
+    }
+
+    const startWalk = performance.now();
+    const dlRoot = doc.querySelector('dl');
+    const nodes = dlRoot ? parseDl(dlRoot) : [];
+    const walkTime = performance.now() - startWalk;
+    log(`Tree walk & extraction time: ${walkTime.toFixed(2)} ms`);
+
+    function countExtracted(nList) {
+      let c = 0;
+      for (const n of nList) {
+        if (n.url) c++;
+        if (n.children) c += countExtracted(n.children);
+      }
+      return c;
+    }
+    const extractedCount = countExtracted(nodes);
+    log(`Extracted bookmarks count: ${extractedCount} of ${count}`);
+    
+    if (window.performance && window.performance.memory) {
+      log(`JS Heap Used: ${(window.performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)} MB`);
+      log(`JS Heap Total: ${(window.performance.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)} MB`);
+    }
+
+    log('BENCHMARK_COMPLETED');
+  </script>
+</body>
+</html>

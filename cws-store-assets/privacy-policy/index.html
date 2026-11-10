@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Bookmark Health Master (BHM-PRO)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --badge-bg: #dcfce7;
+      --badge-text: #15803d;
+      --code-bg: #f1f5f9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+      color: var(--text);
+      background: var(--bg);
+    }
+    header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 12px 0;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 32px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #edf2f7;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 20px 0 8px;
+    }
+    p, li {
+      font-size: 15px;
+      color: #334155;
+    }
+    ul, ol {
+      padding-left: 22px;
+      margin: 10px 0;
+    }
+    li { margin-bottom: 6px; }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      margin-bottom: 12px;
+    }
+    .meta-info {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    th, td {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      text-align: left;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: #0969da;
+    }
+    .note-box {
+      background: #eff6ff;
+      border-left: 4px solid var(--primary);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      color: #1e40af;
+    }
+    details {
+      margin-top: 40px;
+      padding: 16px 20px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    summary {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+    }
+    summary:hover {
+      color: var(--primary-dark);
+    }
+    .zh-content {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .zh-content h3 {
+      color: #0f172a;
+      margin: 18px 0 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="badge">100% Local-First & Zero Telemetry</span>
+    <h1>Privacy Policy for Bookmark Health Master (BHM-PRO)</h1>
+    <p class="meta-info"><strong>Last Updated:</strong> November 7, 2026 &nbsp;|&nbsp; <strong>Effective Date:</strong> November 7, 2026</p>
+  </header>
+
+  <section>
+    <p>Bookmark Health Master (BHM-PRO, "we", "our", or "the extension") is a privacy-first, local-first browser extension designed to audit dead bookmark links, reorganize official tech giant ecosystems, and provide zero-loss bookmark backups within Google Chrome.</p>
+    <p>We are deeply committed to protecting your privacy. This Privacy Policy details our data collection, usage, and security practices in strict accordance with the Google Chrome Web Store Least Privilege Principle and Single-Purpose Policy.</p>
+  </section>
+
+  <section>
+    <h2>1. 100% Local-First Philosophy (Zero Remote Data Storage)</h2>
+    <ul>
+      <li><strong>No Remote Telemetry or Tracking:</strong> The extension operates entirely within your local browser sandbox. We do not operate any external tracking servers, analytics endpoints, or remote user databases.</li>
+      <li><strong>No Bookmarks or Personal Data Transmission:</strong> Your bookmark tree, folder structures, tags, browsing history, and personal bookmark content are <strong>never</strong> transmitted to our servers or any third-party database. All clustering, sorting, Netscape HTML serialization, and health calculations are executed strictly on your local device.</li>
+      <li><strong>Third-Party DNS-over-HTTPS (DoH) Hostname Resolution:</strong> The only external network communication made by the extension outside of direct user-initiated website reachability checks is querying Cloudflare's public DNS-over-HTTPS service (<code>https://cloudflare-dns.com/dns-query</code>) solely to resolve domain hostnames and cross-validate NXDOMAIN (non-existent domain) status during dead link health checks. Only the isolated domain hostname (e.g., <code>example.com</code>) is queried; full URL paths, search parameters, hashes, cookies, and user identifiers are never included or transmitted. Cloudflare handles DNS queries in accordance with their public DNS privacy policy.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2. Permissions Justification &amp; Technical Scope</h2>
+    <p>In accordance with Google Chrome Web Store policies, BHM-PRO requests only the minimal permissions required to deliver its core functionality:</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Permission</th>
+          <th>Purpose &amp; Technical Scope</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>bookmarks</code></td>
+          <td>Required to read your bookmark hierarchy, organize links into categorized folders, and move broken links into a quarantined trash folder upon explicit user request.</td>
+        </tr>
+        <tr>
+          <td><code>storage</code> &amp; <code>unlimitedStorage</code></td>
+          <td>Required to save local operation journals (Move Journals) and Netscape HTML backup snapshots within Chrome's local storage (<code>chrome.storage.local</code>) for atomic undo and disaster recovery.</td>
+        </tr>
+        <tr>
+          <td><code>sidePanel</code></td>
+          <td>Required to open the native Chrome Side Panel companion for fast bookmark search and access.</td>
+        </tr>
+        <tr>
+          <td><code>alarms</code></td>
+          <td>Required to manage Service Worker keepalive cycles during active user-initiated scans to prevent Chromium idle timeout.</td>
+        </tr>
+        <tr>
+          <td><code>declarativeNetRequest</code></td>
+          <td>Used strictly during active user-initiated health scans via temporary session rules (<code>updateSessionRules</code>) to remove the <code>Origin</code> request header exclusively on probe requests dispatched to bookmarked domains by the extension itself (from the dashboard page or background Service Worker) to test target domain reachability. This prevents cross-origin headers from triggering server anti-bot blocks without monitoring, collecting, or altering general web browsing traffic in normal tabs. All session rules are uninstalled immediately upon scan completion or abort.</td>
+        </tr>
+        <tr>
+          <td><code>optional_host_permissions</code><br><code>(*://*/*)</code></td>
+          <td><strong>Never requested at installation.</strong> Dynamically and optionally requested <strong>only</strong> when the user explicitly clicks the "Start Health Scan" button, enabling the browser to send low-overhead <code>HEAD</code> / slice-<code>GET</code> network requests directly from the user's browser to check whether bookmarked pages return HTTP 404 or connection failures.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. Network Probing, DoH Resolution &amp; Traffic Safety</h2>
+    <p>When you initiate a Bookmark Health Scan:</p>
+    <ol>
+      <li><strong>Credentials Omitted:</strong> All diagnostic network requests explicitly enforce <code>credentials: 'omit'</code>. The extension <strong>never</strong> sends your cookies, authentication tokens, session IDs, or login state.</li>
+      <li><strong>Intranet &amp; Action Parameter Shielding:</strong> URLs containing sensitive action parameters (such as <code>logout</code>, <code>unsubscribe</code>, <code>reset_password</code>, <code>token=</code>) and RFC1918/RFC3927/RFC6598 private and reserved IP addresses (<code>127.0.0.1</code>, <code>10.*</code>, <code>172.16-31.*</code>, <code>192.168.*</code>, <code>169.254.*</code>, <code>100.64-127.*</code>, <code>198.18-19.*</code>, IPv6 private/link-local) are automatically shielded and bypassed to protect internal infrastructure, cloud metadata endpoints, and active user sessions.</li>
+      <li><strong>Third-Party DNS Hostname Resolution (Cloudflare DoH):</strong> During dead link health checks, when target domain reachability requires secondary verification or encounters network anomalies, the extension queries Cloudflare's public DNS-over-HTTPS service (<code>https://cloudflare-dns.com/dns-query</code>) solely to determine whether the domain's DNS record exists (NXDOMAIN check). Only the isolated domain hostname is sent in the DNS query. No URL paths, search queries, bookmark titles, headers, cookies, or user identifiers are ever transmitted.</li>
+      <li><strong>No Browsing Traffic Monitoring or Interception:</strong> The extension never monitors, collects, or alters general web browsing traffic in standard user tabs. Strictly during user-initiated bookmark health checkups, temporary session rules (<code>updateSessionRules</code>) remove the <code>Origin</code> request header exclusively on diagnostic probe requests dispatched to bookmarked domains by the extension itself (from the dashboard page or background Service Worker) to test target domain reachability. User browsing activity across tabs is never intercepted, tracked, or modified, and rules are uninstalled immediately once inspection completes or halts.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>4. Payment Processing (Merchant of Record)</h2>
+    <p>Commercial licensing is processed securely through <strong>Lemon Squeezy</strong> as the Merchant of Record (MoR).</p>
+    <ul>
+      <li>When purchasing a license, payment details (credit card, PayPal, Apple Pay) are processed directly by Lemon Squeezy under PCI-DSS Level 1 compliance.</li>
+      <li>BHM-PRO does not store or process your financial information. The extension only stores your activation license key locally in <code>chrome.storage.local</code> to unlock premium capabilities.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Contact &amp; Questions</h2>
+    <p>If you have any questions or feedback regarding this Privacy Policy, please contact our support team at:</p>
+    <ul>
+      <li><strong>Support Email:</strong> <code>support@bookmarkhealthmaster.com</code> (or submit an issue via our official repository)</li>
+    </ul>
+  </section>
+
+  <!-- Bilingual Chinese Summary for CWS Reviewers & Global Users -->
+  <details>
+    <summary>🌐 查看简体中文版隐私政策摘要 (Simplified Chinese Summary)</summary>
+    <div class="zh-content">
+      <h3>1. 100% 本地优先理念（零远程数据存储）</h3>
+      <p>Bookmark Health Master (BHM-PRO) 坚持<strong>本地优先 (Local-First)</strong> 架构设计。您的书签树、目录结构、书签标签与浏览历史<strong>绝不会上传至我们的任何服务器或第三方数据库</strong>。所有智能聚类、死链诊断、Netscape HTML 备份快照均严格在您本机的浏览器沙箱内运算完成。</p>
+
+      <h3>2. 权限申请与技术用途披露（遵循 Chrome Web Store 最小权限原则）</h3>
+      <ul>
+        <li><code>bookmarks</code>：用于读取书签层级、按生态目录归类整理，以及经用户确认后将死链移入隔离回收站。</li>
+        <li><code>storage</code> / <code>unlimitedStorage</code>：用于在本地 <code>chrome.storage.local</code> 保存原子撤销操作日志 (Move Journals) 与灾难恢复快照。</li>
+        <li><code>sidePanel</code>：用于唤起 Chrome 原生侧边栏伴侣面板，便捷检索书签。</li>
+        <li><code>alarms</code>：用于在扫描期间保持后台 Service Worker 活跃，防止浏览器空闲超时终止任务。</li>
+        <li><code>declarativeNetRequest</code>：仅在用户主动发起书签健康体检期间，通过会话级临时规则 (<code>updateSessionRules</code>) 仅针对插件自身全景大盘页面或后台 Service Worker 发往待测书签域名的探测请求移除 <code>Origin</code> 请求头，避免跨域请求头干扰状态码探测，体检结束或中断时立即卸载该规则，绝不监控、收集或修改用户在普通网页标签页中的日常浏览流量。</li>
+        <li><code>optional_host_permissions</code> (<code>*://*/*</code>)：<strong>安装时绝不索取</strong>。仅在用户主动点击“开始死链体检”时动态提示授权，供浏览器向书签目标站点发起轻量连通性探测。</li>
+      </ul>
+
+      <h3>3. 网络探测、DoH 域名复核与网络安全保护</h3>
+      <ul>
+        <li><strong>强制脱敏凭据：</strong>探测请求严格指定 <code>credentials: 'omit'</code>，绝不携带任何 Cookie、Token、会话状态或个人身份标识。</li>
+        <li><strong>内网与危险参数熔断防护：</strong>严格屏蔽 RFC1918/RFC3927/RFC6598 等私有内网 IP 与包含 <code>logout</code>、<code>unsubscribe</code>、<code>token=</code> 等敏感注销参数的链接。</li>
+        <li><strong>Cloudflare 公共 DoH 连通性复核：</strong>仅在域名连通性异常时，向 Cloudflare 公共 DoH (<code>https://cloudflare-dns.com/dns-query</code>) 查询纯主机名（如 <code>example.com</code>）以复核域名解析状态，绝不传输 URL 路径、查询参数、书签标题或 Cookie。</li>
+      </ul>
+
+      <h3>4. 商业支付与安全处理</h3>
+      <p>商业授权由全球知名备案商家 <strong>Lemon Squeezy (Merchant of Record, MoR)</strong> 在 PCI-DSS Level 1 安全合规标准下托管处理。本插件绝不收集或储存任何银行卡号或财务信息，仅在本地 <code>chrome.storage.local</code> 存储激活码以离线解锁 Pro 权益。</p>
+
+      <h3>5. 联系方式</h3>
+      <p>如有任何疑问，请联系官方支持邮箱：<code>support@bookmarkhealthmaster.com</code></p>
+    </div>
+  </details>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "书签健康管家 (BHM-PRO) - 死链清理与智能分类整理",
+    "description": "Extension name in Simplified Chinese"
+  },
+  "extDescription": {
+    "message": "本地优先的 Chrome 原生书签死链深度检测、按域名与16大生态智能归拢、侧边栏快速检索及 Netscape 快照安全备份工具。",
+    "description": "Extension description in Simplified Chinese"
+  },
+  "actionTitle": {
+    "message": "书签健康管家 (BHM-PRO)",
+    "description": "Toolbar action tooltip"
+  }
+}
