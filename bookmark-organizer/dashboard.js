@@ -457,9 +457,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let resolvedName = tierName;
     if (!resolvedName) {
       if (tier === "SINGLE_WASH") {
-        resolvedName = isEn ? "30-Day Full Wash Pass ($9.90)" : "30天全量大扫除卡 ($9.90)";
+        resolvedName = isEn ? "30-Day Full Wash Pass ($4.90)" : "30天全量大扫除卡 ($4.90)";
       } else {
-        resolvedName = isEn ? "Pro Lifetime Buyout ($24.90)" : "Pro 终身买断授权 ($24.90)";
+        resolvedName = isEn ? "Pro Lifetime Buyout ($14.90)" : "Pro 终身买断授权 ($14.90)";
       }
     }
 

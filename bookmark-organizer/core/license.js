@@ -23,7 +23,7 @@ class LicenseManager {
       validDays: Infinity
     },
     SINGLE_WASH: {
-      price: 9.90,
+      price: 4.90,
       currency: "USD",
       name: "30天全量大扫除卡 (Single Wash Pass)",
       enName: "30-Day Single Wash Pass",
@@ -31,7 +31,7 @@ class LicenseManager {
       validDays: 30
     },
     LTD: {
-      price: 24.90,
+      price: 14.90,
       currency: "USD",
       name: "Pro 终身买断授权 (Lifetime Buyout)",
       enName: "Pro Lifetime Buyout",
@@ -39,7 +39,7 @@ class LicenseManager {
       validDays: Infinity
     },
     PRO: {
-      price: 24.90,
+      price: 14.90,
       currency: "USD",
       name: "Pro 终身买断授权 (Lifetime Buyout)",
       enName: "Pro Lifetime Buyout",

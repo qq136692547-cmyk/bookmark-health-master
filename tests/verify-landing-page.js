@@ -129,11 +129,11 @@ if (!jsonLdMatch) {
 
     const offers = schema.offers || [];
     const prices = offers.map(o => o.price);
-    if (!prices.includes('0') || !prices.includes('9.90') || !prices.includes('24.90')) {
-      console.error(`  ❌ [FAIL] JSON-LD missing expected price offers [0, 9.90, 24.90]. Found: ${JSON.stringify(prices)}`);
+    if (!prices.includes('0') || !prices.includes('4.90') || !prices.includes('14.90')) {
+      console.error(`  ❌ [FAIL] JSON-LD missing expected price offers [0, 4.90, 14.90]. Found: ${JSON.stringify(prices)}`);
       totalErrors++;
     } else {
-      console.log(`  ✓ [PASS] JSON-LD offers include Free ($0), Single Wash ($9.90), and Lifetime Buyout ($24.90)`);
+      console.log(`  ✓ [PASS] JSON-LD offers include Free ($0), Single Wash ($4.90), and Lifetime Buyout ($14.90)`);
     }
   } catch (err) {
     console.error(`  ❌ [FAIL] JSON-LD failed to parse: ${err.message}`);

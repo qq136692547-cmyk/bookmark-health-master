@@ -68,8 +68,8 @@ async function runLicenseTests() {
     console.log("  ▶ Group 1: Pricing Ladder and Action Gating Verification");
     const washPrice = LicenseManager.PRICING?.SINGLE_WASH?.price;
     const ltdPrice = LicenseManager.PRICING?.LTD?.price;
-    assert.strictEqual(washPrice, 9.90, "Single Wash Card must be $9.90");
-    assert.strictEqual(ltdPrice, 24.90, "Lifetime Deal must be $24.90");
+    assert.strictEqual(washPrice, 4.90, "Single Wash Card must be $4.90");
+    assert.strictEqual(ltdPrice, 14.90, "Lifetime Deal must be $14.90");
     console.log(`    ✓ Pricing ladder confirmed: Single Wash = $${washPrice}, Lifetime LTD = $${ltdPrice}`);
 
     assert.strictEqual(LicenseManager.canExecuteAction("SCAN", "FREE"), true, "Scan must be free for all");
