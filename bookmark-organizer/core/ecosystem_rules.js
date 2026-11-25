@@ -370,7 +370,7 @@ const ECOSYSTEM_RULES = [
         id: "ai_bedrock",
         name: "AWS Bedrock 与 AI 平台",
         enName: "AWS Bedrock & AI Platform",
-        domainWhitelist: ["aws.amazon.com", "sagemaker.aws", "alexa.amazon.com"],
+        domainWhitelist: ["bedrock.amazonaws.com", "sagemaker.aws", "alexa.amazon.com"],
         titleRegex: /(bedrock|sagemaker|q developer|amazon q|titan|alexa)/i
       },
       {

@@ -7,11 +7,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   const bookmarkCurrentBtn = document.getElementById("bookmarkCurrentBtn");
   const refreshSideBtn = document.getElementById("refreshSideBtn");
   const langToggleBtn = document.getElementById("langToggleBtn");
+  const sideUpgradeBtn = document.getElementById("sideUpgradeBtn");
+  const sideProBadge = document.getElementById("sideProBadge");
+  const sideFooterUpgrade = document.getElementById("sideFooterUpgrade");
+  const sideNativeReady = document.getElementById("sideNativeReady");
 
   // 初始化双语引擎
   if (typeof BHM_I18N !== "undefined") {
     await BHM_I18N.init();
   }
+
+  // 刷新授权展示状态
+  async function updateSidepanelProUI() {
+    let proStatus = { isPro: false, tier: "FREE" };
+    if (typeof LicenseManager !== "undefined" && LicenseManager.checkProStatus) {
+      proStatus = await LicenseManager.checkProStatus();
+    }
+    const isPaid = Boolean(proStatus.isPro && (proStatus.tier === "LTD" || proStatus.tier === "PRO" || proStatus.tier === "SINGLE_WASH"));
+    if (sideUpgradeBtn) sideUpgradeBtn.style.display = isPaid ? "none" : "inline-flex";
+    if (sideProBadge) sideProBadge.style.display = isPaid ? "inline-flex" : "none";
+    if (sideFooterUpgrade) sideFooterUpgrade.style.display = isPaid ? "none" : "inline-flex";
+    if (sideNativeReady) sideNativeReady.style.display = isPaid ? "inline-flex" : "none";
+  }
+
+  await updateSidepanelProUI();
 
   const rules = (window.ECOSYSTEM_RULES || (typeof ECOSYSTEM_RULES !== "undefined" ? ECOSYSTEM_RULES : []));
   let classifier = new (window.EcosystemClassifier || (typeof EcosystemClassifier !== "undefined" ? EcosystemClassifier : null))(
@@ -100,10 +119,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                   scheduleReload();
                 }
               });
-            } else if (chrome.permissions && chrome.permissions.request) {
-              chrome.permissions.request({ origins: ["*://*/*"] }, (granted) => {
-                if (granted) doBookmarkTab();
-              });
+            } else {
+              // P0-6: 仅依赖 activeTab 安全提示，严禁越界申请全网主机权限或触发系统页递归
+              const msg = typeof BHM_I18N !== "undefined"
+                ? BHM_I18N.t("sidepanel.cantReadTab")
+                : "Cannot read this page URL (internal browser page or click extension icon first to grant activeTab access).";
+              alert(msg);
             }
           });
         };
@@ -185,7 +206,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     renderEcoTabs();
     renderList();
+    updateSidepanelProUI();
   });
+
+  if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.bhm_license_key || changes.bhm_pro_activated || changes.bhm_license_tier) {
+        updateSidepanelProUI();
+      }
+    });
+  }
 
   // 初始加载
   allBookmarks = await loadBookmarks();
@@ -380,9 +410,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         if (remaining <= 0) {
+          const isWash = proStatus.tier === "SINGLE_WASH";
           const quotaExceededMsg = typeof BHM_I18N !== "undefined"
-            ? BHM_I18N.t("sidepanel.quotaExceeded")
-            : "Quota limit reached. Please upgrade to Pro in Dashboard to continue.";
+            ? BHM_I18N.t(isWash ? "sidepanel.washQuotaExceeded" : "sidepanel.quotaExceeded")
+            : (isWash
+              ? "30-Day Wash Pass quota limit reached. Upgrade to Lifetime Pro in Dashboard for unlimited actions."
+              : "Quota limit reached. Please upgrade to Pro in Dashboard to continue.");
           alert(quotaExceededMsg);
           return;
         }

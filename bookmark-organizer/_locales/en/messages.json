@@ -1,10 +1,10 @@
 {
   "extName": {
-    "message": "Bookmark Health Master - Dead Link Cleaner & Organizer",
+    "message": "Bookmark Health Master: Dead Link Cleaner & Organizer",
     "description": "Extension name in Chrome Web Store (<= 75 chars)"
   },
   "extDescription": {
-    "message": "Local-first Chrome bookmark dead link checker, 16 tech ecosystem organizer, Side Panel search & Netscape HTML backup.",
+    "message": "100% local-first Chrome bookmark cleaner, 404 dead link checker & duplicate remover. Group 16 tech ecosystems with 1-click undo.",
     "description": "Extension description in Chrome Web Store (<= 132 chars)"
   },
   "actionTitle": {

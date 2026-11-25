@@ -56,6 +56,181 @@ async function updateSystemFolders(patch) {
   return updated;
 }
 
+// v2.2.0: 持久化读写受保护文件夹、重组范围策略、用户自定义规则
+async function getReorgPreferences() {
+  const defaults = {
+    protectedFolderIds: [],
+    reorgConfig: { scope: "loose_only", includeUncategorized: false },
+    customRules: []
+  };
+  if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(["bhm_protected_folders", "bhm_reorg_config", "bhm_custom_rules"], (res) => {
+        const protectedFolderIds = Array.isArray(res?.bhm_protected_folders) ? res.bhm_protected_folders.map(String) : [];
+        const rawCfg = res?.bhm_reorg_config;
+        const validScopes = new Set(["loose_only", "titans_only", "full_library"]);
+        const scope = (rawCfg && validScopes.has(rawCfg.scope)) ? rawCfg.scope : defaults.reorgConfig.scope;
+        const includeUncategorized = (rawCfg && typeof rawCfg.includeUncategorized === "boolean")
+          ? rawCfg.includeUncategorized
+          : defaults.reorgConfig.includeUncategorized;
+        const customRules = Array.isArray(res?.bhm_custom_rules) ? res.bhm_custom_rules : [];
+        resolve({ protectedFolderIds, reorgConfig: { scope, includeUncategorized }, customRules });
+      });
+    });
+  }
+  try {
+    const protectedFolderIds = JSON.parse(localStorage.getItem("bhm_protected_folders") || "[]");
+    const rawCfg = JSON.parse(localStorage.getItem("bhm_reorg_config") || "null");
+    const customRules = JSON.parse(localStorage.getItem("bhm_custom_rules") || "[]");
+    const validScopes = new Set(["loose_only", "titans_only", "full_library"]);
+    return {
+      protectedFolderIds: Array.isArray(protectedFolderIds) ? protectedFolderIds.map(String) : [],
+      reorgConfig: {
+        scope: (rawCfg && validScopes.has(rawCfg.scope)) ? rawCfg.scope : "loose_only",
+        includeUncategorized: (rawCfg && typeof rawCfg.includeUncategorized === "boolean") ? rawCfg.includeUncategorized : false
+      },
+      customRules: Array.isArray(customRules) ? customRules : []
+    };
+  } catch (e) {
+    return defaults;
+  }
+}
+
+async function saveReorgPreferences({ protectedFolderIds, reorgConfig, customRules }) {
+  const payload = {};
+  if (Array.isArray(protectedFolderIds)) payload.bhm_protected_folders = protectedFolderIds;
+  if (reorgConfig && typeof reorgConfig === "object") payload.bhm_reorg_config = reorgConfig;
+  if (Array.isArray(customRules)) payload.bhm_custom_rules = customRules;
+
+  if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+    await new Promise((resolve) => chrome.storage.local.set(payload, resolve));
+  } else {
+    try {
+      if (payload.bhm_protected_folders) localStorage.setItem("bhm_protected_folders", JSON.stringify(payload.bhm_protected_folders));
+      if (payload.bhm_reorg_config) localStorage.setItem("bhm_reorg_config", JSON.stringify(payload.bhm_reorg_config));
+      if (payload.bhm_custom_rules) localStorage.setItem("bhm_custom_rules", JSON.stringify(payload.bhm_custom_rules));
+    } catch (e) {}
+  }
+}
+
+// v2.2.0: 动态提取 Chrome 顶层根容器 ID（书签栏/其他书签/移动设备书签，兼容多账号双根架构）
+function getTopLevelRootIds(tree) {
+  const ids = new Set(["1", "2", "3"]);
+  if (Array.isArray(tree) && tree[0] && Array.isArray(tree[0].children)) {
+    for (const rootChild of tree[0].children) {
+      if (rootChild && !rootChild.url && rootChild.id) {
+        ids.add(String(rootChild.id));
+      }
+    }
+  }
+  return ids;
+}
+
+// v2.2.0: 提取用户所有可保护的自定义书签文件夹（自动排除系统根容器与 BHM 内置目录）
+function extractUserFoldersFromTree(tree, sysFolders = {}) {
+  const rootIds = getTopLevelRootIds(tree);
+  rootIds.add("0");
+  const result = [];
+
+  function countBookmarks(node) {
+    let total = 0;
+    for (const c of (node.children || [])) {
+      if (c.url) total++;
+      else if (c.children) total += countBookmarks(c);
+    }
+    return total;
+  }
+
+  function walk(nodes, pathParts = []) {
+    for (const n of (nodes || [])) {
+      if (n.url) continue;
+      const idStr = String(n.id || "");
+      const title = String(n.title || "");
+
+      const isBhmSystem =
+        (sysFolders.trashId && idStr === String(sysFolders.trashId)) ||
+        (sysFolders.mainEcoId && idStr === String(sysFolders.mainEcoId)) ||
+        (sysFolders.uncatId && idStr === String(sysFolders.uncatId)) ||
+        (sysFolders.ugcId && idStr === String(sysFolders.ugcId)) ||
+        BHM_TRASH_TITLES.has(title) ||
+        BHM_MAIN_ECO_TITLES.has(title) ||
+        BHM_UNCAT_TITLES.has(title) ||
+        BHM_UGC_TITLES.has(title) ||
+        BHM_SNAPSHOT_PREFIXES.some((p) => title.startsWith(p));
+
+      if (isBhmSystem) continue;
+
+      const isChromeRoot = rootIds.has(idStr);
+      if (!isChromeRoot && idStr) {
+        const nextPath = pathParts.concat(title || idStr);
+        result.push({
+          id: idStr,
+          title: title || idStr,
+          pathLabel: nextPath.join(" / "),
+          count: countBookmarks(n),
+          depth: pathParts.length
+        });
+        if (n.children) walk(n.children, nextPath);
+      } else if (n.children) {
+        walk(n.children, pathParts);
+      }
+    }
+  }
+
+  walk(tree, []);
+  return result;
+}
+
+// v2.2.0: 递归展开已锁定文件夹及其全部嵌套子目录 ID
+function collectProtectedSubtreeIds(tree, protectedIds = []) {
+  const seedSet = new Set((protectedIds || []).map(String));
+  const expanded = new Set();
+  if (seedSet.size === 0) return expanded;
+
+  function walk(nodes, insideProtected) {
+    for (const n of (nodes || [])) {
+      if (n.url) continue;
+      const idStr = String(n.id || "");
+      const nowProtected = insideProtected || seedSet.has(idStr);
+      if (nowProtected && idStr) expanded.add(idStr);
+      if (n.children) walk(n.children, nowProtected);
+    }
+  }
+  walk(tree, false);
+  for (const id of seedSet) expanded.add(id);
+  return expanded;
+}
+
+// v2.2.0: 根据整理范围策略 + 受保护文件夹白名单，精确过滤待重组书签集合
+function filterBookmarksForReorganize(bookmarks, tree, options = {}) {
+  const scope = options.scope || "loose_only";
+  const protectedFolderIds = Array.isArray(options.protectedFolderIds) ? options.protectedFolderIds : [];
+  const rootIds = getTopLevelRootIds(tree);
+  const protectedSet = collectProtectedSubtreeIds(tree, protectedFolderIds);
+
+  const eligibleBookmarks = [];
+  let protectedCount = 0;
+
+  for (const bm of (bookmarks || [])) {
+    const parentId = String(bm.parentId || "1");
+    if (scope === "loose_only") {
+      if (!rootIds.has(parentId)) {
+        protectedCount++;
+        continue;
+      }
+      eligibleBookmarks.push(bm);
+    } else {
+      if (protectedSet.has(parentId)) {
+        protectedCount++;
+        continue;
+      }
+      eligibleBookmarks.push(bm);
+    }
+  }
+
+  return { eligibleBookmarks, protectedCount };
+}
+
 /**
  * 从 Chrome 书签树读取所有有效活跃书签（P0-A: 排除死链回收站与快照恢复子树，杜绝复吸回流）
  * @returns {Promise<{ tree: any[], bookmarks: any[] }>}
@@ -103,31 +278,34 @@ async function reorganizeBookmarksInChrome(data, options = {}) {
     SafetyManagerClass = (typeof SafetyManager !== "undefined" ? SafetyManager : null),
     EcosystemClassifierClass = (typeof EcosystemClassifier !== "undefined" ? EcosystemClassifier : null),
     i18n = (typeof BHM_I18N !== "undefined" ? BHM_I18N : null),
-    throttleMs = 50
+    throttleMs = 50,
+    includeUncategorized = true
   } = options;
 
   const groups = data.ecosystemGroups || {};
   const domainMap = {};
 
-  if (data.uncategorizedGroup && data.uncategorizedGroup.subcategories) {
-    for (const domain of Object.keys(data.uncategorizedGroup.subcategories)) {
-      const sub = data.uncategorizedGroup.subcategories[domain];
-      if (sub && sub.items && sub.items.length > 0) {
-        domainMap[domain] = sub.items.slice();
+  if (includeUncategorized) {
+    if (data.uncategorizedGroup && data.uncategorizedGroup.subcategories) {
+      for (const domain of Object.keys(data.uncategorizedGroup.subcategories)) {
+        const sub = data.uncategorizedGroup.subcategories[domain];
+        if (sub && sub.items && sub.items.length > 0) {
+          domainMap[domain] = sub.items.slice();
+        }
       }
     }
-  }
 
-  if (Array.isArray(data.nonEcosystemItems)) {
-    for (const item of data.nonEcosystemItems) {
-      const domain = (EcosystemClassifierClass && EcosystemClassifierClass.extractMainDomain)
-        ? EcosystemClassifierClass.extractMainDomain(item.url)
-        : (item.classification?.mainDomain || "unknown");
-      if (!domainMap[domain]) {
-        domainMap[domain] = [];
-      }
-      if (!domainMap[domain].some((existing) => existing.id === item.id)) {
-        domainMap[domain].push(item);
+    if (Array.isArray(data.nonEcosystemItems)) {
+      for (const item of data.nonEcosystemItems) {
+        const domain = (EcosystemClassifierClass && EcosystemClassifierClass.extractMainDomain)
+          ? EcosystemClassifierClass.extractMainDomain(item.url)
+          : (item.classification?.mainDomain || "unknown");
+        if (!domainMap[domain]) {
+          domainMap[domain] = [];
+        }
+        if (!domainMap[domain].some((existing) => existing.id === item.id)) {
+          domainMap[domain].push(item);
+        }
       }
     }
   }
@@ -191,15 +369,26 @@ async function reorganizeBookmarksInChrome(data, options = {}) {
   const sysFolders = await getSystemFolders();
   const createdFolderIds = [];
 
-  const rootTitle = i18n ? i18n.t("folder.mainEco") : "【Official Tech Titans Ecosystems】";
-  const { folder: mainEcoFolder, created: rootCreated } = await getOrCreateFolder("1", rootTitle, 0, BHM_MAIN_ECO_TITLES, sysFolders.mainEcoId);
-  if (rootCreated && mainEcoFolder?.id) {
-    createdFolderIds.push(mainEcoFolder.id);
-    sysFolders.mainEcoId = mainEcoFolder.id;
-    await updateSystemFolders({ mainEcoId: mainEcoFolder.id });
-  } else if (mainEcoFolder?.id && mainEcoFolder.id !== sysFolders.mainEcoId) {
-    sysFolders.mainEcoId = mainEcoFolder.id;
-    await updateSystemFolders({ mainEcoId: mainEcoFolder.id });
+  // 仅当存在至少 1 条需要归入 16 巨头生态的书签时才创建【官方全生态总书签】目录，避免生成空目录
+  const hasStandardTitanItems = Object.keys(groups).some((ecoId) => {
+    if (ecoId === "uncategorized" || ecoId === "ugc_docs") return false;
+    const g = groups[ecoId];
+    return g && g.totalCount > 0 && !g.meta?.isUgcContainer && !g.meta?.isCustomRule;
+  });
+
+  let mainEcoFolder = null;
+  if (hasStandardTitanItems) {
+    const rootTitle = i18n ? i18n.t("folder.mainEco") : "【Official Tech Titans Ecosystems】";
+    const { folder: f, created: rootCreated } = await getOrCreateFolder("1", rootTitle, 0, BHM_MAIN_ECO_TITLES, sysFolders.mainEcoId);
+    mainEcoFolder = f;
+    if (rootCreated && mainEcoFolder?.id) {
+      createdFolderIds.push(mainEcoFolder.id);
+      sysFolders.mainEcoId = mainEcoFolder.id;
+      await updateSystemFolders({ mainEcoId: mainEcoFolder.id });
+    } else if (mainEcoFolder?.id && mainEcoFolder.id !== sysFolders.mainEcoId) {
+      sysFolders.mainEcoId = mainEcoFolder.id;
+      await updateSystemFolders({ mainEcoId: mainEcoFolder.id });
+    }
   }
 
   const moveOperations = [];
@@ -209,7 +398,23 @@ async function reorganizeBookmarksInChrome(data, options = {}) {
     const group = groups[ecoId];
     if (!group || group.totalCount === 0) continue;
 
-    let parentFolderId = mainEcoFolder.id;
+    // v2.2.0: 用户自定义专属规则直接复用或创建在书签栏 ("1") 下的同名目录（例如「自建网站」），不建多余嵌套子夹
+    if (group.meta?.isCustomRule) {
+      const customFolderTitle = group.meta.folderName || group.meta.name;
+      const { folder: customFolder, created: customCreated } = await getOrCreateFolder("1", customFolderTitle);
+      if (customCreated && customFolder?.id) createdFolderIds.push(customFolder.id);
+      for (const subId of Object.keys(group.subcategories || {})) {
+        const sub = group.subcategories[subId];
+        if (!sub || !sub.items) continue;
+        for (const item of sub.items) {
+          if (item.parentId === customFolder.id) continue;
+          moveOperations.push({ item, targetParentId: customFolder.id });
+        }
+      }
+      continue;
+    }
+
+    let parentFolderId = mainEcoFolder ? mainEcoFolder.id : "1";
     if (ecoId === "ugc_docs" || group.meta.isUgcContainer) {
       const ugcTitle = group.meta.folderName || (i18n ? i18n.t("folder.ugcDocs") : "📄 Docs & Knowledge Base");
       const { folder: ugcFolder, created: ugcCreated } = await getOrCreateFolder("1", ugcTitle, undefined, BHM_UGC_TITLES, sysFolders.ugcId);
@@ -249,7 +454,7 @@ async function reorganizeBookmarksInChrome(data, options = {}) {
   }
 
   const domainKeys = Object.keys(domainMap);
-  if (domainKeys.length > 0) {
+  if (includeUncategorized && domainKeys.length > 0) {
     const uncatCategoryTitle = i18n ? i18n.t("folder.uncat") : "📁 Uncategorized (By Domain)";
     const { folder: uncatFolder, created: uncatCreated } = await getOrCreateFolder("1", uncatCategoryTitle, undefined, BHM_UNCAT_TITLES, sysFolders.uncatId);
     if (uncatCreated && uncatFolder?.id) {
@@ -345,8 +550,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const ecosystemsGrid = document.getElementById("ecosystemsGrid");
   const reorganizeEcoBtn = document.getElementById("reorganizeEcoBtn");
+  const reorgScopeSelect = document.getElementById("reorgScopeSelect");
+  const includeUncatCheckbox = document.getElementById("includeUncatCheckbox");
+  const reorgPreviewStats = document.getElementById("reorgPreviewStats");
+  const protectedFoldersHint = document.getElementById("protectedFoldersHint");
+  const protectedFoldersList = document.getElementById("protectedFoldersList");
+  const customRuleFolderInput = document.getElementById("customRuleFolderInput");
+  const customRuleDomainsInput = document.getElementById("customRuleDomainsInput");
+  const addCustomRuleBtn = document.getElementById("addCustomRuleBtn");
+  const customRulesList = document.getElementById("customRulesList");
 
   const snapshotList = document.getElementById("snapshotList");
+  const journalList = document.getElementById("journalList");
   const manualSnapshotBtn = document.getElementById("manualSnapshotBtn");
 
   const licenseKeyInput = document.getElementById("licenseKeyInput");
@@ -354,6 +569,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   const licenseStatusText = document.getElementById("licenseStatusText");
   const toastContainer = document.getElementById("toastContainer");
   const langToggleBtn = document.getElementById("langToggleBtn");
+
+  const headerUpgradeBtn = document.getElementById("headerUpgradeBtn");
+  const headerProStatus = document.getElementById("headerProStatus");
+  const headerProTierText = document.getElementById("headerProTierText");
+  const proHealthBanner = document.getElementById("proHealthBanner");
+  const healthBannerRedeemBtn = document.getElementById("healthBannerRedeemBtn");
+
+  // P0-1: 将 Paywall 与健康战报 DOM 引用全部提升至 DOMContentLoaded 顶部，彻底消除 TDZ 风险
+  const paywallModal = document.getElementById("paywallModal");
+  const closePaywallBtn = document.getElementById("closePaywallBtn");
+  const paywallHeadline = document.getElementById("paywallHeadline");
+  const paywallSubheadline = document.getElementById("paywallSubheadline");
+  const pwDeadCount = document.getElementById("pwDeadCount");
+  const pwDupCount = document.getElementById("pwDupCount");
+  const pwSavedMinutes = document.getElementById("pwSavedMinutes");
+  const paywallViralUnlockBtn = document.getElementById("paywallViralUnlockBtn");
+  const paywallLicenseInput = document.getElementById("paywallLicenseInput");
+  const paywallActivateBtn = document.getElementById("paywallActivateBtn");
+  const generateHealthCardBtn = document.getElementById("generateHealthCardBtn");
+
+  if (healthBannerRedeemBtn) {
+    healthBannerRedeemBtn.addEventListener("click", () => {
+      const proTab = document.querySelector('.nav-tab[data-target="tab-pro"]');
+      if (proTab) proTab.click();
+      if (licenseKeyInput) {
+        setTimeout(() => licenseKeyInput.focus(), 100);
+      }
+    });
+  }
 
   // 绑定官方商业化结算 URL
   if (typeof LicenseManager !== "undefined" && LicenseManager.CHECKOUT_URLS) {
@@ -375,17 +619,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     { lang: typeof BHM_I18N !== "undefined" ? BHM_I18N.getLang() : "en" }
   );
 
+  const dupTabBadge = document.getElementById("dupTabBadge");
+  const cleanDupsBtn = document.getElementById("cleanDupsBtn");
+  const dupSummaryText = document.getElementById("dupSummaryText");
+  const duplicatesListContainer = document.getElementById("duplicatesListContainer");
+
   // 内部状态
   let fullTree = [];
   let allBookmarks = [];
+  let allDuplicates = [];
+  let duplicateGroups = [];
   let probeResults = [];
   let classifiedData = null;
+  let reorgClassifiedData = null;
+  let protectedFolderIds = [];
+  let reorgConfig = { scope: "loose_only", includeUncategorized: false };
+  let userCustomRules = [];
+  let cachedSysFolders = {};
+  let lastProtectedCount = 0;
   let currentFilter = "all";
   let isPro = false;
   let activeProber = null;
   let isBusyTask = false;
   let proTier = "FREE";
   let lastScore = 100;
+  let currentLicenseKey = null;
 
   // 语言切换按钮绑定
   if (langToggleBtn && typeof BHM_I18N !== "undefined") {
@@ -442,12 +700,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         storedKey = localStorage.getItem("bhm_license_key");
       }
 
-      updateProUI(isPro, storedKey, proTier, status.tierName);
+      currentLicenseKey = storedKey || currentLicenseKey;
+      const isEn = typeof BHM_I18N !== "undefined" ? BHM_I18N.getLang() === "en" : true;
+      const localizedTierName = isEn ? (status.tierEnName || null) : (status.tierName || null);
+      updateProUI(isPro, currentLicenseKey, proTier, localizedTierName);
       return isPro;
     }
 
     isPro = false;
     proTier = "FREE";
+    currentLicenseKey = null;
     updateProUI(false, null, "FREE");
     return false;
   }
@@ -464,6 +726,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (active) {
+      if (headerUpgradeBtn) headerUpgradeBtn.classList.add("hidden");
+      if (headerProStatus) {
+        headerProStatus.classList.remove("hidden");
+        headerProStatus.classList.add("inline-flex");
+      }
+      if (headerProTierText) {
+        headerProTierText.textContent = resolvedName || "Pro Active";
+      }
+      if (proHealthBanner) proHealthBanner.classList.add("hidden");
+
       if (licenseStatusText) {
         const activeBadgeText = typeof BHM_I18N !== "undefined"
           ? BHM_I18N.t("dashboard.licenseActiveBadge", { tier: resolvedName })
@@ -490,6 +762,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         activateLicenseBtn.className = "px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-lg transition border border-slate-700";
       }
     } else {
+      if (headerUpgradeBtn) headerUpgradeBtn.classList.remove("hidden");
+      if (headerProStatus) {
+        headerProStatus.classList.add("hidden");
+        headerProStatus.classList.remove("inline-flex");
+      }
+      if (proHealthBanner) proHealthBanner.classList.remove("hidden");
+
       if (licenseStatusText) {
         licenseStatusText.textContent = typeof BHM_I18N !== "undefined"
           ? BHM_I18N.t("dashboard.licenseHelpText")
@@ -526,7 +805,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-xl backdrop-blur-md text-xs font-medium transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-auto ${colors[type] || colors.info}`;
-    toast.innerHTML = `<span>${icons[type] || "ℹ️"}</span><span>${message}</span>`;
+    const iconSpan = document.createElement("span");
+    iconSpan.textContent = icons[type] || "ℹ️";
+    const msgSpan = document.createElement("span");
+    msgSpan.textContent = String(message ?? "");
+    toast.appendChild(iconSpan);
+    toast.appendChild(msgSpan);
     toastContainer.appendChild(toast);
 
     requestAnimationFrame(() => {
@@ -539,14 +823,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 3500);
   }
 
-  // 导航 Tab 切换
+  // 导航 Tab 切换（保留 tab-duplicates 与 tab-pro 的 flex/徽章样式）
   navTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const targetId = tab.getAttribute("data-target");
       navTabs.forEach((t) => {
-        t.className = "nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white";
+        const tid = t.getAttribute("data-target");
+        if (tid === "tab-pro") {
+          t.className = "nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5";
+        } else if (tid === "tab-duplicates") {
+          t.className = "nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white flex items-center gap-1.5";
+        } else {
+          t.className = "nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white";
+        }
       });
-      tab.className = "nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white";
+      if (targetId === "tab-pro") {
+        tab.className = "nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 border border-amber-400 transition flex items-center gap-1.5";
+      } else if (targetId === "tab-duplicates") {
+        tab.className = "nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white flex items-center gap-1.5";
+      } else {
+        tab.className = "nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white";
+      }
 
       tabContents.forEach((c) => {
         if (c.id === targetId) {
@@ -619,6 +916,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const flat = [];
       let mockIdx = 0;
+      const sysFolders = await getSystemFolders();
       function traverseMock(nodes) {
         for (const n of nodes) {
           if (!n.url) {
@@ -677,20 +975,384 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  function renderProtectedFoldersPanel(sysFolders = {}) {
+    if (!protectedFoldersList) return;
+    const folders = extractUserFoldersFromTree(fullTree, sysFolders);
+    const lockedSet = new Set(protectedFolderIds.map(String));
+
+    if (protectedFoldersHint) {
+      if (reorgConfig.scope === "loose_only") {
+        protectedFoldersHint.classList.remove("hidden");
+      } else {
+        protectedFoldersHint.classList.add("hidden");
+      }
+    }
+
+    if (folders.length === 0) {
+      const emptyTxt = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("dashboard.protectedFoldersEmpty")
+        : "No custom user folders detected yet (all bookmarks are at root level)";
+      protectedFoldersList.innerHTML = `<span class="text-[11px] text-slate-500">${escapeHtml(emptyTxt)}</span>`;
+      return;
+    }
+
+    protectedFoldersList.innerHTML = folders.map((f) => {
+      const isLocked = lockedSet.has(f.id);
+      const cls = isLocked
+        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/40"
+        : "bg-slate-800/80 text-slate-300 border-slate-700 hover:border-slate-500";
+      return `
+        <button type="button" class="protected-folder-pill inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-medium transition ${cls}" data-folder-id="${escapeHtml(f.id)}" title="${escapeHtml(f.pathLabel)}">
+          <span>${isLocked ? "🔒" : "🔓"}</span>
+          <span class="max-w-[180px] truncate">${escapeHtml(f.pathLabel)}</span>
+          <span class="text-[10px] opacity-75 font-mono">(${f.count})</span>
+        </button>
+      `;
+    }).join("");
+
+    if (!protectedFoldersList._hasDelegated) {
+      protectedFoldersList._hasDelegated = true;
+      protectedFoldersList.addEventListener("click", async (e) => {
+        const pill = e.target.closest(".protected-folder-pill");
+        if (!pill) return;
+        const fid = pill.getAttribute("data-folder-id");
+        if (!fid) return;
+        const idx = protectedFolderIds.indexOf(fid);
+        if (idx >= 0) {
+          protectedFolderIds.splice(idx, 1);
+        } else {
+          protectedFolderIds.push(fid);
+        }
+        await saveReorgPreferences({ protectedFolderIds });
+        recomputeDuplicatesAndEcosystems();
+      });
+    }
+  }
+
+  function renderCustomRulesPanel() {
+    if (!customRulesList) return;
+    if (!userCustomRules || userCustomRules.length === 0) {
+      const emptyTxt = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("dashboard.customRulesEmpty")
+        : "No custom rules yet. Add your own domains so scattered self-hosted/project links route straight into your chosen folder.";
+      customRulesList.innerHTML = `<div class="text-[11px] text-slate-500">${escapeHtml(emptyTxt)}</div>`;
+      return;
+    }
+
+    const delLabel = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.deleteRuleBtn") : "Remove";
+    customRulesList.innerHTML = userCustomRules.map((r) => {
+      const ecoKey = `custom_${r.id}`;
+      const matchCount = reorgClassifiedData?.ecosystemGroups?.[ecoKey]?.totalCount || 0;
+      return `
+        <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-lg bg-slate-950/70 border border-emerald-500/25">
+          <div class="min-w-0 flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-semibold text-emerald-300">📁 ${escapeHtml(r.folderName)}</span>
+            <span class="text-[10px] text-slate-400 font-mono truncate max-w-[360px]">${escapeHtml((r.domains || []).join(", "))}</span>
+            <span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-300 font-mono">${matchCount}</span>
+          </div>
+          <button type="button" class="delete-custom-rule-btn px-2 py-0.5 rounded text-[10px] bg-red-950/60 hover:bg-red-900/70 text-red-300 border border-red-500/30 transition" data-rule-id="${escapeHtml(r.id)}">${escapeHtml(delLabel)}</button>
+        </div>
+      `;
+    }).join("");
+
+    if (!customRulesList._hasDelegated) {
+      customRulesList._hasDelegated = true;
+      customRulesList.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".delete-custom-rule-btn");
+        if (!btn) return;
+        const rid = btn.getAttribute("data-rule-id");
+        userCustomRules = userCustomRules.filter((r) => r.id !== rid);
+        await saveReorgPreferences({ customRules: userCustomRules });
+        recomputeDuplicatesAndEcosystems();
+        const delMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.customRuleDeleted") : "Custom rule removed";
+        showToast(delMsg, "info");
+      });
+    }
+  }
+
+  function updateReorgPreviewStats() {
+    if (!reorgPreviewStats || !reorgClassifiedData) return;
+    const customCount = reorgClassifiedData.totalCustomCount || 0;
+    const ecoCount = Math.max(0, (reorgClassifiedData.totalEcosystemCount || 0) - customCount);
+    const uncatCount = reorgConfig.includeUncategorized ? (reorgClassifiedData.totalUncategorizedCount || 0) : 0;
+    const eligible = customCount + ecoCount + uncatCount;
+    const uncatKept = reorgConfig.includeUncategorized ? 0 : (reorgClassifiedData.totalUncategorizedCount || 0);
+    const protectedTotal = lastProtectedCount + uncatKept;
+
+    reorgPreviewStats.textContent = typeof BHM_I18N !== "undefined"
+      ? BHM_I18N.t("dashboard.reorgPreviewStats", {
+        eligible,
+        custom: customCount,
+        eco: ecoCount,
+        uncat: uncatCount,
+        protected: protectedTotal
+      })
+      : `Will organize ${eligible} items (Custom ${customCount} · Ecosystems/Docs ${ecoCount} · Uncategorized ${uncatCount}) · Protected & untouched: ${protectedTotal}`;
+  }
+
+  function recomputeDuplicatesAndEcosystems() {
+    if (classifier && classifier.setCustomRules) {
+      classifier.setCustomRules(userCustomRules);
+    }
+    classifiedData = classifier.classifyAll(allBookmarks);
+    const dupRes = (window.EcosystemClassifier || EcosystemClassifier).findDuplicates(allBookmarks);
+    allDuplicates = dupRes.duplicates || [];
+    duplicateGroups = dupRes.duplicateGroups || [];
+    statEcoCount.textContent = classifiedData.totalEcosystemCount.toLocaleString();
+
+    const filtered = filterBookmarksForReorganize(allBookmarks, fullTree, {
+      scope: reorgConfig.scope,
+      protectedFolderIds
+    });
+    lastProtectedCount = filtered.protectedCount;
+    reorgClassifiedData = classifier.classifyAll(filtered.eligibleBookmarks);
+
+    renderProtectedFoldersPanel(cachedSysFolders);
+    renderCustomRulesPanel();
+    updateReorgPreviewStats();
+    renderEcosystemsGrid(reorgClassifiedData);
+    renderDuplicatesPanel();
+  }
+
+  // v2.2.0: 绑定整理范围策略、未分类开关与自定义规则添加事件
+  if (reorgScopeSelect) {
+    reorgScopeSelect.addEventListener("change", async () => {
+      const nextScope = reorgScopeSelect.value;
+      reorgConfig.scope = nextScope;
+      if (nextScope === "full_library") {
+        reorgConfig.includeUncategorized = true;
+      } else if (nextScope === "titans_only" || nextScope === "loose_only") {
+        reorgConfig.includeUncategorized = false;
+      }
+      if (includeUncatCheckbox) {
+        includeUncatCheckbox.checked = reorgConfig.includeUncategorized;
+      }
+      await saveReorgPreferences({ reorgConfig });
+      recomputeDuplicatesAndEcosystems();
+    });
+  }
+
+  if (includeUncatCheckbox) {
+    includeUncatCheckbox.addEventListener("change", async () => {
+      reorgConfig.includeUncategorized = !!includeUncatCheckbox.checked;
+      // 非 loose_only 模式下自动联动下拉框文案与实际策略一致
+      if (reorgConfig.scope !== "loose_only") {
+        reorgConfig.scope = reorgConfig.includeUncategorized ? "full_library" : "titans_only";
+        if (reorgScopeSelect) reorgScopeSelect.value = reorgConfig.scope;
+      }
+      await saveReorgPreferences({ reorgConfig });
+      recomputeDuplicatesAndEcosystems();
+    });
+  }
+
+  if (addCustomRuleBtn) {
+    addCustomRuleBtn.addEventListener("click", async () => {
+      const folderName = (customRuleFolderInput?.value || "").trim();
+      const rawDomains = (customRuleDomainsInput?.value || "").trim();
+      const sanitized = (window.EcosystemClassifier || EcosystemClassifier).sanitizeCustomRules([
+        { id: `u_${Date.now()}`, folderName, icon: "📁", domains: rawDomains }
+      ]);
+      if (sanitized.length === 0) {
+        const errTxt = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("toast.customRuleInvalid")
+          : "Please enter a target folder name and at least one valid domain (e.g. geoscore.help)";
+        showToast(errTxt, "warning");
+        return;
+      }
+      const newRule = sanitized[0];
+      // 若已存在同名文件夹规则则合并域名，避免重复规则
+      const existing = userCustomRules.find((r) => r.folderName === newRule.folderName);
+      if (existing) {
+        existing.domains = Array.from(new Set([...(existing.domains || []), ...newRule.domains]));
+      } else {
+        userCustomRules.push(newRule);
+      }
+      if (customRuleFolderInput) customRuleFolderInput.value = "";
+      if (customRuleDomainsInput) customRuleDomainsInput.value = "";
+      await saveReorgPreferences({ customRules: userCustomRules });
+      recomputeDuplicatesAndEcosystems();
+      const okTxt = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("toast.customRuleAdded", { folder: newRule.folderName })
+        : `Added custom rule "${newRule.folderName}" (active immediately)`;
+      showToast(okTxt, "success");
+    });
+  }
+
+  function renderDuplicatesPanel() {
+    if (dupTabBadge) {
+      if (allDuplicates.length > 0) {
+        dupTabBadge.textContent = allDuplicates.length.toString();
+        dupTabBadge.classList.remove("hidden");
+      } else {
+        dupTabBadge.classList.add("hidden");
+      }
+    }
+    if (cleanDupsBtn) {
+      if (allDuplicates.length > 0) {
+        cleanDupsBtn.disabled = false;
+        cleanDupsBtn.textContent = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.cleanDupsBtn", { count: allDuplicates.length })
+          : `🗑️ Quarantine All Duplicates (${allDuplicates.length})`;
+      } else {
+        cleanDupsBtn.disabled = true;
+        cleanDupsBtn.textContent = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.cleanDupsBtnZero")
+          : "✅ No Duplicates Found";
+      }
+    }
+    if (dupSummaryText) {
+      dupSummaryText.textContent = allDuplicates.length > 0
+        ? (typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.dupGroupCount", { groups: duplicateGroups.length, count: allDuplicates.length })
+          : `${duplicateGroups.length} duplicate groups · ${allDuplicates.length} redundant copies ready to quarantine`)
+        : (typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.noDuplicates")
+          : "🎉 Clean library! Zero duplicate bookmark URLs detected.");
+    }
+    if (!duplicatesListContainer) return;
+    if (duplicateGroups.length === 0) {
+      const emptyMsg = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("dashboard.noDuplicates")
+        : "🎉 Clean library! Zero duplicate bookmark URLs detected.";
+      duplicatesListContainer.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs">${escapeHtml(emptyMsg)}</div>`;
+      return;
+    }
+
+    const keepLabel = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.dupKeepBadge") : "✓ Keep (Earliest)";
+    const copyLabel = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.dupCopyBadge") : "Duplicate";
+    const quarantineLabel = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.quarantineBtn") : "Quarantine";
+    const untitled = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.untitledBookmark") : "Untitled Bookmark";
+
+    duplicatesListContainer.innerHTML = duplicateGroups.map((group) => `
+      <div class="p-4 space-y-2">
+        <div class="text-[11px] font-mono text-blue-300 truncate">${escapeHtml(group.normalizedUrl)}</div>
+        <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+          <div class="min-w-0 flex items-center gap-2">
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 shrink-0">${escapeHtml(keepLabel)}</span>
+            <span class="text-xs text-slate-200 truncate">${escapeHtml(group.keep.title || untitled)}</span>
+          </div>
+        </div>
+        ${group.duplicates.map((dup) => `
+          <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-amber-500/5 border border-amber-500/20">
+            <div class="min-w-0 flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/15 text-amber-300 shrink-0">${escapeHtml(copyLabel)}</span>
+              <span class="text-xs text-slate-300 truncate">${escapeHtml(dup.title || untitled)}</span>
+            </div>
+            <button class="single-dup-quarantine-btn px-2.5 py-1 rounded text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 transition shrink-0" data-id="${escapeHtml(dup.id)}">${escapeHtml(quarantineLabel)}</button>
+          </div>
+        `).join("")}
+      </div>
+    `).join("");
+
+    if (!duplicatesListContainer._hasDelegated) {
+      duplicatesListContainer._hasDelegated = true;
+      duplicatesListContainer.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".single-dup-quarantine-btn");
+        if (!btn) return;
+        const id = btn.getAttribute("data-id");
+        const target = allDuplicates.find((d) => d.id === id);
+        if (!target) return;
+        const moveRes = await moveToTrashFolder([target], { actionType: "QUARANTINE_DUPLICATES" });
+        if (moveRes && moveRes.movedCount > 0) {
+          allBookmarks = allBookmarks.filter((b) => b.id !== id);
+          probeResults = probeResults.filter((r) => r.id !== id);
+          statTotalBm.textContent = allBookmarks.length.toLocaleString();
+          recomputeDuplicatesAndEcosystems();
+          refreshScanCountersAndList();
+          await renderSnapshots();
+          const okMsg = typeof BHM_I18N !== "undefined"
+            ? BHM_I18N.t("toast.singleQuarantineSuccess", { title: target.title || target.url })
+            : `Moved "${target.title || target.url}" to quarantine.`;
+          showToast(okMsg, "success");
+        } else {
+          const failMsg = typeof BHM_I18N !== "undefined"
+            ? BHM_I18N.t("toast.singleQuarantineFailed", { title: target.title || target.url })
+            : `Failed to move "${target.title || target.url}" (quota reached or move error).`;
+          showToast(failMsg, "error");
+        }
+      });
+    }
+  }
+
+  if (cleanDupsBtn) {
+    cleanDupsBtn.addEventListener("click", async () => {
+      if (!allDuplicates || allDuplicates.length === 0) return;
+
+      const trashFolderName = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("folder.trash")
+        : "🗑️ Dead Links Quarantine (BHM)";
+      const confirmMsg = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("dialog.confirmCleanDups", { count: allDuplicates.length, folder: trashFolderName })
+        : `Move ${allDuplicates.length} duplicate bookmark copies to "${trashFolderName}"?`;
+      if (!confirm(confirmMsg)) return;
+
+      // 配额前置校验，避免 0 配额时白建快照
+      const livePro = (typeof LicenseManager !== "undefined" && LicenseManager.checkProStatus)
+        ? await LicenseManager.checkProStatus()
+        : { isPro, tier: proTier };
+      const activeTier = livePro.tier || (livePro.isPro ? "LTD" : "FREE");
+      const rem = (typeof LicenseManager !== "undefined" && LicenseManager.getRemainingQuota)
+        ? await LicenseManager.getRemainingQuota(activeTier)
+        : Infinity;
+
+      if (rem > 0) {
+        await refreshFullTree();
+        const snapLabel = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("snapshot.batchDuplicates", { count: allDuplicates.length })
+          : `Pre-deduplication full snapshot (${allDuplicates.length} duplicates)`;
+        await safetyManager.createSnapshot(fullTree, snapLabel);
+      }
+
+      const moveRes = await moveToTrashFolder(allDuplicates, { actionType: "QUARANTINE_DUPLICATES" });
+      const { movedCount = 0, movedIds = [], skippedCount = 0 } = moveRes || {};
+
+      if (movedIds.length > 0) {
+        const movedSet = new Set(movedIds);
+        allBookmarks = allBookmarks.filter((b) => !movedSet.has(b.id));
+        probeResults = probeResults.filter((r) => !movedSet.has(r.id));
+        statTotalBm.textContent = allBookmarks.length.toLocaleString();
+        recomputeDuplicatesAndEcosystems();
+        refreshScanCountersAndList();
+        await renderSnapshots();
+      }
+
+      if (skippedCount > 0) {
+        showToast(
+          typeof BHM_I18N !== "undefined"
+            ? BHM_I18N.t("toast.dupQuarantinePartial", { moved: movedCount, skipped: skippedCount })
+            : `Quarantined ${movedCount} duplicates; ${skippedCount} remaining due to tier quota limits.`,
+          "warning"
+        );
+      } else if (movedCount > 0) {
+        showToast(
+          typeof BHM_I18N !== "undefined"
+            ? BHM_I18N.t("toast.dupQuarantineSuccess", { count: movedCount })
+            : `🎉 Quarantined ${movedCount} duplicate bookmarks! Undo anytime in Time Machine.`,
+          "success"
+        );
+      }
+    });
+  }
+
   // 初始化大盘指标
   async function initDashboard() {
     await checkProStatus();
+    cachedSysFolders = await getSystemFolders();
+    const prefs = await getReorgPreferences();
+    protectedFolderIds = prefs.protectedFolderIds || [];
+    reorgConfig = prefs.reorgConfig || { scope: "loose_only", includeUncategorized: false };
+    userCustomRules = (window.EcosystemClassifier || EcosystemClassifier).sanitizeCustomRules(prefs.customRules || []);
+
+    if (reorgScopeSelect) reorgScopeSelect.value = reorgConfig.scope;
+    if (includeUncatCheckbox) includeUncatCheckbox.checked = !!reorgConfig.includeUncategorized;
+
     allBookmarks = await loadBookmarks();
 
     // 更新总书签数
     statTotalBm.textContent = allBookmarks.length.toLocaleString();
 
-    // 运行 16 大官方生态分析
-    classifiedData = classifier.classifyAll(allBookmarks);
-    statEcoCount.textContent = classifiedData.totalEcosystemCount.toLocaleString();
-
-    // 渲染 16 大生态矩阵网格
-    renderEcosystemsGrid(classifiedData);
+    // 运行自定义规则 + 16 大官方生态分析 + 精准去重检测
+    recomputeDuplicatesAndEcosystems();
 
     // 渲染快照历史与事务日志
     await renderSnapshots();
@@ -699,18 +1361,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 监听多语言切换事件
   window.addEventListener("bhm:langchange", async (e) => {
     const lang = (e && e.detail && e.detail.lang) || (typeof BHM_I18N !== "undefined" ? BHM_I18N.getLang() : "en");
-    classifier = new (window.EcosystemClassifier || (typeof EcosystemClassifier !== "undefined" ? EcosystemClassifier : null))(rules, { lang });
-    if (allBookmarks.length > 0) {
-      classifiedData = classifier.classifyAll(allBookmarks);
-    }
-    renderEcosystemsGrid(classifiedData);
+    classifier = new (window.EcosystemClassifier || (typeof EcosystemClassifier !== "undefined" ? EcosystemClassifier : null))(rules, { lang, userCustomRules });
+    recomputeDuplicatesAndEcosystems();
     updateHealthScoreDesc(lastScore);
-    renderDeadList();
+    refreshScanCountersAndList();
+    if (startScanBtn && !isBusyTask) {
+      startScanBtn.textContent = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t(probeResults.length > 0 ? "dashboard.rescan" : "dashboard.startScan")
+        : (probeResults.length > 0 ? "🔄 Re-scan Library" : "🚀 Start Full Scan");
+    }
     await renderSnapshots();
     await checkProStatus();
   });
-
-  await initDashboard();
 
   // ==========================================================================
   // TAB 1: 书签健康体检与死链探测
@@ -760,13 +1422,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       stopScanBtn.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.stopScan") : "⏹️ Stop Scan";
     }
 
-    // 1. 提取所有合法公网 HTTP/HTTPS 主机名去重数组，联动 DNR 规则放行 HEAD/GET
+    // 1. 提取所有合法公网 HTTP/HTTPS 主机名去重数组，联动 DNR 规则放行 HEAD/GET（过滤内网 IP 与 IPv6 字面量防 DNR 报错）
+    const ProberCls = window.BookmarkProber || (typeof BookmarkProber !== "undefined" ? BookmarkProber : null);
     const domainSet = new Set();
     for (const bm of allBookmarks) {
       if (bm.url && /^https?:\/\//i.test(bm.url)) {
+        if (ProberCls && ProberCls.isIntranetUrl && ProberCls.isIntranetUrl(bm.url)) {
+          continue;
+        }
         try {
           const u = new URL(bm.url);
-          if (u.hostname && !u.hostname.includes("localhost") && !u.hostname.endsWith(".local") && !u.hostname.endsWith(".internal")) {
+          if (
+            u.hostname &&
+            !u.hostname.includes(":") &&
+            !u.hostname.startsWith("[") &&
+            !u.hostname.includes("localhost") &&
+            !u.hostname.endsWith(".local") &&
+            !u.hostname.endsWith(".internal")
+          ) {
             domainSet.add(u.hostname);
           }
         } catch (e) {}
@@ -805,7 +1478,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               try {
                 chrome.runtime.sendMessage({
                   type: "BHM_SAVE_SCAN_CHECKPOINT",
-                  payload: { completed, total, timestamp: Date.now() }
+                  payload: { completed, total, timestamp: Date.now(), updatedAt: Date.now() }
                 }, () => {
                   if (chrome.runtime && chrome.runtime.lastError) {}
                 });
@@ -824,21 +1497,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       statHealthScore.textContent = `${score} / 100`;
       updateHealthScoreDesc(score);
 
-      const deadItems = probeResults.filter((r) => r.status === "DEAD");
-      const reviewItems = probeResults.filter((r) => r.status === "UNREACHABLE_OR_PROTECTED" || r.status === "SKIPPED_INTERNAL");
-      const redirectItems = probeResults.filter((r) => r.status === "HEALTHY" && r.redirectedUrl);
-      const healthyItems = probeResults.filter((r) => r.status === "HEALTHY" && !r.redirectedUrl);
+      const { deadItems, reviewItems } = refreshScanCountersAndList();
 
-      statDeadCount.textContent = deadItems.length.toLocaleString();
+      if (generateHealthCardBtn) {
+        generateHealthCardBtn.classList.remove("hidden");
+        generateHealthCardBtn.classList.add("flex");
+      }
 
-      updateFilterCounts(probeResults.length, deadItems.length, reviewItems.length, redirectItems.length, healthyItems.length);
-      renderDeadList();
-
-      if (deadItems.length > 0) {
-        cleanDeadBtn.classList.remove("hidden");
-        cleanDeadBtn.textContent = typeof BHM_I18N !== "undefined"
-          ? BHM_I18N.t("dashboard.cleanDeadBtn", { count: deadItems.length })
-          : `🗑️ Quarantine ${deadItems.length} Dead Links`;
+      // P0-1: 扫描完成后若发现严重死链或堆积，触发痛点诊断
+      if (!isPro && (deadItems.length >= 10 || allDuplicates.length >= 10)) {
+        setTimeout(() => {
+          openPaywallModal({
+            deadCount: deadItems.length,
+            dupCount: allDuplicates.length,
+            clusterCount: classifiedData ? (classifiedData.totalEcosystemCount || 0) : 0
+          });
+        }, 1200);
       }
 
       scanProgressText.textContent = typeof BHM_I18N !== "undefined"
@@ -878,13 +1552,72 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  function isReviewStatus(status) {
+    return (
+      status === "UNREACHABLE_OR_PROTECTED" ||
+      status === "SKIPPED_INTERNAL" ||
+      status === "SKIPPED_DANGEROUS" ||
+      status === "SERVER_ERROR" ||
+      status === "SKIPPED"
+    );
+  }
+
+  function resolveProbeReason(item) {
+    if (!item) return "";
+    if (item.reasonCode && typeof BHM_I18N !== "undefined") {
+      const key = `probe.reason.${item.reasonCode}`;
+      const translated = BHM_I18N.t(key, item.reasonParams || {});
+      if (translated && translated !== key) return translated;
+    }
+    return item.reason || "";
+  }
+
+  function refreshScanCountersAndList() {
+    const deadItems = probeResults.filter((r) => r.status === "DEAD");
+    const reviewItems = probeResults.filter((r) => isReviewStatus(r.status));
+    const redirectItems = probeResults.filter((r) => r.status === "HEALTHY" && r.redirectedUrl);
+    const healthyItems = probeResults.filter((r) => r.status === "HEALTHY" && !r.redirectedUrl);
+
+    statDeadCount.textContent = deadItems.length.toLocaleString();
+    updateFilterCounts(probeResults.length, deadItems.length, reviewItems.length, redirectItems.length, healthyItems.length);
+
+    if (scanResultSummary) {
+      if (probeResults.length === 0) {
+        scanResultSummary.textContent = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.noScanRecord")
+          : "No inspection records yet";
+      } else {
+        scanResultSummary.textContent = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.scanSummaryStats", {
+            total: probeResults.length,
+            dead: deadItems.length,
+            review: reviewItems.length,
+            redirect: redirectItems.length
+          })
+          : `Probed ${probeResults.length} · ${deadItems.length} dead · ${reviewItems.length} review · ${redirectItems.length} redirected`;
+      }
+    }
+
+    if (deadItems.length > 0) {
+      cleanDeadBtn.classList.remove("hidden");
+      cleanDeadBtn.textContent = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("dashboard.cleanDeadBtn", { count: deadItems.length })
+        : `🗑️ Quarantine ${deadItems.length} Dead Links`;
+    } else {
+      cleanDeadBtn.classList.add("hidden");
+    }
+
+    renderDeadList();
+    return { deadItems, reviewItems, redirectItems, healthyItems };
+  }
+
   function updateFilterCounts(all, dead, review, redirect, healthy) {
     filterChips.forEach((chip) => {
       const filter = chip.getAttribute("data-filter");
       if (filter === "all") chip.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.filterAll", { count: all }) : `All (${all})`;
       if (filter === "dead") chip.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.filterDead", { count: dead }) : `Dead Links (${dead})`;
       if (filter === "review") chip.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.filterReview", { count: review }) : `🛡️ Safety Review (${review})`;
-      if (filter === "redirect") chip.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.filterRedirect", { count: redirect }) : `301 Redirect (${redirect})`;
+      if (filter === "redirect") chip.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.filterRedirect", { count: redirect }) : `Redirected (${redirect})`;
       if (filter === "healthy") chip.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.filterHealthy", { count: healthy }) : `Healthy (${healthy})`;
     });
   }
@@ -917,7 +1650,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (currentFilter === "dead") {
       filtered = probeResults.filter((r) => r.status === "DEAD");
     } else if (currentFilter === "review") {
-      filtered = probeResults.filter((r) => r.status === "UNREACHABLE_OR_PROTECTED" || r.status === "SKIPPED_INTERNAL");
+      filtered = probeResults.filter((r) => isReviewStatus(r.status));
     } else if (currentFilter === "redirect") {
       filtered = probeResults.filter((r) => r.status === "HEALTHY" && r.redirectedUrl);
     } else if (currentFilter === "healthy") {
@@ -946,19 +1679,35 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else if (item.status === "UNREACHABLE_OR_PROTECTED") {
         const revTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.reviewBadge") : "🛡️ Safety Review";
         badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">${revTxt}</span>`;
+      } else if (item.status === "SERVER_ERROR") {
+        const srvTxt = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("dashboard.serverErrorBadge", { code: item.httpCode || "5xx" })
+          : `⚠️ Server Error (${item.httpCode || "5xx"})`;
+        badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">${escapeHtml(srvTxt)}</span>`;
       } else if (item.status === "SKIPPED_INTERNAL") {
         const intTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.internalBadge") : "🛡️ Intranet Protected";
         badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${intTxt}</span>`;
+      } else if (item.status === "SKIPPED_DANGEROUS") {
+        const dngTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.dangerousBadge") : "🛡️ Action URL Shielded";
+        badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/25">${dngTxt}</span>`;
+      } else if (item.status === "SKIPPED") {
+        const skipTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.skippedBadge") : "Skipped";
+        badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">${skipTxt}</span>`;
       } else if (item.redirectedUrl) {
-        const redirTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.redirectBadge") : "301 Redirect";
-        badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">${redirTxt}</span>`;
-      } else if (item.status === "CHALLENGE") {
-        const cfTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.cfBadge") : "CF Anti-Bot Challenge";
-        badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">${cfTxt}</span>`;
+        const isAuth = !!item.authOrWafProtected;
+        const redirTxt = typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t(isAuth ? "dashboard.authRedirectBadge" : "dashboard.redirectBadge")
+          : (isAuth ? "🛡️ Auth / Login Redirect" : "Redirected");
+        const colorCls = isAuth
+          ? "bg-amber-500/10 text-amber-300 border border-amber-500/25"
+          : "bg-blue-500/10 text-blue-400 border border-blue-500/20";
+        badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold ${colorCls}">${redirTxt}</span>`;
       } else {
         const healthyTxt = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.healthyBadge") : "Healthy 200 OK";
         badge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${healthyTxt}</span>`;
       }
+
+      const displayReason = resolveProbeReason(item);
 
       const isHttpUrl = /^https?:\/\//i.test(item.url || "");
       const safeHref = isHttpUrl ? escapeHtml(item.url) : "#";
@@ -978,11 +1727,11 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${escapeHtml(item.url)}
             </div>
             ${item.redirectedUrl ? `<div class="text-[10px] text-blue-400/80 truncate mt-0.5">${escapeHtml(targetHint)}</div>` : ""}
-            ${item.reason ? `<div class="text-[10px] text-red-400/80 truncate mt-0.5">${escapeHtml(item.reason)}</div>` : ""}
+            ${displayReason ? `<div class="text-[10px] ${item.status === "DEAD" ? "text-red-400/80" : "text-amber-300/80"} truncate mt-0.5">${escapeHtml(displayReason)}</div>` : ""}
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <a href="${safeHref}" ${linkTarget} title="${escapeHtml(item.url || "")}" class="px-2.5 py-1 rounded text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 transition">${visitLabel}</a>
-            ${item.status === "DEAD" ? `<button class="single-quarantine-btn px-2.5 py-1 rounded text-[11px] bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/30 transition" data-id="${item.id}">${quarantineLabel}</button>` : ""}
+            ${item.status === "DEAD" ? `<button class="single-quarantine-btn px-2.5 py-1 rounded text-[11px] bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/30 transition" data-id="${escapeHtml(item.id)}">${quarantineLabel}</button>` : ""}
           </div>
         </div>
       `;
@@ -1001,17 +1750,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // 单条隔离 (P1-7: 快照标题使用 i18n)
+  // 单条隔离 (P1-12: 仅记原子 Move Journal，避免连点冲毁 10 槽全量历史快照)
   async function quarantineSingleBookmark(bmId) {
     const item = allBookmarks.find((b) => b.id === bmId);
     if (!item) return;
 
-    await refreshFullTree();
-    const snapLabel = typeof BHM_I18N !== "undefined"
-      ? BHM_I18N.t("snapshot.singleQuarantine", { title: item.title })
-      : `Single dead link quarantine: ${item.title}`;
-    await safetyManager.createSnapshot(fullTree, snapLabel);
-    const res = await moveToTrashFolder([item]);
+    const res = await moveToTrashFolder([item], { actionType: "QUARANTINE_DEAD" });
     if (res && res.movedCount > 0) {
       const okMsg = typeof BHM_I18N !== "undefined"
         ? BHM_I18N.t("toast.singleQuarantineSuccess", { title: item.title })
@@ -1019,8 +1763,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       showToast(okMsg, "success");
       probeResults = probeResults.filter((r) => r.id !== bmId);
       allBookmarks = allBookmarks.filter((b) => b.id !== bmId);
-      statDeadCount.textContent = probeResults.filter((r) => r.status === "DEAD").length.toString();
-      renderDeadList();
+      statTotalBm.textContent = allBookmarks.length.toLocaleString();
+      recomputeDuplicatesAndEcosystems();
+      refreshScanCountersAndList();
       await renderSnapshots();
     } else {
       const failMsg = typeof BHM_I18N !== "undefined"
@@ -1050,16 +1795,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     const confirmed = confirm(confirmTpl);
     if (!confirmed) return;
 
-    // 1. 自动全量快照备份 (P1-7: 快照标题使用 i18n)
-    await refreshFullTree();
-    const batchSnapLabel = typeof BHM_I18N !== "undefined"
-      ? BHM_I18N.t("snapshot.batchQuarantine", { count: deadItems.length })
-      : `Dead links batch quarantine snapshot (${deadItems.length} items)`;
-    const snapshot = await safetyManager.createSnapshot(fullTree, batchSnapLabel);
+    // P1-12: 先校验可用配额，再决定是否建全量快照（避免 0 配额时白建垃圾快照）
+    const liveStatus = (typeof LicenseManager !== "undefined" && LicenseManager.checkProStatus)
+      ? await LicenseManager.checkProStatus()
+      : { isPro, tier: proTier };
+    const effectiveTier = liveStatus.tier || (liveStatus.isPro ? "LTD" : "FREE");
+    const preQuota = (typeof LicenseManager !== "undefined" && LicenseManager.getRemainingQuota)
+      ? await LicenseManager.getRemainingQuota(effectiveTier)
+      : Infinity;
+
+    if (preQuota > 0) {
+      await refreshFullTree();
+      const batchSnapLabel = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("snapshot.batchQuarantine", { count: deadItems.length })
+        : `Dead links batch quarantine snapshot (${deadItems.length} items)`;
+      await safetyManager.createSnapshot(fullTree, batchSnapLabel);
+    }
 
     // 2. 移入回收站并获得真实处理统计
-    const moveRes = await moveToTrashFolder(deadItems);
-    const { movedCount = 0, movedIds = [], skippedCount = 0, skippedItems = [] } = moveRes || {};
+    const moveRes = await moveToTrashFolder(deadItems, { actionType: "QUARANTINE_DEAD" });
+    const { movedCount = 0, movedIds = [], skippedCount = 0 } = moveRes || {};
 
     // 3. 仅从 probeResults 和 allBookmarks 中剔除真实成功移动的 movedIds
     const movedIdSet = new Set(movedIds);
@@ -1067,17 +1822,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     allBookmarks = allBookmarks.filter((b) => !movedIdSet.has(b.id));
 
     statTotalBm.textContent = allBookmarks.length.toLocaleString();
-
-    const remainingDead = probeResults.filter((r) => r.status === "DEAD").length;
-    statDeadCount.textContent = remainingDead.toString();
-
-    if (remainingDead === 0) {
-      cleanDeadBtn.classList.add("hidden");
-    } else {
-      cleanDeadBtn.classList.remove("hidden");
-    }
-
-    renderDeadList();
+    recomputeDuplicatesAndEcosystems();
+    refreshScanCountersAndList();
     await renderSnapshots();
 
     if (skippedCount > 0) {
@@ -1094,17 +1840,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // 移至回收站核心方法 (P1-9 授权重验 + P1-7 双语配额 + P1-2 文件夹跨语言复用)
-  async function moveToTrashFolder(items) {
+  async function moveToTrashFolder(items, options = {}) {
+    const actionType = options.actionType || "QUARANTINE_DEAD";
     if (!Array.isArray(items) || items.length === 0) {
       return { movedCount: 0, movedIds: [], movedItems: [], skippedCount: 0, skippedItems: [] };
     }
 
-    // 1. 动态复核授权阶梯与过期状态 (P1-9)
+    // 1. 动态复核授权阶梯与过期状态 (P1-9，保留当前已展示密钥不被 null 覆盖)
     if (typeof LicenseManager !== "undefined" && LicenseManager.checkProStatus) {
       const live = await LicenseManager.checkProStatus();
       isPro = !!live.isPro;
       proTier = live.tier || (isPro ? "LTD" : "FREE");
-      updateProUI(isPro, null, proTier, live.tierName);
+      const isEn = typeof BHM_I18N !== "undefined" ? BHM_I18N.getLang() === "en" : true;
+      updateProUI(isPro, currentLicenseKey, proTier, isEn ? (live.tierEnName || null) : (live.tierName || null));
     }
 
     let maxAllowed = items.length;
@@ -1134,6 +1882,12 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? BHM_I18N.t("toast.freeQuotaLimit", { quota: maxAllowed })
           : `Free edition remaining quota: ${maxAllowed} items. Excess items retained; upgrade to Pro for unlimited cleaning.`;
         showToast(freeMsg, "warning");
+        setTimeout(() => {
+          openPaywallModal({
+            deadCount: items.length,
+            dupCount: allDuplicates ? allDuplicates.length : 0
+          });
+        }, 800);
       }
     }
 
@@ -1194,7 +1948,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             const createdFolderIds = createdFolderId ? [createdFolderId] : [];
-            await safetyManager.recordJournal("QUARANTINE_DEAD", moves, createdFolderIds);
+            await safetyManager.recordJournal(actionType, moves, createdFolderIds);
 
             const actuallyMoved = [];
             const moveFailed = [];
@@ -1273,7 +2027,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const subDisplayName = isEn ? (sub.meta.enName || sub.meta.name) : sub.meta.name;
         return `
           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 border border-slate-700/60">
-            <span>${subDisplayName}</span>
+            <span>${escapeHtml(subDisplayName)}</span>
             <span class="text-blue-400 font-bold">${subCount}</span>
           </span>
         `;
@@ -1306,17 +2060,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         : "✓ Native Ready";
 
       const titleName = isEn ? (meta.enName || meta.name) : meta.name;
-      const subtitleName = isEn ? (meta.name !== meta.enName ? meta.name : "") : (meta.enName || "");
+      const isCustom = !!meta.isCustomRule;
+      if (ecoId === "uncategorized" && !reorgConfig.includeUncategorized) {
+        return "";
+      }
+
+      const subtitleName = isCustom
+        ? (typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.customRuleBadge") : "✨ Custom Rule")
+        : (isEn ? (meta.name !== meta.enName ? meta.name : "") : (meta.enName || ""));
+      const effectiveFooter = isCustom
+        ? (typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.customRuleCardFooter") : "Personal custom rule · Direct Bookmarks Bar folder")
+        : cardFooter;
 
       return `
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between hover:border-slate-700 transition">
+        <div class="bg-slate-900 border ${isCustom ? "border-emerald-500/40" : "border-slate-800"} rounded-xl p-4 flex flex-col justify-between hover:border-slate-700 transition">
           <div>
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
               <div class="flex items-center gap-2.5">
-                <span class="text-2xl">${meta.icon}</span>
+                <span class="text-2xl">${escapeHtml(meta.icon || "📁")}</span>
                 <div>
-                  <h4 class="text-xs font-bold text-white">${titleName}</h4>
-                  ${subtitleName ? `<div class="text-[10px] text-slate-400">${subtitleName}</div>` : ""}
+                  <h4 class="text-xs font-bold text-white">${escapeHtml(titleName)}</h4>
+                  ${subtitleName ? `<div class="text-[10px] ${isCustom ? "text-emerald-400" : "text-slate-400"}">${escapeHtml(subtitleName)}</div>` : ""}
                 </div>
               </div>
               <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${count > 0 ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" : "bg-slate-800 text-slate-500"}">
@@ -1333,7 +2097,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ${previewList.map((bm) => `
                   <div class="flex items-center justify-between text-[11px] truncate">
                     <span class="text-slate-300 truncate max-w-[200px]">${escapeHtml(bm.title || bm.url)}</span>
-                    <span class="text-[9px] text-slate-500 font-mono">${escapeHtml(bm.classification.matchedDomain || "")}</span>
+                    <span class="text-[9px] text-slate-500 font-mono">${escapeHtml(bm.classification.matchedDomain || bm.classification.mainDomain || "")}</span>
                   </div>
                 `).join("")}
                 ${sampleList.length > 3 ? `<div class="text-[10px] text-slate-500 text-right">${andMoreLabel}</div>` : ""}
@@ -1342,7 +2106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
 
           <div class="mt-4 pt-3 border-t border-slate-800/60 flex justify-between items-center text-[10px] text-slate-400">
-            <span>${cardFooter}</span>
+            <span>${escapeHtml(effectiveFooter)}</span>
             <span class="text-emerald-400 font-medium">${nativeTag}</span>
           </div>
         </div>
@@ -1350,7 +2114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("");
   }
 
-  // 一键在 Chrome 中重组全生态总书签 (P0-C: 前置权限核验 + 返回值真实捕获与上报 + P1-7 双语快照标题)
+  // 一键在 Chrome 中按当前范围/保护锁/自定义规则执行重组
   reorganizeEcoBtn.addEventListener("click", async () => {
     // 动态复核授权状态
     if (typeof LicenseManager !== "undefined" && LicenseManager.checkProStatus) {
@@ -1368,23 +2132,47 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? BHM_I18N.t("toast.reorganizeProRequired")
         : "Physical Titans reorganization & domain bucketing is a Pro Lifetime feature. Please unlock in Pro tab.";
       showToast(proReq, "warning");
+      openPaywallModal({
+        clusterCount: classifiedData ? (classifiedData.totalEcosystemCount || 0) : 50
+      });
       return;
     }
 
-    const ecoCount = classifiedData ? (classifiedData.totalEcosystemCount || 0) : 0;
-    const nonEcoCount = classifiedData ? (classifiedData.totalUncategorizedCount || (classifiedData.nonEcosystemItems ? classifiedData.nonEcosystemItems.length : 0)) : 0;
-    if (!classifiedData || (ecoCount === 0 && nonEcoCount === 0)) {
+    const targetData = reorgClassifiedData || classifiedData;
+    const ecoCount = targetData ? (targetData.totalEcosystemCount || 0) : 0;
+    const nonEcoCount = (reorgConfig.includeUncategorized && targetData)
+      ? (targetData.totalUncategorizedCount || (targetData.nonEcosystemItems ? targetData.nonEcosystemItems.length : 0))
+      : 0;
+    const totalEligible = ecoCount + nonEcoCount;
+
+    if (!targetData || totalEligible === 0) {
       const noReorgMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.noReorganizeItems") : "No bookmarks detected for reorganization.";
       showToast(noReorgMsg, "info");
       return;
     }
 
-    const mainFolder = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("folder.mainEco") : "【Official Tech Titans Ecosystems】";
     const uncatFolder = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("folder.uncat") : "📁 Uncategorized (By Domain)";
+    const scopeKeyMap = {
+      loose_only: "dashboard.scopeLooseOnly",
+      titans_only: "dashboard.scopeTitansOnly",
+      full_library: "dashboard.scopeFullLibrary"
+    };
+    const scopeLabel = typeof BHM_I18N !== "undefined"
+      ? BHM_I18N.t(scopeKeyMap[reorgConfig.scope] || "dashboard.scopeLooseOnly")
+      : reorgConfig.scope;
+    const uncatAction = reorgConfig.includeUncategorized
+      ? (typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.uncatActionMove", { uncatFolder }) : `Bucket into "${uncatFolder}"`)
+      : (typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.uncatActionKeep") : "Keep in original folders");
+    const uncatKept = reorgConfig.includeUncategorized ? 0 : (targetData.totalUncategorizedCount || 0);
 
     const confirmMsg = typeof BHM_I18N !== "undefined"
-      ? BHM_I18N.t("dialog.confirmReorganize", { mainFolder, uncatFolder })
-      : `Will create "${mainFolder}" for the 16 Tech Titans, and "${uncatFolder}" for other bookmarks by domain. Proceed?`;
+      ? BHM_I18N.t("dialog.confirmReorganizeScoped", {
+        scopeLabel,
+        eligible: totalEligible,
+        protected: lastProtectedCount + uncatKept,
+        uncatAction
+      })
+      : `Reorganize ${totalEligible} bookmarks under "${scopeLabel}" (${lastProtectedCount + uncatKept} protected)?`;
 
     const confirmed = confirm(confirmMsg);
     if (!confirmed) return;
@@ -1396,16 +2184,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       : "Full bookmark ecosystem and domain reorganization snapshot";
     await safetyManager.createSnapshot(fullTree, reorgSnapLabel);
 
-    // 2. 执行 Chrome 原生书签重组并接住真实统计 (P0-C)
-    const reorgRes = await reorganizeInChrome(classifiedData);
+    // 2. 执行 Chrome 原生书签重组并接住真实统计 (P0-C + v2.2.0 includeUncategorized)
+    const reorgRes = await reorganizeInChrome(targetData, {
+      includeUncategorized: !!reorgConfig.includeUncategorized
+    });
     if (!reorgRes || reorgRes.aborted) return;
 
     // 3. 刷新书签并重绘
+    cachedSysFolders = await getSystemFolders();
     allBookmarks = await loadBookmarks();
     statTotalBm.textContent = allBookmarks.length.toLocaleString();
-    classifiedData = classifier.classifyAll(allBookmarks);
-    statEcoCount.textContent = classifiedData.totalEcosystemCount.toLocaleString();
-    renderEcosystemsGrid(classifiedData);
+    recomputeDuplicatesAndEcosystems();
     await renderSnapshots();
 
     if (reorgRes.failedCount > 0) {
@@ -1415,17 +2204,24 @@ document.addEventListener("DOMContentLoaded", async () => {
           : `Ecosystem reorganization moved ${reorgRes.movedCount} bookmarks, ${reorgRes.failedCount} failed.`,
         "warning"
       );
+    } else if (reorgRes.movedCount === 0) {
+      showToast(
+        typeof BHM_I18N !== "undefined"
+          ? BHM_I18N.t("toast.reorganizeAlreadySorted")
+          : "All matching bookmarks are already in their target folders.",
+        "info"
+      );
     } else {
       showToast(
         typeof BHM_I18N !== "undefined"
           ? BHM_I18N.t("toast.reorganizeSuccess", { count: reorgRes.movedCount })
-          : `🎉 Successfully reorganized ${reorgRes.movedCount} bookmarks! 0 orphan bookmarks.`,
+          : `🎉 Successfully reorganized ${reorgRes.movedCount} bookmarks!`,
         "success"
       );
     }
   });
 
-  async function reorganizeInChrome(data) {
+  async function reorganizeInChrome(data, extraOptions = {}) {
     const canReorganize = (typeof LicenseManager !== "undefined" && LicenseManager.canExecuteAction)
       ? LicenseManager.canExecuteAction("ECOSYSTEM_REORGANIZE", proTier)
       : isPro;
@@ -1448,15 +2244,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       SafetyManagerClass: SafetyManager,
       EcosystemClassifierClass: typeof EcosystemClassifier !== "undefined" ? EcosystemClassifier : null,
       i18n: typeof BHM_I18N !== "undefined" ? BHM_I18N : null,
-      throttleMs: 50
+      throttleMs: 50,
+      includeUncategorized: extraOptions.includeUncategorized !== undefined ? extraOptions.includeUncategorized : true
     });
   }
 
   // ==========================================================================
   // TAB 3: 时光机快照与增量位移事务原位回滚
   // ==========================================================================
-
-  const journalList = document.getElementById("journalList");
 
   async function renderSnapshots() {
     // 1. 渲染增量位移事务日志 (Move Journals)
@@ -1477,6 +2272,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         const typeLabels = {
           QUARANTINE_DEAD: typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.journalQuarantine") : "Dead Links Quarantine Transaction",
+          QUARANTINE_DUPLICATES: typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.journalDuplicates") : "Duplicate Bookmarks Cleanup Transaction",
           ECOSYSTEM_REORGANIZE: typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.journalReorganize") : "16 Titans Reorganization Transaction"
         };
         const genericLabel = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("dashboard.journalGeneric") : "Bookmark Move Transaction";
@@ -1533,9 +2329,10 @@ document.addEventListener("DOMContentLoaded", async () => {
               // EXT-03: 显式传入 delayMs = 30 毫秒串行微批节流，杜绝冲击 Chromium Sync 管道
               const res = await safetyManager.rollbackJournal(jid, null, 30);
               if (res && res.success) {
-                // EXT-08: 若回滚的操作为隔离死链，自动返还已扣减的配额
-                if (targetJ && targetJ.action === "QUARANTINE_DEAD" && typeof LicenseManager !== "undefined" && LicenseManager.refundQuota) {
-                  await LicenseManager.refundQuota(res.count || targetJ.count || 1);
+                // EXT-08 & P1-10: 若回滚的操作为死链或去重隔离且实际恢复条数 > 0，自动返还已扣减配额
+                const jType = targetJ && (targetJ.actionType || targetJ.action);
+                if ((jType === "QUARANTINE_DEAD" || jType === "QUARANTINE_DUPLICATES") && res.count > 0 && typeof LicenseManager !== "undefined" && LicenseManager.refundQuota) {
+                  await LicenseManager.refundQuota(res.count);
                 }
                 const succMsg = typeof BHM_I18N !== "undefined"
                   ? BHM_I18N.t("toast.rollbackSuccess", { count: res.count })
@@ -1549,9 +2346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               }
               allBookmarks = await loadBookmarks();
               statTotalBm.textContent = allBookmarks.length.toLocaleString();
-              classifiedData = classifier.classifyAll(allBookmarks);
-              statEcoCount.textContent = classifiedData.totalEcosystemCount.toLocaleString();
-              renderEcosystemsGrid(classifiedData);
+              recomputeDuplicatesAndEcosystems();
               await renderSnapshots();
             } catch (err) {
               const errMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.rollbackError", { msg: err.message }) : ("Rollback error: " + err.message);
@@ -1639,9 +2434,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             showToast(succMsg, "success");
             allBookmarks = await loadBookmarks();
             statTotalBm.textContent = allBookmarks.length.toLocaleString();
-            classifiedData = classifier.classifyAll(allBookmarks);
-            statEcoCount.textContent = classifiedData.totalEcosystemCount.toLocaleString();
-            renderEcosystemsGrid(classifiedData);
+            recomputeDuplicatesAndEcosystems();
             await renderSnapshots();
           } else {
             const failMsg = typeof BHM_I18N !== "undefined"
@@ -1734,40 +2527,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // TAB 4: Pro 商业化特权激活
   // ==========================================================================
 
-  activateLicenseBtn.addEventListener("click", async () => {
-    if (isPro) {
-      const confirmDeact = typeof BHM_I18N !== "undefined"
-        ? BHM_I18N.t("dialog.confirmDeactivate")
-        : "Are you sure you want to deactivate the current commercial license?";
-
-      if (confirm(confirmDeact)) {
-        const deactMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.deactivated") : "Commercial license deactivated successfully.";
-        if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
-          chrome.storage.local.remove(["bhm_pro_activated", "bhm_license_key", "bhm_license_tier", "bhm_license_tier_name"], () => {
-            isPro = false;
-            proTier = "FREE";
-            updateProUI(false, null, "FREE");
-            showToast(deactMsg, "info");
-          });
-        } else {
-          localStorage.removeItem("bhm_pro_activated");
-          localStorage.removeItem("bhm_license_key");
-          localStorage.removeItem("bhm_license_tier");
-          localStorage.removeItem("bhm_license_tier_name");
-          isPro = false;
-          proTier = "FREE";
-          updateProUI(false, null, "FREE");
-          showToast(deactMsg, "info");
-        }
-      }
-      return;
-    }
-
-    const key = licenseKeyInput.value.trim();
+  // 抽离异步许可证激活逻辑，供主 Tab 与 Paywall 弹窗共同 await (P1-13)
+  async function activateLicenseKey(rawKey) {
+    const key = String(rawKey || "").trim();
     if (!key) {
       const emptyMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.enterLicenseKey") : "Please enter your license key (e.g. BHM1...)";
       showToast(emptyMsg, "warning");
-      return;
+      return false;
     }
 
     let verification;
@@ -1777,42 +2543,187 @@ document.addEventListener("DOMContentLoaded", async () => {
       verification = { valid: false, reason: "LicenseManager module not ready" };
     }
 
-    if (!verification || !verification.valid) {
-      const reason = verification ? (verification.reason || verification.error) : "Invalid license key format or verification failed";
+    if (!verification || !verification.valid || !verification.tier || verification.tier === "FREE") {
+      const reason = verification ? (verification.reason || verification.error || "License tier is not commercial Pro") : "Invalid license key format or verification failed";
       const failMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.activateFailed", { msg: reason }) : `Activation failed: ${reason}`;
       showToast(failMsg, "error");
-      return;
+      return false;
     }
 
     const tier = verification.tier;
-    const tierName = verification.tierName;
+    const isEn = typeof BHM_I18N !== "undefined" ? BHM_I18N.getLang() === "en" : true;
+    const tierDisplay = isEn ? (verification.tierEnName || verification.tierName) : (verification.tierName || verification.tierEnName);
 
     if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.set({
-        bhm_pro_activated: true,
-        bhm_license_key: key,
-        bhm_license_tier: tier,
-        bhm_license_tier_name: tierName,
-        bhm_last_valid_time: Math.floor(Date.now() / 1000)
-      }, () => {
-        isPro = true;
-        proTier = tier;
-        updateProUI(true, key, tier, tierName);
-        const succMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.activateSuccess", { tier: tierName }) : `Congratulations! ${tierName} activated successfully!`;
-        showToast(succMsg, "success");
+      await new Promise((resolve) => {
+        chrome.storage.local.set({
+          bhm_pro_activated: true,
+          bhm_license_key: key,
+          bhm_license_tier: tier,
+          bhm_license_tier_name: verification.tierName,
+          bhm_last_valid_time: Math.floor(Date.now() / 1000)
+        }, resolve);
       });
+      if (chrome.storage.sync) {
+        try { chrome.storage.sync.set({ bhm_license_key: key }); } catch (_) {}
+      }
+      // 同步初始化单卡独立配额账本与 UI 状态
+      await checkProStatus();
     } else {
       localStorage.setItem("bhm_pro_activated", "true");
       localStorage.setItem("bhm_license_key", key);
       localStorage.setItem("bhm_license_tier", tier);
-      localStorage.setItem("bhm_license_tier_name", tierName);
+      localStorage.setItem("bhm_license_tier_name", verification.tierName);
       isPro = true;
       proTier = tier;
-      updateProUI(true, key, tier, tierName);
-      const succMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.activateSuccess", { tier: tierName }) : `Congratulations! ${tierName} activated successfully!`;
-      showToast(succMsg, "success");
+      currentLicenseKey = key;
+      updateProUI(true, key, tier, tierDisplay);
     }
+
+    const succMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.activateSuccess", { tier: tierDisplay }) : `Congratulations! ${tierDisplay} activated successfully!`;
+    showToast(succMsg, "success");
+    return true;
+  }
+
+  activateLicenseBtn.addEventListener("click", async () => {
+    if (isPro) {
+      const confirmDeact = typeof BHM_I18N !== "undefined"
+        ? BHM_I18N.t("dialog.confirmDeactivate")
+        : "Are you sure you want to deactivate the current commercial license?";
+
+      if (confirm(confirmDeact)) {
+        const deactMsg = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("toast.deactivated") : "Commercial license deactivated successfully.";
+        if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+          await new Promise((resolve) => {
+            chrome.storage.local.remove(["bhm_pro_activated", "bhm_license_key", "bhm_license_tier", "bhm_license_tier_name"], resolve);
+          });
+          if (chrome.storage.sync) {
+            try { chrome.storage.sync.remove(["bhm_license_key"]); } catch (_) {}
+          }
+        } else {
+          localStorage.removeItem("bhm_pro_activated");
+          localStorage.removeItem("bhm_license_key");
+          localStorage.removeItem("bhm_license_tier");
+          localStorage.removeItem("bhm_license_tier_name");
+        }
+        isPro = false;
+        proTier = "FREE";
+        currentLicenseKey = null;
+        updateProUI(false, null, "FREE");
+        showToast(deactMsg, "info");
+      }
+      return;
+    }
+
+    await activateLicenseKey(licenseKeyInput.value);
   });
+
+  // ==========================================================================
+  // P0-1 & P1-1: 转化漏斗 Paywall Modal 与 资产诊断战报海报逻辑
+  // ==========================================================================
+
+  function openPaywallModal(data = {}) {
+    if (isPro) return;
+    if (!paywallModal) return;
+
+    const deadCount = typeof data.deadCount === "number" ? data.deadCount : (probeResults ? probeResults.filter((r) => r.status === "DEAD").length : 0);
+    const dupCount = typeof data.dupCount === "number" ? data.dupCount : allDuplicates.length;
+    const clusterCount = typeof data.clusterCount === "number" ? data.clusterCount : (classifiedData ? (classifiedData.totalEcosystemCount || 0) : 0);
+    const totalCount = allBookmarks ? allBookmarks.length : (deadCount + dupCount + clusterCount);
+    const folderCount = Math.max(1, new Set((allBookmarks || []).map((b) => b.parentId).filter(Boolean)).size);
+
+    // 动态计算预计节省分钟数
+    const savedMins = Math.max(15, Math.ceil((deadCount * 12 + dupCount * 8 + clusterCount * 15) / 60));
+
+    if (paywallHeadline && typeof BHM_I18N !== "undefined") {
+      paywallHeadline.textContent = BHM_I18N.t("paywall.headlineDynamic", { deadCount, dupCount, folderCount });
+    } else {
+      if (pwDeadCount) pwDeadCount.textContent = deadCount.toString();
+      if (pwDupCount) pwDupCount.textContent = dupCount.toString();
+    }
+
+    if (paywallSubheadline && typeof BHM_I18N !== "undefined") {
+      paywallSubheadline.textContent = BHM_I18N.t("paywall.subheadlinePain", { totalCount, savedMinutes: savedMins });
+    } else if (pwSavedMinutes) {
+      pwSavedMinutes.textContent = savedMins.toString();
+    }
+
+    // 动态更新 CTA 按钮文案
+    const buyLtdBtn = document.getElementById("paywallBuyLtdBtn");
+    if (buyLtdBtn && typeof BHM_I18N !== "undefined") {
+      buyLtdBtn.textContent = BHM_I18N.t("paywall.ctaLifetime", { savedMinutes: savedMins });
+    }
+
+    paywallModal.classList.remove("hidden");
+  }
+
+  function closePaywallModal() {
+    if (paywallModal) paywallModal.classList.add("hidden");
+  }
+
+  if (closePaywallBtn) {
+    closePaywallBtn.addEventListener("click", closePaywallModal);
+  }
+
+  if (paywallViralUnlockBtn) {
+    paywallViralUnlockBtn.addEventListener("click", () => {
+      closePaywallModal();
+      if (generateHealthCardBtn) generateHealthCardBtn.click();
+    });
+  }
+
+  if (paywallActivateBtn && paywallLicenseInput) {
+    paywallActivateBtn.addEventListener("click", async () => {
+      const key = paywallLicenseInput.value.trim();
+      if (licenseKeyInput) licenseKeyInput.value = key;
+      const ok = await activateLicenseKey(key);
+      if (ok && isPro) {
+        closePaywallModal();
+      }
+    });
+  }
+
+  if (generateHealthCardBtn) {
+    generateHealthCardBtn.addEventListener("click", async () => {
+      try {
+        generateHealthCardBtn.disabled = true;
+        const genText = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("viral.generating") : "Rendering report...";
+        generateHealthCardBtn.textContent = `⏳ ${genText}`;
+
+        const deadCount = probeResults ? probeResults.filter((r) => r.status === "DEAD").length : 0;
+        const dupCount = allDuplicates.length;
+        const ecoCount = classifiedData ? (classifiedData.totalEcosystemCount || 0) : 0;
+        const collabDocsCount = classifiedData?.ecosystemGroups?.ugc_docs?.totalCount || 0;
+        const totalBookmarks = allBookmarks ? allBookmarks.length : 0;
+        const healthScore = parseInt(statHealthScore.textContent, 10) || 100;
+        const techRatio = totalBookmarks > 0 ? (ecoCount / totalBookmarks) : 0;
+
+        if (typeof HealthCardGenerator !== "undefined") {
+          await HealthCardGenerator.exportAndUnlockTrial({
+            totalBookmarks,
+            deadCount,
+            dupCount,
+            ecoCount,
+            collabDocsCount,
+            healthScore,
+            techRatio
+          });
+          const succMsg = typeof BHM_I18N !== "undefined"
+            ? BHM_I18N.t("viral.downloadSuccessToast")
+            : "🎉 Health Report downloaded! 50 dead-link batch cleanup quota unlocked locally!";
+          showToast(succMsg, "success");
+
+          // 刷新本地配额与状态
+          await checkProStatus();
+        }
+      } catch (err) {
+        showToast("Export error: " + err.message, "error");
+      } finally {
+        generateHealthCardBtn.disabled = false;
+        generateHealthCardBtn.textContent = typeof BHM_I18N !== "undefined" ? BHM_I18N.t("viral.btnGenerate") : "📊 导出资产诊断战报";
+      }
+    });
+  }
 
   // 工具函数：HTML 转义防注入
   function escapeHtml(str) {
@@ -1823,6 +2734,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
   }
+
+  // P0-1: 全部 DOM 引用与事件监听器就绪后再执行初始化渲染，彻底杜绝 TDZ 与未绑定竞争
+  await initDashboard();
 });
 }
 
@@ -1835,6 +2749,12 @@ if (typeof module !== "undefined" && module.exports) {
     BHM_SNAPSHOT_PREFIXES,
     getSystemFolders,
     updateSystemFolders,
+    getReorgPreferences,
+    saveReorgPreferences,
+    getTopLevelRootIds,
+    extractUserFoldersFromTree,
+    collectProtectedSubtreeIds,
+    filterBookmarksForReorganize,
     loadActiveBookmarksFromChrome,
     reorganizeBookmarksInChrome
   };

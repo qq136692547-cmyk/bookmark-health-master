@@ -255,14 +255,12 @@ async function runMv3ComplianceTests() {
   // Feature 5: Service Worker Lifecycle, Alarms & Checkpoints (Calling Real background.js APIs)
   // ==========================================================================
 
-  // Test 5.1: Real Alarm registration via ensureAlarmsRegistered()
+  // Test 5.1: Real Alarm registration via ensureAlarmsRegistered() (On-demand heartbeat, zero idle battery drain)
   ensureAlarmsRegistered();
-  const hbAlarm = await mockChrome.alarms.get(ALARM_NAME_HEARTBEAT);
+  const hbAlarmIdle = await mockChrome.alarms.get(ALARM_NAME_HEARTBEAT);
   const stAlarm = await mockChrome.alarms.get(ALARM_NAME_SENTINEL);
-  console.log(`  ✓ Real alarms created: ${hbAlarm?.name} (${hbAlarm?.periodInMinutes}m), ${stAlarm?.name} (${stAlarm?.periodInMinutes}m)`);
-  assert(hbAlarm !== null, "Heartbeat alarm must be registered");
-  assert.strictEqual(hbAlarm.name, "bhm_sw_heartbeat");
-  assert.strictEqual(hbAlarm.periodInMinutes, 1, "Heartbeat period must be 1 minute");
+  console.log(`  ✓ Idle alarms verified: heartbeat=${hbAlarmIdle?.name || "none (on-demand)"}, sentinel=${stAlarm?.name} (${stAlarm?.periodInMinutes}m)`);
+  assert.strictEqual(hbAlarmIdle, null, "Heartbeat alarm must NOT run continuously while idle");
   assert(stAlarm !== null, "Sentinel alarm must be registered");
   assert.strictEqual(stAlarm.name, "bhm_domain_sentinel");
   assert.strictEqual(stAlarm.periodInMinutes, 1440, "Sentinel period must be 1440 minutes (24 hours)");

@@ -269,6 +269,7 @@ class SafetyManager {
     const rootFolderId = rootFolder.id;
     let restoredCount = 0;
     let folderCount = 0;
+    let failedCount = 0;
 
     // 跳过根级包裹的“书签栏/Bookmarks bar”外壳直接还原其内部子项，避免多套一层无用壳；若根下还有“其他书签”则保留子文件夹
     const itemsToRestore = [];
@@ -286,30 +287,38 @@ class SafetyManager {
     const restoreNodes = async (nodes, parentId) => {
       for (const node of nodes) {
         if (node.children) {
-          const created = await new Promise((resolve, reject) => {
-            chrome.bookmarks.create({ parentId, title: node.title || "文件夹" }, (res) => {
-              if (chrome.runtime && chrome.runtime.lastError) {
-                return reject(new Error(chrome.runtime.lastError.message));
-              }
-              resolve(res);
+          try {
+            const created = await new Promise((resolve, reject) => {
+              chrome.bookmarks.create({ parentId, title: node.title || "Folder" }, (res) => {
+                if (chrome.runtime && chrome.runtime.lastError) {
+                  return reject(new Error(chrome.runtime.lastError.message));
+                }
+                resolve(res);
+              });
             });
-          });
-          folderCount++;
-          await delay(15);
-          if (node.children.length > 0) {
-            await restoreNodes(node.children, created.id);
+            folderCount++;
+            await delay(15);
+            if (node.children.length > 0) {
+              await restoreNodes(node.children, created.id);
+            }
+          } catch (e) {
+            failedCount++;
           }
         } else if (node.url) {
-          await new Promise((resolve, reject) => {
-            chrome.bookmarks.create({ parentId, title: node.title || node.url, url: node.url }, (res) => {
-              if (chrome.runtime && chrome.runtime.lastError) {
-                return reject(new Error(chrome.runtime.lastError.message));
-              }
-              resolve(res);
+          try {
+            await new Promise((resolve, reject) => {
+              chrome.bookmarks.create({ parentId, title: node.title || node.url, url: node.url }, (res) => {
+                if (chrome.runtime && chrome.runtime.lastError) {
+                  return reject(new Error(chrome.runtime.lastError.message));
+                }
+                resolve(res);
+              });
             });
-          });
-          restoredCount++;
-          await delay(15);
+            restoredCount++;
+            await delay(15);
+          } catch (e) {
+            failedCount++;
+          }
         }
       }
     };
@@ -320,6 +329,7 @@ class SafetyManager {
       success: true,
       restoredCount,
       folderCount,
+      failedCount,
       rootFolderId,
       rootTitle
     };
@@ -838,9 +848,14 @@ class SafetyManager {
             continue;
           }
 
+          // P1-11: Chrome bookmarks.move 同父目录低索引向高索引移动时需 +1 补偿（插入先于移除旧槽位）
+          const moveIndex = (currentNode.parentId === pId && curIdx !== -1 && curIdx < targetIdx)
+            ? targetIdx + 1
+            : targetIdx;
+
           const moveRes = await SafetyManager.moveBookmarkWithThrottling(
             id,
-            { parentId: pId, index: targetIdx },
+            { parentId: pId, index: moveIndex },
             delayMs
           );
 

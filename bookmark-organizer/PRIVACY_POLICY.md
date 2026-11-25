@@ -26,7 +26,8 @@ In accordance with Google Chrome Web Store's **Least Privilege Principle** and *
 | `bookmarks` | Required to read your bookmark hierarchy, organize links into categorized folders, and move broken links into a quarantined trash folder upon explicit user request. |
 | `storage` & `unlimitedStorage` | Required to save local operation journals (Move Journals) and Netscape HTML backup snapshots within Chrome's local storage (`chrome.storage.local`) for atomic undo and disaster recovery. |
 | `sidePanel` | Required to open the native Chrome Side Panel companion for fast bookmark search and access. |
-| `alarms` | Required to manage Service Worker keepalive cycles during active user-initiated scans to prevent Chromium idle timeout. |
+| `activeTab` | Used strictly when the user clicks "Bookmark Current Page" in the Side Panel to read the current active tab's title and URL without requesting background host access. |
+| `alarms` | Required to run periodic hygiene checks that clean up temporary session probe rules if a scan tab closes unexpectedly. |
 | `declarativeNetRequest` | Used strictly during active user-initiated health scans via temporary session rules (`updateSessionRules`) to remove the `Origin` request header exclusively on probe requests dispatched to bookmarked domains by the extension itself (from the dashboard page or background Service Worker) to test target domain reachability. This prevents cross-origin headers from triggering server anti-bot blocks without monitoring, collecting, or altering general web browsing traffic in normal tabs. All session rules are uninstalled immediately upon scan completion or abort. |
 | `optional_host_permissions` (`*://*/*`) | **Never requested at installation.** Dynamically and optionally requested **only** when the user explicitly clicks the "Start Health Scan" button, enabling the browser to send low-overhead `HEAD` / slice-`GET` network requests directly from the user's browser to check whether bookmarked pages return HTTP 404 or connection failures. |
 
@@ -44,13 +45,13 @@ When you initiate a Bookmark Health Scan:
 
 ## 4. Payment Processing
 
-Commercial licensing is processed securely through **Paddle (Paddle.com Market Ltd)** as the Merchant of Record (MoR). 
-* When purchasing a license, payment details (credit card, PayPal, Apple Pay) are processed directly by Paddle under PCI-DSS Level 1 compliance.
-* BHM-PRO does not store or process your financial information. The extension only stores your activation license key locally in `chrome.storage.local` to unlock premium capabilities.
+Commercial licensing is processed securely through **Gumroad (Gumroad, Inc.)** as the Merchant of Record (MoR). 
+* When purchasing a license, payment details (credit card, PayPal, Apple Pay) are processed directly by Gumroad under PCI-DSS compliance.
+* BHM-PRO does not store or process your financial information. The extension only stores your offline Ed25519 activation license key locally in `chrome.storage.local` (and optionally syncs the key via Chrome's built-in `chrome.storage.sync` across your signed-in Chrome browsers) to unlock premium capabilities.
 
 ---
 
 ## 5. Contact & Questions
 
 If you have any questions or feedback regarding this Privacy Policy, please contact our support team at:
-* **Support Email**: `support@bookmarkhealthmaster.com` (or submit an issue via our official repository)
+* **Support Email**: `bhm@geoscore.help` (or submit an issue via our official repository)

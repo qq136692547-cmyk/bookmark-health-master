@@ -81,8 +81,8 @@ class BookmarkProber {
 
       // IPv6 地址精确判定 (含冒号)
       if (rawHost.includes(":")) {
-        // IPv6 回环地址
-        if (rawHost === "::1" || /^0*(:0*)*:1$/.test(rawHost)) return true;
+        // IPv6 未指定地址 (::) 与回环地址 (::1)
+        if (rawHost === "::" || rawHost === "::1" || /^0*(:0*)*(:1)?$/.test(rawHost)) return true;
         // IPv6 唯一本地地址 ULA (fc00::/7，即 fc00::/8 与 fd00::/8)
         if (/^(fc|fd)[0-9a-f]{0,2}:/i.test(rawHost)) return true;
         // IPv6 链路本地地址 Link-Local (fe80::/10，即 fe80:: 到 febf::)
@@ -114,8 +114,11 @@ class BookmarkProber {
         return false;
       }
 
+      // 常见本地与内网开发端口判定 (如 :3000, :5173, :8080, :8443, :8000, :4200, :9000, :1313, :8888)
+      if (u.port && /^(3000|5173|8080|8443|8000|4200|9000|1313|8888)$/.test(u.port)) return true;
+
       // 常见企业内网顶级域、本地局域网域与 RFC 6761 保留域名
-      if (/\.(local|internal|corp|lan|home|intra|office|priv|test|example|invalid|localhost)$/i.test(rawHost)) return true;
+      if (/\.(local|internal|corp|lan|home|intra|office|priv|test|example|invalid|localhost|intranet|onion)$/i.test(rawHost)) return true;
 
       // 不含点号的短主机名 (如 http://gitlab/ 或 http://wiki/)
       if (!rawHost.includes(".")) return true;
@@ -139,7 +142,8 @@ class BookmarkProber {
         /(delete|destroy|remove_account)/,
         /(reset_password|reset-pwd)/,
         /(magic_link|magic-link|autologin)/,
-        /(webhook|trigger|callback)/
+        /(webhook|trigger|callback)/,
+        /([?&]token=|access_token=|auth_token=)/
       ];
       return dangerousPatterns.some(p => p.test(combined));
     } catch (e) {
@@ -203,21 +207,24 @@ class BookmarkProber {
     if (typeof item === "string") {
       item = { url: item };
     }
+    if (this.isAborted) {
+      return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+    }
     const timeoutMs = options.timeoutMs || this.timeoutMs;
     const url = item.url;
     if (!url || typeof url !== "string") {
-      return { ...item, status: "SKIPPED", httpCode: 0, reason: "无效 URL 格式" };
+      return { ...item, status: "SKIPPED", httpCode: 0, reasonCode: "INVALID_URL", reason: "无效 URL 格式" };
     }
 
     let urlObj;
     try {
       urlObj = new URL(url);
     } catch (e) {
-      return { ...item, status: "SKIPPED", httpCode: 0, reason: "无效 URL 格式" };
+      return { ...item, status: "SKIPPED", httpCode: 0, reasonCode: "INVALID_URL", reason: "无效 URL 格式" };
     }
 
     if (urlObj.protocol !== "http:" && urlObj.protocol !== "https:") {
-      return { ...item, status: "SKIPPED", httpCode: 0, reason: "非 HTTP/HTTPS 协议书签" };
+      return { ...item, status: "SKIPPED", httpCode: 0, reasonCode: "NON_HTTP", reason: "非 HTTP/HTTPS 协议书签" };
     }
 
     // 1. [安全锁] 预先拦截内网/本地书签
@@ -227,6 +234,7 @@ class BookmarkProber {
         status: "SKIPPED_INTERNAL",
         intranetProtected: true,
         httpCode: 0,
+        reasonCode: "INTRANET_PROTECTED",
         reason: "🛡️ 内网/本地环境书签（自动免测保护）"
       };
     }
@@ -237,6 +245,7 @@ class BookmarkProber {
         ...item,
         status: "SKIPPED_DANGEROUS",
         httpCode: 0,
+        reasonCode: "DANGEROUS_ACTION",
         reason: "🛡️ 检测到注销/退订等敏感动作参数（自动免测保护）"
       };
     }
@@ -244,6 +253,9 @@ class BookmarkProber {
     // 3. [防限流] Per-Host 域名原子化平滑节流调度
     const host = urlObj.hostname.toLowerCase();
     await this._acquireHostSlot(host);
+    if (this.isAborted) {
+      return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+    }
 
     const startTime = Date.now();
     let stage1Res = null;
@@ -258,14 +270,23 @@ class BookmarkProber {
         }
       }, timeoutMs);
 
+      if (this.isAborted) {
+        return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+      }
+
       // 2xx 或 3xx 直接健康通过
       if (stage1Res.status >= 200 && stage1Res.status < 400) {
+        const redir = stage1Res.redirectedUrl || null;
+        const isUpdatable301 = (stage1Res.status === 301 || stage1Res.status === 308) && !!redir && redir !== url;
+        const isAuthRedirect = redir && /(login|sso|auth|oauth|okta|signin|cas)/i.test(redir);
         return {
           ...item,
           status: "HEALTHY",
           httpCode: stage1Res.status,
           latencyMs: Date.now() - startTime,
-          redirectedUrl: stage1Res.redirectedUrl || null,
+          redirectedUrl: redir,
+          isUpdatable301,
+          authOrWafProtected: isAuthRedirect,
           streamCancelled: !!stage1Res.streamCancelled
         };
       }
@@ -275,7 +296,15 @@ class BookmarkProber {
         console.warn(`[Prober] HEAD returned ${stage1Res.status} for ${url}, falling back to Stage 2 Range GET`);
       }
     } catch (e) {
+      // P1-7: 用户主动中止时立刻退出，绝不跌入 Stage 2 GET / Stage 3 DoH 制造请求风暴
+      if (this.isAborted) {
+        return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+      }
       // HEAD 失败进入 Stage 2
+    }
+
+    if (this.isAborted) {
+      return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
     }
 
     // --- STAGE 2: Range GET 深度降级探针 (防防爬策略与防误杀) ---
@@ -289,13 +318,22 @@ class BookmarkProber {
         }
       }, timeoutMs);
 
+      if (this.isAborted) {
+        return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+      }
+
       if (stage2Res.status >= 200 && stage2Res.status < 400) {
+        const redir = stage2Res.redirectedUrl || stage1Res?.redirectedUrl || null;
+        const isUpdatable301 = (stage2Res.status === 301 || stage2Res.status === 308 || stage1Res?.status === 301) && !!redir && redir !== url;
+        const isAuthRedirect = redir && /(login|sso|auth|oauth|okta|signin|cas)/i.test(redir);
         return {
           ...item,
           status: "HEALTHY",
           httpCode: stage2Res.status,
           latencyMs: Date.now() - startTime,
-          redirectedUrl: stage2Res.redirectedUrl || null,
+          redirectedUrl: redir,
+          isUpdatable301,
+          authOrWafProtected: isAuthRedirect,
           streamCancelled: !!(stage2Res.streamCancelled || stage1Res?.streamCancelled)
         };
       }
@@ -308,8 +346,11 @@ class BookmarkProber {
         return {
           ...item,
           status: "UNREACHABLE_OR_PROTECTED",
+          authOrWafProtected: true,
           httpCode: stage2Res.status,
           latencyMs: Date.now() - startTime,
+          reasonCode: "WAF_OR_AUTH",
+          reasonParams: { code: stage2Res.status },
           reason: `受安全网关/防爬挑战拦截 (HTTP ${stage2Res.status})，实际网站存活，严禁误删`,
           streamCancelled: !!(stage2Res.streamCancelled || stage1Res?.streamCancelled)
         };
@@ -321,6 +362,7 @@ class BookmarkProber {
           status: "DEAD",
           httpCode: stage2Res.status,
           latencyMs: Date.now() - startTime,
+          reasonCode: stage2Res.status === 404 ? "HTTP_404" : "HTTP_410",
           reason: stage2Res.status === 404 ? "页面未找到 (404 Not Found)" : "资源已永久下线 (410 Gone)",
           streamCancelled: !!(stage2Res.streamCancelled || stage1Res?.streamCancelled)
         };
@@ -332,19 +374,31 @@ class BookmarkProber {
           status: "SERVER_ERROR",
           httpCode: stage2Res.status,
           latencyMs: Date.now() - startTime,
+          reasonCode: "SERVER_ERROR",
+          reasonParams: { code: stage2Res.status },
           reason: `服务端故障响应 (HTTP ${stage2Res.status})`,
           streamCancelled: !!(stage2Res.streamCancelled || stage1Res?.streamCancelled)
         };
       }
     } catch (netErr) {
+      // P1-7: 用户主动中止时绝不触发 Stage 3 Cloudflare DoH 请求
+      if (this.isAborted) {
+        return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+      }
+
       // --- STAGE 3: DNS DoH 二次交叉验证 (终极防误杀) ---
       const dnsResult = await BookmarkProber.verifyDomainDns(host);
+      if (this.isAborted) {
+        return { ...item, status: "ABORTED", httpCode: 0, reasonCode: "ABORTED", reason: "Scan aborted" };
+      }
+
       if (dnsResult.isNxDomain) {
         return {
           ...item,
           status: "DEAD",
           httpCode: 0,
           latencyMs: Date.now() - startTime,
+          reasonCode: "DNS_NXDOMAIN",
           reason: "域名已彻底注销停用 (DNS NXDOMAIN 验证确诊)"
         };
       }
@@ -355,6 +409,7 @@ class BookmarkProber {
         status: "UNREACHABLE_OR_PROTECTED",
         httpCode: 0,
         latencyMs: Date.now() - startTime,
+        reasonCode: "NETWORK_TIMEOUT",
         reason: "网络超时或可能需特定网络环境，DNS解析正常，已放入安全复核区"
       };
     }
@@ -364,6 +419,7 @@ class BookmarkProber {
       status: "UNREACHABLE_OR_PROTECTED",
       httpCode: 0,
       latencyMs: Date.now() - startTime,
+      reasonCode: "UNKNOWN_PROTECTED",
       reason: "状态未知，已纳入安全保护"
     };
   }
@@ -398,7 +454,9 @@ class BookmarkProber {
     }
 
     await Promise.all(workers);
-    return this.isAborted ? results.filter(Boolean) : results;
+    return this.isAborted
+      ? results.filter((r) => r && r.status !== "ABORTED")
+      : results;
   }
 
   /**
@@ -435,6 +493,7 @@ class BookmarkProber {
         ? res.body.getReader()
         : null;
 
+      let streamCancelled = false;
       if (reader) {
         try {
           let totalBytes = 0;
@@ -449,6 +508,7 @@ class BookmarkProber {
         } finally {
           try {
             await reader.cancel();
+            streamCancelled = true;
           } catch (e) {
             // 忽略取消异常
           }
@@ -459,7 +519,7 @@ class BookmarkProber {
         status: res.status,
         redirectedUrl: res.redirected ? res.url : null,
         headers: res.headers,
-        streamCancelled: !!res.streamCancelled
+        streamCancelled: streamCancelled || !!res.streamCancelled
       };
     } finally {
       clearTimeout(timer);

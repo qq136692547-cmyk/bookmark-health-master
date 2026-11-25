@@ -1,6 +1,6 @@
 // ============================================================================
 // 商业化授权与双阶梯定价系统 (License Manager & Pricing Architecture v2.2)
-// 支持: $9.90 单次大扫除卡 (30天/500条)、$24.90 终身买断卡 (LTD)
+// 支持: $4.90 单次大扫除卡 (30天/500条)、$14.90 终身买断卡 (LTD)
 //       Ed25519 离线非对称签名验证 (Web Crypto API)
 //       配额落盘与时效动态校验机制
 // ============================================================================
@@ -397,7 +397,23 @@ class LicenseManager {
       });
     });
 
-    const key = storedData.bhm_license_key;
+    let key = storedData.bhm_license_key;
+
+    // 跨机与重装自动同步：若 local 中无 key，尝试从 chrome.storage.sync 检索已绑定的激活凭证
+    if (!key && typeof chrome !== "undefined" && chrome.storage && chrome.storage.sync) {
+      try {
+        const syncData = await new Promise((resolve) => {
+          chrome.storage.sync.get(["bhm_license_key"], (items) => resolve(items || {}));
+        });
+        if (syncData && syncData.bhm_license_key) {
+          key = syncData.bhm_license_key;
+          storedData.bhm_license_key = key;
+          // 异步回写至本地存储
+          store.set({ bhm_license_key: key });
+        }
+      } catch (_) {}
+    }
+
     const freeUsed = (typeof storedData.bhm_free_quota_used === "number")
       ? storedData.bhm_free_quota_used
       : ((typeof storedData.bhm_quota_used === "number") ? storedData.bhm_quota_used : 0);
@@ -435,7 +451,7 @@ class LicenseManager {
 
     const nowSec = Math.floor(Date.now() / 1000);
 
-    // P1-8: 按单张 $9.90 卡签名独立计量配额，购买新卡自动享全新 500 额度，重复粘贴旧卡不可重置额度
+    // P1-8: 按单张 $4.90 卡签名独立计量配额，购买新卡自动享全新 500 额度，重复粘贴旧卡不可重置额度
     const updatePayload = {
       bhm_pro_activated: true,
       bhm_license_tier: verification.tier,
@@ -498,9 +514,30 @@ class LicenseManager {
         "bhm_free_quota_used",
         "bhm_license_key",
         "bhm_license_tier",
-        "bhm_wash_used_by_sig"
+        "bhm_wash_used_by_sig",
+        "bhm_viral_trial_redeemed",
+        "bhm_viral_bonus_quota"
       ], (items) => resolve(items || {}));
     });
+
+    // P1-17: SINGLE_WASH 优先读取已签名密钥载荷中的 maxCleanQuota，兼容自定义额度
+    if (tier === "SINGLE_WASH" && data.bhm_license_key) {
+      try {
+        const parts = String(data.bhm_license_key).trim().split(".");
+        if (parts.length === 3 && parts[0] === "BHM1") {
+          const payloadObj = JSON.parse(LicenseManager._base64UrlDecodeText(parts[1]));
+          if (typeof payloadObj.maxCleanQuota === "number" && payloadObj.maxCleanQuota > 0) {
+            maxQuota = payloadObj.maxCleanQuota;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 零遥测病毒微激励体验配额奖励 (P1-1: 额外 50 条试用配额)
+    if (tier === "FREE" && (data.bhm_viral_trial_redeemed || typeof data.bhm_viral_bonus_quota === "number")) {
+      const bonus = typeof data.bhm_viral_bonus_quota === "number" ? data.bhm_viral_bonus_quota : 50;
+      maxQuota += bonus;
+    }
 
     let used = (data && typeof data.bhm_quota_used === "number") ? data.bhm_quota_used : 0;
     if (tier === "SINGLE_WASH" && data.bhm_license_key && data.bhm_wash_used_by_sig) {

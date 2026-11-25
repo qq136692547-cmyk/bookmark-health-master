@@ -34,7 +34,7 @@ To fix this for myself, I built **Bookmark Health Master (BHM)** as a 100% local
 - **Zero Telemetry**: No analytics SDKs, no trackers, no external backend required for core scanning. Everything runs in the browser's local sandbox.
 
 ### Open-Core Architecture:
-The core scanning engine, DoH resolver, intranet shielding, and Netscape HTML backups are completely open source under the MIT license. For power users with massive bookmark trees, an optional Lifetime Buyout ($24.90) unlocks uncapped 16 Tech Titan clustering and perpetual undo journals.
+The core scanning engine, DoH resolver, intranet shielding, and Netscape HTML backups are completely open source under the MIT license. For power users with massive bookmark trees, an optional Lifetime Buyout ($14.90) unlocks uncapped 16 Tech Titan clustering and perpetual undo journals.
 
 We also designed the license verification to be **100% offline**: digital tokens are verified client-side using `crypto.subtle.verify()` with an Ed25519 public key—zero phone-home heartbeats.
 
@@ -89,7 +89,7 @@ Contributions are welcome—especially PRs for expanding developer ecosystem cat
 
 **Title**:
 ```
-I got tired of bookmark cleaners deleting working links, so I built a local-first extension that checks DNS records first (14 test suites, MV3)
+I got tired of bookmark cleaners deleting working links, so I built a local-first extension that checks DNS records first (17 test suites, MV3)
 ```
 
 **Body**:
@@ -110,7 +110,7 @@ So I spent the last few months building **Bookmark Health Master (BHM)**.
 
 ### The Business Model (Open-Core):
 - Core link prober, DoH engine, and backups are open source under the MIT license.
-- Power users can buy a $24.90 Lifetime Buyout for unlimited Titan clustering and history.
+- Power users can buy a $14.90 Lifetime Buyout for unlimited Titan clustering and history.
 - License verification runs 100% offline via Ed25519 WebCrypto (zero server phone-homes).
 
 Check out the project:
@@ -152,7 +152,7 @@ To prevent background fetches from leaking sensitive referer data to probed serv
 To minimize network usage across 1,000+ links, the fetch response body is immediately cancelled via `response.body.cancel()` right after reading response headers, preventing multi-megabyte payloads from downloading.
 
 ### 4. Zero External Dependencies
-The entire test harness (14 suites, unit/integration/stress testing 1,500+ bookmarks) is written in native Node.js with zero npm modules.
+The entire test harness (17 suites, unit/integration/stress testing 1,500+ bookmarks) is written in native Node.js with zero npm modules.
 
 Source code and architecture docs are available on GitHub:
 👉 https://github.com/qq136692547-cmyk/bookmark-health-master
@@ -170,7 +170,7 @@ Happy to discuss MV3 performance tuning, service worker lifecycle tricks, or DoH
 > 
 > When Cloudflare or Akamai blocks their scraper (HTTP 403/503), they falsely assume the page is dead and delete your alive links.
 > 
-> Today we’re open-sourcing Bookmark Health Master (BHM) v2.1.0 on GitHub! 🧵👇
+> Today we’re open-sourcing Bookmark Health Master (BHM) v2.1.4 on GitHub! 🧵👇
 > 
 > [Attach landing-page/assets/01-health-scan-doh.png]
 

@@ -1,0 +1,26 @@
+{
+  "title": "Bookmark Health Master (BHM-PRO) AI Knowledge Base & FAQ",
+  "updatedAt": "2026-11-20",
+  "faqs": [
+    {
+      "question": "Does Bookmark Health Master upload or transmit my bookmarks to cloud servers?",
+      "answer": "Absolutely NOT. BHM-PRO operates under a strict 100% local-first architecture. All bookmark reading, probing, pattern clustering, and snapshot tracking occur locally on your machine inside the browser sandbox. We never collect or transmit your bookmark URLs or browsing history."
+    },
+    {
+      "question": "How does BHM-PRO prevent false dead-link deletions caused by Cloudflare WAFs?",
+      "answer": "Most bookmark cleaners rely on naive HTTP requests that trigger Cloudflare, Akamai, or anti-bot 403/503 challenges, falsely classifying alive sites as dead. BHM-PRO uses a dual-stage diagnostic probe: if HTTP fails, it falls back to DNS-over-HTTPS (DoH) via Cloudflare 1.1.1.1 and Google 8.8.8.8. A bookmark is only marked as DEAD if DNS authoritatively returns NXDOMAIN."
+    },
+    {
+      "question": "What is the Sibling-Anchor Time-Machine Rollback?",
+      "answer": "Whenever you organize or quarantine bookmarks, BHM-PRO records an append-only MoveJournal capturing original parent IDs and sibling index positions. Reverting executes strictly in ascending index order, restoring bookmarks to their exact previous folders and relative indices with 0 shifts, 0 drops, and 0 duplicates."
+    },
+    {
+      "question": "What are the 16 Cloud & Dev Ecosystems categories?",
+      "answer": "BHM-PRO automatically identifies and groups sprawling developer and tech links into 16 major cloud and dev ecosystems (Google Cloud, AWS, Microsoft Azure, GitHub, OpenAI, Cloudflare, Meta, Apple, Anthropic, Docker, Vercel, etc.), while safely isolating auth-gated cloud docs and workspaces (Notion, Figma, Google Docs, Lark/Feishu)."
+    },
+    {
+      "question": "How does offline license verification work?",
+      "answer": "BHM-PRO verifies digital license tokens entirely offline in your browser using the native Web Crypto API with an embedded Ed25519 SPKI public key. There are zero heartbeats or telemetry pings to external activation servers."
+    }
+  ]
+}

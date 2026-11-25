@@ -81,15 +81,15 @@ function resolveOrderTier({ customData = {}, attributes = {} } = {}) {
     return "SINGLE_WASH";
   }
 
-  // 3. Check item catalog unit price (before discounts)
+  // 3. Check item catalog unit price (before discounts: $14.90 -> 1490 LTD, $4.90 -> 490 SINGLE_WASH)
   const itemPrice = typeof firstItem.price === "number" ? firstItem.price : null;
   if (itemPrice !== null) {
-    return itemPrice <= 1500 ? "SINGLE_WASH" : "LTD";
+    return itemPrice < 1000 ? "SINGLE_WASH" : "LTD";
   }
 
   // 4. Fallback to order total if no other indicator
-  const total = typeof attributes.total === "number" ? attributes.total : 2490;
-  return total < 2000 ? "SINGLE_WASH" : "LTD";
+  const total = typeof attributes.total === "number" ? attributes.total : 1490;
+  return total < 1000 ? "SINGLE_WASH" : "LTD";
 }
 
 /**
@@ -253,6 +253,14 @@ export default {
         return new Response(JSON.stringify({ error: "Order not found or email does not match" }), {
           status: 404,
           headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      // P1-4: Block refunded / revoked orders on self-service lookup
+      if (rawRecord.status === "revoked") {
+        return new Response(JSON.stringify({ error: "Order has been refunded and license is revoked", revoked: true }), {
+          status: 403,
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
         });
       }
 

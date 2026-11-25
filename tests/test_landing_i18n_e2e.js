@@ -110,7 +110,7 @@ console.log('\n[Sub-test 1] Intelligent Default: Browser language zh-CN');
 
   // Check translated elements
   const heroTitle = env.elements.find(e => e.key === 'hero.title');
-  assert(heroTitle.innerHTML.includes('让沉睡的书签重获新生'), 'Hero title must be translated to Chinese');
+  assert(heroTitle.innerHTML.includes('秒级智能整理 1,000+ 书签'), 'Hero title must be translated to Chinese');
 
   const washAmount = env.elements.find(e => e.key === 'price.washAmount');
   assert.strictEqual(washAmount.textContent, '35', 'Wash amount must be 35 (RMB, Option A)');
@@ -146,7 +146,7 @@ console.log('\n[Sub-test 2] URL param ?lang=en override');
   assert.strictEqual(env.mockDoc.documentElement.lang, 'en', 'Document lang must be en');
 
   const heroTitle = env.elements.find(e => e.key === 'hero.title');
-  assert(heroTitle.innerHTML.includes('Resurrect Your Bookmarks'), 'Hero title must be in English');
+  assert(heroTitle.innerHTML.includes('Clean & Organize 1,000+ Bookmarks in Seconds'), 'Hero title must be in English');
 
   const washAmount = env.elements.find(e => e.key === 'price.washAmount');
   assert.strictEqual(washAmount.textContent, '4.90', 'Wash amount must be 4.90 (USD, Option A)');
@@ -178,7 +178,7 @@ console.log('\n[Sub-test 3] Seamless Client-side Toggle & Persistence');
   assert.strictEqual(env.store['bhm_lang'], 'zh', 'Must persist zh to localStorage');
 
   const heroTitleZh = env.elements.find(e => e.key === 'hero.title');
-  assert(heroTitleZh.innerHTML.includes('让沉睡的书签重获新生'));
+  assert(heroTitleZh.innerHTML.includes('秒级智能整理 1,000+ 书签'));
 
   // Switch back to en
   applyLanguage('en');
@@ -186,7 +186,7 @@ console.log('\n[Sub-test 3] Seamless Client-side Toggle & Persistence');
   assert.strictEqual(env.store['bhm_lang'], 'en', 'Must persist en to localStorage');
 
   const heroTitleEn = env.elements.find(e => e.key === 'hero.title');
-  assert(heroTitleEn.innerHTML.includes('Resurrect Your Bookmarks'));
+  assert(heroTitleEn.innerHTML.includes('Clean & Organize 1,000+ Bookmarks in Seconds'));
 
   console.log('  ✓ Client-side toggle smoothly switches zh <-> en without page reload and persists to localStorage');
 }
@@ -209,12 +209,14 @@ console.log('\n[Sub-test 4] Dictionary Completeness & Section Parity');
   assert(BHM_I18N_DICT.zh['hero.pill'].includes('Google Chrome'));
   assert(BHM_I18N_DICT.zh['comp.badBadge'].includes('淘汰型'));
   assert(BHM_I18N_DICT.zh['feat.tab1Title'].includes('DNS-over-HTTPS'));
-  assert(BHM_I18N_DICT.zh['feat.tab2Title'].includes('16 大全球与中国科技巨头'));
-  assert(BHM_I18N_DICT.zh['feat.tab3Title'].includes('UGC 协同文档'));
+  assert(BHM_I18N_DICT.zh['feat.tab2Title'].includes('16 大云端与开发者生态'));
+  assert(BHM_I18N_DICT.zh['feat.tab3Title'].includes('鉴权云端文档与工作空间'));
   assert(BHM_I18N_DICT.zh['feat.tab4Title'].includes('同级锚点事务日志'));
   assert(BHM_I18N_DICT.zh['arch.card1Title'].includes('Ed25519 纯本地离线密码学验真'));
   assert(BHM_I18N_DICT.zh['price.washAmount'] === '35');
   assert(BHM_I18N_DICT.zh['price.ltdAmount'] === '99');
+  assert(BHM_I18N_DICT.zh['price.teamAmount'] === '269');
+  assert(BHM_I18N_DICT.en['price.teamAmount'] === '39');
   assert(BHM_I18N_DICT.zh['faq.q1'].includes('上传到服务器'));
   assert(BHM_I18N_DICT.zh['footer.brandDesc'].includes('守护隐私'));
 

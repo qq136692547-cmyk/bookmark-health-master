@@ -234,6 +234,12 @@
       <span>🛡️</span> <span data-i18n="sidepanel.brand">BHM Companion</span>
     </div>
     <div class="actions-top">
+      <a id="sideUpgradeBtn" href="https://bhm-pro-ern.pages.dev/#pricing" target="_blank" rel="noopener noreferrer" class="icon-btn" style="background: linear-gradient(135deg, #f59e0b, #ea580c); color: #0f172a; font-weight: 700; text-decoration: none; border: none; padding: 4px 8px; display: inline-flex; align-items: center; gap: 3px;" title="Upgrade to Pro">
+        <span>👑</span> <span data-i18n="sidepanel.upgradeBtn">Upgrade Pro</span>
+      </a>
+      <span id="sideProBadge" class="icon-btn" style="display: none; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 600; padding: 3px 6px;">
+        👑 Pro
+      </span>
       <button class="icon-btn" id="bookmarkCurrentBtn" data-i18n="sidepanel.bookmarkCurrent" data-i18n-title="sidepanel.bookmarkCurrentTitle" title="Bookmark currently active browser tab">⭐ Bookmark Tab</button>
       <button class="icon-btn" id="refreshSideBtn" data-i18n="sidepanel.refresh" data-i18n-title="sidepanel.refreshTitle" title="Manually refresh bookmark tree">🔄 Refresh</button>
       <button class="icon-btn" id="fullDashboardBtn" data-i18n="sidepanel.fullDashboard">📊 Dashboard</button>
@@ -258,7 +264,10 @@
 
   <div class="footer">
     <span id="statusText" data-i18n="sidepanel.statusText">Loaded 16 Global & China Tech Titans Ecosystems</span>
-    <span style="color: var(--success); font-weight: 500;" data-i18n="sidepanel.nativeActive">● Native Ready</span>
+    <a id="sideFooterUpgrade" href="https://bhm-pro-ern.pages.dev/#pricing" target="_blank" rel="noopener noreferrer" style="color: #fbbf24; text-decoration: none; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 3px;">
+      <span data-i18n="sidepanel.footerUpgrade">👑 Upgrade Pro ($4.90+)</span>
+    </a>
+    <span id="sideNativeReady" style="color: var(--success); font-weight: 500; display: none;" data-i18n="sidepanel.nativeActive">● Native Ready</span>
   </div>
 
   <script src="core/ecosystem_rules.js"></script>

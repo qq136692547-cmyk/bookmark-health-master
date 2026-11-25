@@ -58,7 +58,7 @@ async function runAdversarialWorkerTests() {
   // 1. OPTIONS preflight
   const reqOptions = new Request("https://worker.test/webhook", {
     method: "OPTIONS",
-    headers: { "Origin": "https://bhm-pro-ern.pages.dev", "Access-Control-Request-Headers": "Paddle-Signature" }
+    headers: { "Origin": "https://bhm.geoscore.help", "Access-Control-Request-Headers": "Paddle-Signature" }
   });
   const resOptions = await worker.fetch(reqOptions, env);
   assertTest("OPTIONS returns 204", resOptions.status === 204);

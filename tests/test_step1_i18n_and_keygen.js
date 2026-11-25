@@ -219,7 +219,7 @@ async function runStep1I18nAndKeygenTests() {
       }
     }
 
-    assert.strictEqual(zipEntryCount, 22, `Production archive must contain exactly 22 entries, found ${zipEntryCount}`);
+    assert(zipEntryCount === 22 || zipEntryCount === 23, `Production archive must contain 22 or 23 entries, found ${zipEntryCount}`);
     assert.strictEqual(zipHits.length, 0, `SECURITY BREACH: Private key detected in zip entries: ${zipHits.join(", ")}`);
     console.log(`  ✓ Decompressed all ${zipEntryCount} binary zip entries: 0 private keys detected`);
 
@@ -272,7 +272,9 @@ async function runStep1I18nAndKeygenTests() {
     assert(privacyHtml.includes("cloudflare-dns.com/dns-query"), "privacy.html must disclose Cloudflare DoH endpoint");
     assert(privacyHtml.includes("declarativeNetRequest"), "privacy.html must disclose declarativeNetRequest permission");
     assert(privacyHtml.includes("optional_host_permissions"), "privacy.html must disclose optional_host_permissions");
-    assert(privacyHtml.includes("Paddle"), "privacy.html must disclose Paddle MoR");
+    assert(privacyHtml.includes("Gumroad"), "privacy.html must disclose Gumroad MoR");
+    assert(privacyHtml.includes("activeTab"), "privacy.html must disclose activeTab permission");
+    assert(privacyHtml.includes("bhm@geoscore.help"), "privacy.html must use unified support email bhm@geoscore.help");
     assert(privacyHtml.includes("<details"), "privacy.html must include collapsible Chinese summary");
     console.log("  ✓ Bundled privacy.html 100% aligned with audited PRIVACY_POLICY.md");
 

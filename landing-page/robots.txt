@@ -1,0 +1,33 @@
+# robots.txt for Bookmark Health Master (BHM-PRO)
+# https://bhm.geoscore.help/
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /private-keys/
+
+# Generative Engine Optimization (GEO) & AI Search Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# Sitemaps & Machine-Readable Context
+Sitemap: https://bhm.geoscore.help/sitemap.xml
+Sitemap: https://bhm.geoscore.help/llms.txt

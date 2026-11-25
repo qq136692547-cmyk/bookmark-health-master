@@ -32,6 +32,12 @@
       </div>
       <div class="flex items-center gap-3">
         <button id="langToggleBtn" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 transition" title="Switch language">🌐 中文</button>
+        <a id="headerUpgradeBtn" href="https://bhm-pro-ern.pages.dev/#pricing" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-md shadow-amber-500/20 flex items-center gap-1.5 transition">
+          <span>👑</span> <span data-i18n="dashboard.headerUpgrade">Upgrade to Pro ($4.90+)</span>
+        </a>
+        <span id="headerProStatus" class="hidden items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+          <span>👑</span> <span id="headerProTierText" data-i18n="dashboard.headerProLifetime">Pro Lifetime Active</span>
+        </span>
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
           <span data-i18n="dashboard.nativeReady">Chrome Native Ready</span>
@@ -40,9 +46,13 @@
     </header>
 
     <!-- 导航切换 Tab -->
-    <div class="flex gap-2 border-b border-slate-800 pb-3">
+    <div class="flex gap-2 border-b border-slate-800 pb-3 items-center">
       <button class="nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-blue-600 text-white" data-target="tab-health" data-i18n="dashboard.tabHealth">
         🩺 Health & Dead Links
+      </button>
+      <button class="nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white flex items-center gap-1.5" data-target="tab-duplicates">
+        <span data-i18n="dashboard.tabDuplicates">🔁 Duplicates</span>
+        <span id="dupTabBadge" class="hidden text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-mono">0</span>
       </button>
       <button class="nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white" data-target="tab-ecosystems" data-i18n="dashboard.tabEcosystems">
         🏛️ 16 Titans Ecosystems
@@ -50,8 +60,8 @@
       <button class="nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white" data-target="tab-snapshots" data-i18n="dashboard.tabSnapshots">
         ⏱️ Time Machine & Rollback
       </button>
-      <button class="nav-tab px-4 py-2 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-white" data-target="tab-pro" data-i18n="dashboard.tabPro">
-        💎 Pro Privileges
+      <button class="nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition flex items-center gap-1.5" data-target="tab-pro">
+        <span>💎</span> <span data-i18n="dashboard.tabPro">Upgrade Pro / Privileges</span> <span class="text-[9px] bg-amber-500 text-slate-950 font-black px-1.5 py-0.5 rounded tracking-wide uppercase" data-i18n="dashboard.earlyBirdTag">Early Bird</span>
       </button>
     </div>
 
@@ -82,12 +92,34 @@
         </div>
       </div>
 
+      <!-- Pro 升级引导横幅 -->
+      <div id="proHealthBanner" class="p-4 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent border border-amber-500/30 rounded-xl flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl flex-shrink-0">
+            👑
+          </div>
+          <div>
+            <div class="text-xs font-bold text-amber-300" data-i18n="dashboard.healthBannerTitle">Upgrade to BHM-PRO: Unlock Unlimited Batch Cleaning & 16 Titans Clustering</div>
+            <div class="text-[11px] text-slate-400 mt-0.5" data-i18n="dashboard.healthBannerDesc">Free edition is limited to 10 bookmarks. Upgrade to enjoy unlimited quarantine, Cloudflare DoH anti-false-positive verification & millisecond in-place rollback.</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <a href="https://bhm-pro-ern.pages.dev/#pricing" target="_blank" rel="noopener noreferrer" class="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs rounded-lg transition shadow-md shadow-amber-500/20 flex items-center gap-1">
+            <span>🚀</span> <span data-i18n="dashboard.healthBannerBtnText">Upgrade Now ($4.90+)</span>
+          </a>
+          <button id="healthBannerRedeemBtn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg border border-slate-700 transition" data-i18n="dashboard.healthBannerRedeem">
+            Enter License
+          </button>
+        </div>
+      </div>
+
       <!-- 操作卡片 -->
       <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="font-semibold text-white text-sm" data-i18n="dashboard.probeCardTitle">Two-Stage Adaptive Dead Link Health Probe</h3>
-            <p class="text-xs text-slate-400 mt-0.5" data-i18n="dashboard.probeCardDesc">HEAD probe + Range GET fallback, auto-detects Cloudflare anti-bot challenge to prevent false positives</p>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="dashboard.probeCardDesc">HEAD probe + Range GET fallback with WAF/auth & intranet shielding to prevent false positives</p>
+            <p class="text-[11px] text-slate-500 mt-1" data-i18n="dashboard.dohDisclosure">🔒 Privacy Disclosure: Runs 100% locally with credentials omitted (zero cookies). Only on connection timeout does it query Cloudflare DoH (cloudflare-dns.com) with the bare hostname (no path or query) to verify NXDOMAIN.</p>
           </div>
           <div class="flex items-center gap-2">
             <button id="startScanBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-medium transition shadow-lg shadow-blue-600/20" data-i18n="dashboard.startScan">
@@ -95,6 +127,9 @@
             </button>
             <button id="cleanDeadBtn" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-medium transition hidden" data-i18n="dashboard.cleanDeadBtnDefault">
               🗑️ Quarantine Dead Links to Trash
+            </button>
+            <button id="generateHealthCardBtn" class="px-3.5 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-semibold transition hidden items-center gap-1.5 shadow-sm" data-i18n="viral.btnGenerate">
+              📊 导出资产诊断战报
             </button>
           </div>
         </div>
@@ -127,7 +162,7 @@
             <button class="filter-chip px-2.5 py-1 rounded text-[11px] font-medium bg-blue-600 text-white" data-filter="all">All (0)</button>
             <button class="filter-chip px-2.5 py-1 rounded text-[11px] font-medium bg-slate-800 text-slate-400 hover:text-white" data-filter="dead">Dead Links (0)</button>
             <button class="filter-chip px-2.5 py-1 rounded text-[11px] font-medium bg-slate-800 text-slate-400 hover:text-white" data-filter="review">🛡️ Safety Review (0)</button>
-            <button class="filter-chip px-2.5 py-1 rounded text-[11px] font-medium bg-slate-800 text-slate-400 hover:text-white" data-filter="redirect">301 Redirect (0)</button>
+            <button class="filter-chip px-2.5 py-1 rounded text-[11px] font-medium bg-slate-800 text-slate-400 hover:text-white" data-filter="redirect">Redirected (0)</button>
             <button class="filter-chip px-2.5 py-1 rounded text-[11px] font-medium bg-slate-800 text-slate-400 hover:text-white" data-filter="healthy">Healthy (0)</button>
           </div>
         </div>
@@ -140,20 +175,88 @@
 
     </section>
 
-    <!-- TAB 2: 16 大官方生态矩阵 -->
-    <section id="tab-ecosystems" class="tab-content space-y-6 hidden">
-      <div class="p-4 bg-gradient-to-r from-blue-900/30 via-indigo-900/20 to-purple-900/30 border border-blue-500/30 rounded-xl flex items-center justify-between">
-        <div>
-          <h3 class="text-sm font-bold text-white" data-i18n="dashboard.ecoBannerTitle">16 Global & China Tech Titans Official Ecosystem Reorganization Matrix</h3>
-          <p class="text-xs text-blue-200 mt-1" data-i18n="dashboard.ecoBannerDesc">Automatically detects official consoles & products across bookmarks, and generates official ecosystem master bookmarks at the head of native Chrome Bookmarks Bar with one click</p>
+    <!-- TAB DUPLICATES: 重复书签精准去重 (MVP) -->
+    <section id="tab-duplicates" class="tab-content space-y-6 hidden">
+      <div class="p-4 bg-gradient-to-r from-amber-900/20 via-slate-900 to-slate-900 border border-amber-500/30 rounded-xl flex flex-wrap items-center justify-between gap-4">
+        <div class="max-w-2xl">
+          <h3 class="text-sm font-bold text-white" data-i18n="dashboard.dupBannerTitle">Exact Duplicate Bookmark Detector & Lossless Cleaner</h3>
+          <p class="text-xs text-slate-300 mt-1" data-i18n="dashboard.dupBannerDesc">Uses full normalized URLs (preserving query params & hash fragments to avoid false merges). Keeps the earliest copy and safely moves duplicates to quarantine with atomic Time-Machine undo.</p>
         </div>
-        <button id="reorganizeEcoBtn" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-semibold shadow-lg shadow-indigo-500/20" data-i18n="dashboard.reorganizeEcoBtn">
-          ⚡ Reorganize Ecosystems in Chrome
+        <button id="cleanDupsBtn" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition shadow-lg shadow-amber-500/20 disabled:opacity-50" data-i18n="dashboard.cleanDupsBtnZero">
+          ✅ No Duplicates Found
         </button>
       </div>
 
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-300" id="dupSummaryText" data-i18n="dashboard.noDuplicates">🎉 Clean library! Zero duplicate bookmark URLs detected.</span>
+        </div>
+        <div id="duplicatesListContainer" class="divide-y divide-slate-800/60 max-h-[30rem] overflow-y-auto">
+          <div class="p-8 text-center text-slate-500 text-xs" data-i18n="dashboard.noDuplicates">
+            🎉 Clean library! Zero duplicate bookmark URLs detected.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: 智能归档矩阵（范围策略 + 文件夹保护锁 + 自定义规则 + 16 大官方生态） -->
+    <section id="tab-ecosystems" class="tab-content space-y-6 hidden">
+      <div class="p-4 bg-gradient-to-r from-blue-900/30 via-indigo-900/20 to-purple-900/30 border border-blue-500/30 rounded-xl flex flex-wrap items-center justify-between gap-4">
+        <div class="max-w-2xl">
+          <h3 class="text-sm font-bold text-white" data-i18n="dashboard.ecoBannerTitle">Smart Organizer Matrix: Custom Rules + 16 Titans + Folder Locks</h3>
+          <p class="text-xs text-blue-200 mt-1" data-i18n="dashboard.ecoBannerDesc">Defaults to organizing loose root bookmarks only—never breaks your existing folders. Lock protected folders or add custom personal domain rules anytime.</p>
+        </div>
+        <button id="reorganizeEcoBtn" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-semibold shadow-lg shadow-indigo-500/20" data-i18n="dashboard.reorganizeEcoBtn">
+          ⚡ Reorganize With Current Policy
+        </button>
+      </div>
+
+      <!-- v2.2.0: 整理范围策略 + 受保护文件夹白名单 + 自定义专属规则面板 -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <h4 class="text-xs font-bold text-white" data-i18n="dashboard.reorgControlTitle">🛡️ Reorganization Scope & Folder Protection</h4>
+          <span id="reorgPreviewStats" class="text-[11px] font-mono text-emerald-400"></span>
+        </div>
+
+        <!-- 1. 范围选择器 + 是否启用未分类归拢 -->
+        <div class="space-y-2.5">
+          <label for="reorgScopeSelect" class="block text-[11px] font-semibold text-slate-300" data-i18n="dashboard.reorgScopeLabel">Organization Scope</label>
+          <select id="reorgScopeSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="loose_only" data-i18n="dashboard.scopeLooseOnly">🟢 Loose Root Bookmarks Only (Recommended Default · Keeps All User Folders Intact)</option>
+            <option value="titans_only" data-i18n="dashboard.scopeTitansOnly">🟡 Custom Rules + 16 Titans Only (Skips Locked Folders · Leaves Regular Sites In Place)</option>
+            <option value="full_library" data-i18n="dashboard.scopeFullLibrary">🔴 Full Library Restructure (Skips Locked Folders · Buckets Uncategorized By Domain)</option>
+          </select>
+          <label class="inline-flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none pt-1">
+            <input type="checkbox" id="includeUncatCheckbox" class="rounded border-slate-600 bg-slate-950 text-blue-500 focus:ring-0">
+            <span data-i18n="dashboard.includeUncatLabel">Move unmatched regular bookmarks into "Uncategorized (By Domain)" folder</span>
+          </label>
+        </div>
+
+        <!-- 2. 受保护文件夹白名单 -->
+        <div class="space-y-2 pt-2 border-t border-slate-800/80">
+          <div class="text-[11px] font-semibold text-slate-300" data-i18n="dashboard.protectedFoldersTitle">🔒 Protected Folders Whitelist (Click to lock — 100% skipped during reorganization)</div>
+          <p id="protectedFoldersHint" class="text-[10px] text-slate-400" data-i18n="dashboard.protectedFoldersHint">Tip: In "Loose Root Bookmarks Only" mode, all existing user folders are automatically protected. Locks also apply when switching to broader modes.</p>
+          <div id="protectedFoldersList" class="flex flex-wrap gap-2 pt-1">
+            <span class="text-[11px] text-slate-500" data-i18n="dashboard.protectedFoldersEmpty">No custom user folders detected yet (all bookmarks are at root level)</span>
+          </div>
+        </div>
+
+        <!-- 3. 自定义专属规则 -->
+        <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
+          <div class="text-[11px] font-semibold text-slate-300" data-i18n="dashboard.customRulesTitle">✨ Personal Custom Domain Rules (Highest Priority — Runs Before 16 Titans)</div>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-2">
+            <input id="customRuleFolderInput" type="text" class="md:col-span-4 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500" data-i18n-placeholder="dashboard.customRuleFolderPlaceholder" placeholder="Target folder name (e.g. My Self-Hosted)">
+            <input id="customRuleDomainsInput" type="text" class="md:col-span-6 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500" data-i18n-placeholder="dashboard.customRuleDomainsPlaceholder" placeholder="Domains, comma-separated (e.g. geoscore.help, *.pages.dev)">
+            <button id="addCustomRuleBtn" type="button" class="md:col-span-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition" data-i18n="dashboard.addCustomRuleBtn">+ Add Rule</button>
+          </div>
+          <div id="customRulesList" class="space-y-1.5">
+            <div class="text-[11px] text-slate-500" data-i18n="dashboard.customRulesEmpty">No custom rules yet. Add your own domains so scattered self-hosted/project links route straight into your chosen folder.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="ecosystemsGrid">
-        <!-- 动态渲染 16 大生态卡片 -->
+        <!-- 动态渲染自定义规则与 16 大生态卡片 -->
       </div>
     </section>
 
@@ -250,7 +353,7 @@
             </a>
           </div>
         </div>
-        <div class="text-[10px] text-slate-500 text-center" data-i18n="dashboard.paymentNote">Supports Credit Card, PayPal, Apple Pay (Gumroad / Paddle)</div>
+        <div class="text-[10px] text-slate-500 text-center" data-i18n="dashboard.paymentNote">Supports Credit Card, PayPal, Apple Pay (Secured by Gumroad)</div>
 
         <!-- 激活码兑换区域 -->
         <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 text-left space-y-3 mt-4">
@@ -261,6 +364,13 @@
           </div>
           <div id="licenseStatusText" class="text-[11px] text-slate-400" data-i18n="dashboard.licenseHelpText">Enter the BHM1... license key from your purchase email (offline Ed25519 signature verification).</div>
         </div>
+
+        <!-- 丢失授权码自助找回 -->
+        <div class="pt-2 text-center">
+          <a href="https://bhm-pro-ern.pages.dev/#lookup" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 underline underline-offset-4 inline-flex items-center gap-1.5 transition">
+            <span>🔍</span> <span data-i18n="dashboard.lookupLicenseLink">Reinstall OS or lost key? Self-service license lookup here</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -269,11 +379,111 @@
   <!-- 全局 Toast 提示容器 -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+  <!-- 转化漏斗与价格锚点 Paywall Modal (P0-1) -->
+  <div id="paywallModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden transition-opacity duration-300">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-left overflow-hidden">
+      <!-- 装饰背景 -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- 关闭按钮 -->
+      <button id="closePaywallBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg p-1 rounded-lg hover:bg-slate-800 transition">✕</button>
+
+      <!-- 标题与痛点统计 -->
+      <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1.5">
+        <span>⚡</span> <span data-i18n="paywall.badgeTitle">BHM-PRO Deep Diagnostic Analysis</span>
+      </div>
+      <h3 id="paywallHeadline" class="text-base sm:text-lg font-bold text-white leading-snug">
+        Detected <span id="pwDeadCount" class="text-rose-400 font-mono">0</span> Dead Links &amp; <span id="pwDupCount" class="text-amber-400 font-mono">0</span> Duplicates
+      </h3>
+      <p id="paywallSubheadline" class="text-xs text-slate-300 mt-2 leading-relaxed">
+        Manually verifying and sorting these bookmarks will cost you ~<strong id="pwSavedMinutes" class="text-amber-300 font-mono">15</strong> minutes of deep-work time—with a high risk of accidentally breaking Auth-Gated Cloud Docs.
+      </p>
+      <div class="mt-3 p-2.5 bg-blue-500/10 border border-blue-500/20 rounded-lg text-[11px] text-blue-300 flex items-start gap-2">
+        <span class="text-blue-400">🛡️</span>
+        <span id="paywallValueAnchor" data-i18n="paywall.valueAnchor">BHM-PRO has staged an Atomic Time-Machine Snapshot and your 16 Cloud &amp; Dev Ecosystems tree locally. Clean and restructure everything losslessly in 0.8 seconds.</span>
+      </div>
+
+      <!-- 阶梯价格锚点 (默认高亮 $14.90 LTD) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+        <!-- 30天通行卡 -->
+        <div id="tierCard30d" class="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl flex flex-col justify-between hover:border-slate-700 transition cursor-pointer">
+          <div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-200" data-i18n="paywall.tier30dTitle">30-Day Deep Clean Pass</span>
+              <span class="text-xs font-mono font-bold text-emerald-400" data-i18n="paywall.tier30dPrice">$4.90</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1" data-i18n="paywall.tier30dDesc">Perfect for a one-off overhaul · Unlimited Time-Machine rollbacks for 30 days</p>
+          </div>
+          <a id="paywallBuy30dBtn" href="https://dengli.gumroad.com/l/bhm-pro-30day?wanted=true" target="_blank" rel="noopener noreferrer" class="mt-3 block text-center py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition border border-slate-700" data-i18n="paywall.cta30d">
+            Just need a quick cleanup? Get 30-Day Pass ($4.90)
+          </a>
+        </div>
+
+        <!-- 终身买断卡 (主推锚点，高亮边框 + 87% 徽章) -->
+        <div id="tierCardLtd" class="p-3.5 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent border-2 border-amber-500 rounded-xl flex flex-col justify-between relative overflow-hidden shadow-lg shadow-amber-500/10 cursor-pointer">
+          <span class="absolute top-0 right-0 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-[8px] uppercase tracking-wider rounded-bl-lg" data-i18n="paywall.tierLifetimeBadge">CHOSEN BY 87% OF DEVELOPERS · EARLY BIRD</span>
+          <div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-white flex items-center gap-1" data-i18n="paywall.tierLifetimeTitle">👑 PRO Lifetime License</span>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-500 line-through mr-1" data-i18n="paywall.tierLifetimeOriginal">$29.00</span>
+                <span class="text-xs font-mono font-bold text-amber-400" data-i18n="paywall.tierLifetimePrice">$14.90</span>
+              </div>
+            </div>
+            <p class="text-[10px] text-amber-200/80 mt-1" data-i18n="paywall.tierLifetimeDesc">Pay once, own forever · Zero subscriptions · Offline Ed25519 key for 3 personal browsers · Forever Time-Machine</p>
+          </div>
+          <a id="paywallBuyLtdBtn" href="https://dengli.gumroad.com/l/bhm-pro-lifetime?wanted=true" target="_blank" rel="noopener noreferrer" class="mt-3 block text-center py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 text-xs font-bold rounded-lg transition shadow-md shadow-amber-500/20">
+            Unlock Lifetime PRO for $14.90
+          </a>
+        </div>
+      </div>
+
+      <!-- 5-Seat Team Pack ($39) 横向转化条 -->
+      <div class="mb-3 p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div class="text-xs font-bold text-indigo-200" data-i18n="paywall.tierTeamTitle">🏢 5-Seat Team Pack ($39)</div>
+          <div class="text-[10px] text-indigo-300/80 mt-0.5" data-i18n="paywall.tierTeamDesc">5 independent offline Ed25519 keys • Instant VAT invoice</div>
+        </div>
+        <a id="paywallBuyTeamBtn" href="https://dengli.gumroad.com/l/bhm-pro-team?wanted=true" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-lg whitespace-nowrap transition shadow-sm" data-i18n="paywall.ctaTeam">
+          Team Pack $39 →
+        </a>
+      </div>
+
+      <!-- 病毒裂变微试用入口 -->
+      <div class="p-2.5 bg-slate-950/40 border border-slate-800/80 rounded-xl flex items-center justify-between gap-3 text-xs mb-3">
+        <div class="flex items-center gap-2 text-slate-300 text-[11px]">
+          <span>🎁</span>
+          <span data-i18n="paywall.viralFreeTrial">Not ready to upgrade? Download Health Report to unlock 50 dead links trial quota</span>
+        </div>
+        <button id="paywallViralUnlockBtn" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 font-semibold text-[11px] rounded-lg border border-amber-500/30 whitespace-nowrap transition" data-i18n="paywall.viralUnlockBtn">
+          Claim Free
+        </button>
+      </div>
+
+      <!-- 内嵌激活码快速兑换框 -->
+      <div class="pt-2 border-t border-slate-800/80">
+        <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
+          <span data-i18n="paywall.inlineRedeemPrompt">Already have an Ed25519 license key? Paste here to activate offline</span>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="paywallLicenseInput" data-i18n-placeholder="paywall.inlineLicensePlaceholder" placeholder="Paste BHM1.eyJ... license key" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 font-mono focus:outline-none focus:border-amber-500">
+          <button id="paywallActivateBtn" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition" data-i18n="paywall.inlineActivateBtn">Activate</button>
+        </div>
+      </div>
+
+      <!-- 底部信任声明 -->
+      <div class="mt-3 text-[10px] text-slate-500 text-center flex items-center justify-center gap-1">
+        <span data-i18n="paywall.trustFooter">🔒 100% Local Sandbox · Zero Telemetry · Secured by Gumroad (Apple Pay / PayPal / Cards) · Instant Ed25519 Key</span>
+      </div>
+    </div>
+  </div>
+
   <script src="core/ecosystem_rules.js"></script>
   <script src="core/prober.js"></script>
   <script src="core/classifier.js"></script>
   <script src="core/safety.js"></script>
   <script src="core/license.js"></script>
+  <script src="core/health_card.js"></script>
   <script src="core/i18n.js"></script>
   <script src="dashboard.js"></script>
 </body>

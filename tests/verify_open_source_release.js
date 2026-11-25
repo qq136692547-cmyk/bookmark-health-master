@@ -82,12 +82,13 @@ test('LICENSE is valid standard MIT license dated 2026', () => {
 test('README.md contains badges, links, and accurate metadata', () => {
   const readme = fs.readFileSync(path.join(ROOT_DIR, 'README.md'), 'utf8');
   assert(readme.includes('nomieaphhhhhikklfhmhhjcdgicaikgn'), 'Missing CWS extension ID badge/link');
-  assert(readme.includes('v2.1.0'), 'Missing v2.1.0 version tag');
+  assert(readme.includes('v2.2.0'), 'Missing v2.2.0 version tag');
+  assert(readme.includes('20/20') || readme.includes('20%2F20'), 'Missing 20/20 test suite badge');
   assert(readme.includes('MIT'), 'Missing MIT license reference');
   assert(readme.includes('Manifest V3'), 'Missing Manifest V3 reference');
   assert(readme.includes('100% Local-First') && readme.includes('Zero Telemetry'), 'Missing local-first / zero telemetry badge');
   assert(readme.includes('https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn'), 'Missing quick install button to CWS');
-  assert(readme.includes('https://bhm-pro-ern.pages.dev/'), 'Missing landing page upgrade link');
+  assert(readme.includes('https://bhm.geoscore.help/'), 'Missing landing page upgrade link');
 });
 
 test('README.md visual walkthrough assets exist on disk', () => {
@@ -105,11 +106,12 @@ test('README.md visual walkthrough assets exist on disk', () => {
   assert(imgCount >= 4, `Expected at least 4 walkthrough images, found ${imgCount}`);
 });
 
-test('README.md contains feature comparison matrix ($24.90 lifetime) & architecture diagram', () => {
+test('README.md contains feature comparison matrix ($14.90 lifetime) & architecture diagram', () => {
   const readme = fs.readFileSync(path.join(ROOT_DIR, 'README.md'), 'utf8');
   assert(readme.includes('Feature Comparison Matrix'), 'Missing Feature Comparison Matrix');
   assert(readme.includes('Community Edition (Free)'), 'Missing Community Edition in table');
-  assert(readme.includes('$24.90'), 'Missing $24.90 lifetime price');
+  assert(readme.includes('$4.90'), 'Missing $4.90 single wash price');
+  assert(readme.includes('$14.90'), 'Missing $14.90 lifetime price');
   assert(readme.includes('DoH'), 'Missing DoH in architecture');
   assert(readme.includes('16 Tech Titans'), 'Missing 16 Tech Titans');
   assert(readme.includes('Move Journal') || readme.includes('MoveJournal'), 'Missing Move Journal');

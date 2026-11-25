@@ -12,11 +12,14 @@ const ALARM_NAME_SENTINEL = "bhm_domain_sentinel";
 /**
  * 确保定时闹钟注册（支持安装、更新与浏览器启动激活生命周期）
  */
+let activeScanTabId = null;
+
 function ensureAlarmsRegistered() {
   if (typeof chrome !== "undefined" && chrome.alarms && chrome.alarms.create) {
-    chrome.alarms.create(ALARM_NAME_HEARTBEAT, {
-      periodInMinutes: 1 // 每 1 分钟心跳保活
-    });
+    // 清除旧版常驻 1 分钟心跳闹钟，改为仅在扫描期间按需保活以节省电量
+    if (chrome.alarms.clear) {
+      try { chrome.alarms.clear(ALARM_NAME_HEARTBEAT); } catch (_) {}
+    }
 
     chrome.alarms.create(ALARM_NAME_SENTINEL, {
       periodInMinutes: 60 * 24 // 每天执行一次静默安全巡检 (1440 min)
@@ -87,14 +90,23 @@ async function handleAlarmEvent(alarm) {
       });
     }
   } else if (alarm.name === ALARM_NAME_SENTINEL) {
-    // 每日安全卫生巡检：若当前无进行中的扫描游标，确保会话级临时 DNR 探测规则已被彻底清理
+    // 每日安全卫生巡检：若无进行中扫描或游标超时 (>30 分钟)，强制清理残留的临时 DNR 规则
     if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
       await new Promise((resolve) => {
         chrome.storage.local.get(["bhm_sw_state"], async (res) => {
           const state = (res && typeof res.bhm_sw_state === "object" && res.bhm_sw_state !== null)
             ? res.bhm_sw_state
             : {};
-          if (!state.scanCursor) {
+          const cursorTs = state.scanCursor
+            ? (typeof state.scanCursor.updatedAt === "number"
+              ? state.scanCursor.updatedAt
+              : (typeof state.scanCursor.timestamp === "number" ? state.scanCursor.timestamp : 0))
+            : 0;
+          const isStaleCursor = !state.scanCursor || !cursorTs || (Date.now() - cursorTs > 30 * 60 * 1000);
+          if (isStaleCursor) {
+            state.scanCursor = null;
+            state.activeScanTabId = null;
+            activeScanTabId = null;
             await uninstallProbeSessionRule();
           }
           state.lastSentinelCheck = Date.now();
@@ -192,6 +204,19 @@ async function installProbeSessionRule(domains = [], tabId = -1) {
       removeRuleIds: [PROBE_RULE_ID],
       addRules: [rule]
     });
+    activeScanTabId = (typeof tabId === "number" && tabId >= 0) ? tabId : null;
+    if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+      await new Promise((resolve) => {
+        chrome.storage.local.get(["bhm_sw_state"], (res) => {
+          const state = (res && typeof res.bhm_sw_state === "object" && res.bhm_sw_state !== null) ? res.bhm_sw_state : {};
+          state.activeScanTabId = activeScanTabId;
+          chrome.storage.local.set({ bhm_sw_state: state }, resolve);
+        });
+      });
+    }
+    if (chrome.alarms && chrome.alarms.create) {
+      try { chrome.alarms.create(ALARM_NAME_HEARTBEAT, { periodInMinutes: 1 }); } catch (_) {}
+    }
     console.log(`[BHM-PRO SW] DeclarativeNetRequest session rule installed: ruleId=${PROBE_RULE_ID}, domains=${cleanDomains.length}`);
   } catch (err) {
     console.warn("[BHM-PRO SW] Failed to install session DNR rules:", err);
@@ -203,6 +228,19 @@ async function installProbeSessionRule(domains = [], tabId = -1) {
  * 卸载 Session 级 DNR 规则（扫描完成或中断时立即调用）
  */
 async function uninstallProbeSessionRule() {
+  activeScanTabId = null;
+  if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+    await new Promise((resolve) => {
+      chrome.storage.local.get(["bhm_sw_state"], (res) => {
+        const state = (res && typeof res.bhm_sw_state === "object" && res.bhm_sw_state !== null) ? res.bhm_sw_state : {};
+        state.activeScanTabId = null;
+        chrome.storage.local.set({ bhm_sw_state: state }, resolve);
+      });
+    });
+  }
+  if (typeof chrome !== "undefined" && chrome.alarms && chrome.alarms.clear) {
+    try { chrome.alarms.clear(ALARM_NAME_HEARTBEAT); } catch (_) {}
+  }
   if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateSessionRules) {
     return;
   }
@@ -302,6 +340,31 @@ function handleRuntimeMessage(message, sender, sendResponse) {
   }
 }
 
+async function handleTabRemoved(tabId) {
+  let trackedTabId = activeScanTabId;
+  if (trackedTabId === null && typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+    trackedTabId = await new Promise((resolve) => {
+      chrome.storage.local.get(["bhm_sw_state"], (res) => {
+        const st = res && res.bhm_sw_state;
+        resolve(st && typeof st.activeScanTabId === "number" ? st.activeScanTabId : null);
+      });
+    });
+  }
+  if (trackedTabId !== null && tabId === trackedTabId) {
+    await uninstallProbeSessionRule();
+    if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+      await new Promise((resolve) => {
+        chrome.storage.local.get(["bhm_sw_state"], (res) => {
+          const state = (res && typeof res.bhm_sw_state === "object" && res.bhm_sw_state !== null) ? res.bhm_sw_state : {};
+          state.scanCursor = null;
+          state.activeScanTabId = null;
+          chrome.storage.local.set({ bhm_sw_state: state }, resolve);
+        });
+      });
+    }
+  }
+}
+
 /**
  * 绑定当前全局 chrome 环境监听（支持真实扩展运行与单元测试注入绑定）
  */
@@ -313,10 +376,16 @@ function bindServiceWorkerListeners() {
   if (chrome.runtime && chrome.runtime.onMessage && chrome.runtime.onMessage.addListener) {
     chrome.runtime.onMessage.addListener(handleRuntimeMessage);
   }
+  if (chrome.tabs && chrome.tabs.onRemoved && chrome.tabs.onRemoved.addListener) {
+    chrome.tabs.onRemoved.addListener(handleTabRemoved);
+  }
 }
 
 if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage && chrome.runtime.onMessage.addListener) {
   chrome.runtime.onMessage.addListener(handleRuntimeMessage);
+}
+if (typeof chrome !== "undefined" && chrome.tabs && chrome.tabs.onRemoved && chrome.tabs.onRemoved.addListener) {
+  chrome.tabs.onRemoved.addListener(handleTabRemoved);
 }
 
 if (typeof module !== "undefined" && module.exports) {
@@ -332,6 +401,7 @@ if (typeof module !== "undefined" && module.exports) {
     ensureAlarmsRegistered,
     handleAlarmEvent,
     handleRuntimeMessage,
+    handleTabRemoved,
     bindServiceWorkerListeners
   };
 }

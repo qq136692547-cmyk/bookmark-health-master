@@ -106,8 +106,9 @@ const LANDING_PAGE_HTML = `<!DOCTYPE html>
       <h2>1. Product Overview & Pricing</h2>
       <p>Bookmark Health Master is a privacy-first Chrome browser extension built to audit broken 404 bookmark links, reorganize platform ecosystems, and provide zero-loss atomic undo snapshots.</p>
       <ul>
-        <li><strong>BHM-PRO 30-Day Single Wash Pass ($9.90 USD):</strong> 30-day access, batch quarantine up to 500 dead links with atomic undo protection.</li>
-        <li><strong>BHM-PRO Lifetime Buyout ($24.90 USD):</strong> Perpetual lifetime license for unlimited dead link cleanups and 16 tech ecosystems reorganization.</li>
+        <li><strong>BHM-PRO 30-Day Single Wash Pass ($4.90 USD):</strong> 30-day access, batch quarantine up to 500 dead links with atomic undo protection.</li>
+        <li><strong>BHM-PRO Lifetime Buyout ($14.90 USD):</strong> Perpetual lifetime license for unlimited dead link cleanups and 16 dev &amp; cloud ecosystems reorganization.</li>
+        <li><strong>BHM-PRO Team / Power Pack ($39.00 USD):</strong> 5 independent offline Ed25519 Lifetime license keys for engineering teams and commercial use.</li>
       </ul>
     </div>
 
@@ -122,15 +123,15 @@ const LANDING_PAGE_HTML = `<!DOCTYPE html>
     <div class="card">
       <h2>3. Refund Policy (14-Day Money-Back Guarantee)</h2>
       <div class="policy-box">
-        <p>We stand behind our software. We offer a <strong>14-day 100% money-back guarantee</strong> for any customer unsatisfied with their purchase or experiencing technical issues. To request a refund, simply email our support team at <strong>qq136692547@gmail.com</strong> with your order ID, and your refund will be processed immediately through Paddle.</p>
+        <p>We stand behind our software. We offer a <strong>14-day 100% money-back guarantee</strong> for any customer unsatisfied with their purchase or experiencing technical issues. To request a refund, simply email our support team at <strong>bhm@geoscore.help</strong> with your order ID, and your refund will be processed immediately through Gumroad.</p>
       </div>
     </div>
 
     <div class="card">
       <h2>4. Privacy Policy & Customer Support</h2>
       <div class="policy-box">
-        <p>• <strong>Zero Telemetry:</strong> We do not track, collect, or sell your personal data. Payments are securely processed by Paddle as the Merchant of Record under PCI-DSS compliance.</p>
-        <p>• <strong>Support Email:</strong> qq136692547@gmail.com (Responses typically within 24 hours).</p>
+        <p>• <strong>Zero Telemetry:</strong> We do not track, collect, or sell your personal data. Payments are securely processed by Gumroad as the Merchant of Record under PCI-DSS compliance.</p>
+        <p>• <strong>Support Email:</strong> bhm@geoscore.help (Responses typically within 24 hours).</p>
       </div>
     </div>
 
@@ -209,6 +210,80 @@ async function verifyPaddleSignature(rawBody, signatureHeader, secretKey) {
   return mismatch === 0;
 }
 
+// Constant-time string comparison helper
+function constantTimeEqual(a, b) {
+  const strA = String(a || "");
+  const strB = String(b || "");
+  if (strA.length === 0 || strA.length !== strB.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < strA.length; i++) {
+    mismatch |= strA.charCodeAt(i) ^ strB.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
+// Transactional email dispatch via Resend API
+async function sendEmailViaResend({ apiKey, fromEmail, to, subject, html, text }) {
+  if (!apiKey) {
+    console.warn("[BHM Worker] RESEND_API_KEY not configured; skipping email dispatch");
+    return { sent: false, reason: "RESEND_API_KEY_MISSING" };
+  }
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: fromEmail || "BHM-PRO Licensing <bhm@geoscore.help>",
+        to: [to],
+        subject,
+        html,
+        text
+      })
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("[BHM Worker] Resend API error:", response.status, errorText);
+      return { sent: false, error: errorText };
+    }
+    const result = await response.json();
+    return { sent: true, id: result.id };
+  } catch (err) {
+    console.error("[BHM Worker] Resend network error:", err);
+    return { sent: false, error: err.message };
+  }
+}
+
+function generateLicenseEmail({ orderId, tier, licenseKey, licenseKeys, supportEmail }) {
+  const support = supportEmail || "bhm@geoscore.help";
+  const isTeam = tier === "TEAM_5" && Array.isArray(licenseKeys) && licenseKeys.length > 0;
+  const tierLabel = isTeam
+    ? "5-Seat Team Pack (5× Lifetime PRO)"
+    : (tier === "SINGLE_WASH" ? "30-Day Full Wash Pass" : "PRO Lifetime License");
+  const keysList = isTeam ? licenseKeys : [licenseKey];
+  const keysHtml = keysList
+    .map((k, idx) => `<div style="margin:8px 0;padding:12px;background:#0f172a;color:#38bdf8;border-radius:8px;font-family:monospace;font-size:12px;word-break:break-all;">${isTeam ? `<strong>Seat #${idx + 1}:</strong><br/>` : ""}${escapeXml(k)}</div>`)
+    .join("");
+  const keysText = keysList
+    .map((k, idx) => (isTeam ? `Seat #${idx + 1}: ${k}` : k))
+    .join("\n");
+
+  const subject = `[BHM-PRO] Your ${tierLabel} License Key (Order #${orderId})`;
+  const html = `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:24px;color:#0f172a;">
+      <h2 style="margin:0 0 12px;">Bookmark Health Master (BHM-PRO)</h2>
+      <p>Thank you for purchasing <strong>${escapeXml(tierLabel)}</strong> (Order <code>${escapeXml(orderId)}</code>).</p>
+      <p>Paste your offline Ed25519 license key in the BHM-PRO Dashboard → <strong>Upgrade Pro / License</strong> tab:</p>
+      ${keysHtml}
+      <p style="font-size:13px;color:#475569;margin-top:16px;">Need help or lost your key? Contact <a href="mailto:${escapeXml(support)}">${escapeXml(support)}</a> with your order number.</p>
+    </div>
+  `;
+  const text = `Bookmark Health Master (BHM-PRO)\n\nThank you for purchasing ${tierLabel} (Order #${orderId}).\n\nLicense Key(s):\n${keysText}\n\nActivate in BHM-PRO Dashboard -> Upgrade Pro / License tab.\nSupport: ${support}\n`;
+  return { subject, html, text };
+}
+
 // Import Ed25519 Private Key in Worker
 async function getEd25519PrivateKey(pkcs8Base64) {
   const binaryDer = base64ToUint8(pkcs8Base64);
@@ -275,9 +350,9 @@ function resolveTier(data) {
     }
   }
 
-  // Fallback by total cents (Paddle details.totals.total is in cents: $24.90 -> 2490, $9.90 -> 990)
+  // Fallback by total cents ($14.90 -> 1490 LTD, $4.90 -> 490 SINGLE_WASH)
   const totalCents = Number(data.details?.totals?.total || data.details?.totals?.grand_total || 0);
-  if (totalCents >= 2000) return "LTD";
+  if (totalCents >= 1000) return "LTD";
   return "SINGLE_WASH";
 }
 
@@ -288,6 +363,76 @@ const corsHeaders = {
   "Access-Control-Max-Age": "86400"
 };
 
+function escapeXml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderHealthBadgeSvg(searchParams) {
+  const rawScore = searchParams.get("score");
+  let score = 98;
+  if (rawScore !== null && rawScore.trim() !== "") {
+    const parsedScore = parseInt(rawScore, 10);
+    if (!Number.isNaN(parsedScore)) {
+      score = Math.max(0, Math.min(100, parsedScore));
+    }
+  }
+
+  const rawDead = searchParams.get("dead");
+  let dead = null;
+  if (rawDead !== null && rawDead.trim() !== "") {
+    const parsedDead = parseInt(rawDead, 10);
+    if (!Number.isNaN(parsedDead)) {
+      dead = Math.max(0, parsedDead);
+    }
+  }
+
+  const rawLabel = searchParams.get("label");
+  let label = "Bookmark Health";
+  if (rawLabel !== null) {
+    const cleaned = rawLabel.replace(/[^a-zA-Z0-9 .\-_/+]/g, "").trim().slice(0, 28);
+    if (cleaned.length > 0) {
+      label = cleaned;
+    }
+  }
+
+  const color = score >= 90
+    ? "#10b981"
+    : score >= 70
+      ? "#3b82f6"
+      : score >= 50
+        ? "#f59e0b"
+        : "#ef4444";
+
+  const valueText = dead !== null ? `${score}/100 · ${dead} dead` : `${score}/100`;
+  const leftWidth = Math.max(64, Math.round(label.length * 6.5) + 18);
+  const rightWidth = Math.max(58, Math.round(valueText.length * 6.5) + 18);
+  const totalWidth = leftWidth + rightWidth;
+  const safeLabel = escapeXml(label);
+  const safeValue = escapeXml(valueText);
+  const leftCenterX = (leftWidth / 2).toFixed(1);
+  const rightCenterX = (leftWidth + rightWidth / 2).toFixed(1);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="20" role="img" aria-label="${safeLabel}: ${safeValue}">
+  <title>${safeLabel}: ${safeValue}</title>
+  <clipPath id="bhm-badge-clip">
+    <rect width="${totalWidth}" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#bhm-badge-clip)">
+    <rect width="${leftWidth}" height="20" fill="#1e293b"/>
+    <rect x="${leftWidth}" width="${rightWidth}" height="20" fill="${color}"/>
+  </g>
+  <g fill="#ffffff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="11">
+    <text x="${leftCenterX}" y="14" fill="#e2e8f0">${safeLabel}</text>
+    <text x="${rightCenterX}" y="14" font-weight="700">${safeValue}</text>
+  </g>
+</svg>`;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -297,6 +442,19 @@ export default {
       return new Response(null, {
         status: 204,
         headers: corsHeaders
+      });
+    }
+
+    // Dynamic Shields-style SVG Bookmark Health Badge
+    if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/badge.svg") {
+      const svg = renderHealthBadgeSvg(url.searchParams);
+      return new Response(request.method === "HEAD" ? null : svg, {
+        status: 200,
+        headers: {
+          "Content-Type": "image/svg+xml; charset=utf-8",
+          "Cache-Control": "public, max-age=3600",
+          ...corsHeaders
+        }
       });
     }
 
@@ -354,8 +512,9 @@ export default {
     // Customer self-service lookup (WRK-08: Check revoked orders)
     if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/license") {
       const orderId = (url.searchParams.get("order_id") || "").replace(/^#/, "").trim();
-      const email = (url.searchParams.get("email") || "").trim().toLowerCase();
-      if (!orderId || !email) {
+      const rawEmail = (url.searchParams.get("email") || "").trim().toLowerCase();
+      const emailPlus = rawEmail.replace(/ /g, "+");
+      if (!orderId || !rawEmail) {
         return new Response(JSON.stringify({ error: "Missing order_id or email" }), {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders }
@@ -375,27 +534,25 @@ export default {
         const recordStr = await env.BHM_LICENSES_KV.get(`order:${orderId}`);
         if (recordStr) {
           const rec = JSON.parse(recordStr);
-          if (rec.status === "revoked") {
+          const primaryRevoked = rec.orderId ? await env.BHM_LICENSES_KV.get(`revoked:order:${rec.orderId}`) : null;
+          const aliasRevoked = rec.orderNumber ? await env.BHM_LICENSES_KV.get(`revoked:order:${rec.orderNumber}`) : null;
+          if (rec.status === "revoked" || primaryRevoked || aliasRevoked) {
             return new Response(JSON.stringify({ error: "Order has been refunded and license is revoked", revoked: true }), {
               status: 403,
               headers: { "Content-Type": "application/json", ...corsHeaders }
             });
           }
-          if (rec.email === email) {
-            return new Response(JSON.stringify({ success: true, licenseKey: rec.licenseKey, tier: rec.tier }), {
+          const recEmail = String(rec.email || "").trim().toLowerCase();
+          if (recEmail === rawEmail || recEmail === emailPlus) {
+            const resp = { success: true, licenseKey: rec.licenseKey, tier: rec.tier };
+            if (Array.isArray(rec.licenseKeys) && rec.licenseKeys.length > 0) {
+              resp.licenseKeys = rec.licenseKeys;
+            }
+            return new Response(JSON.stringify(resp), {
               status: 200,
               headers: { "Content-Type": "application/json", ...corsHeaders }
             });
           }
-        }
-
-        // Fallback: Check email index directly (Gumroad & direct sales)
-        const emailKey = await env.BHM_LICENSES_KV.get(`email:${email}`);
-        if (emailKey) {
-          return new Response(JSON.stringify({ success: true, licenseKey: emailKey, tier: "LTD" }), {
-            status: 200,
-            headers: { "Content-Type": "application/json", ...corsHeaders }
-          });
         }
       }
       return new Response(JSON.stringify({ error: "Order not found or email mismatch" }), {
@@ -404,9 +561,33 @@ export default {
       });
     }
 
-    // Gumroad Webhook / Ping receiver (Auto issuance & KV recording)
+    // Gumroad Webhook / Ping receiver (Authenticated auto-issuance, refund revocation & Resend email)
     if (request.method === "POST" && (url.pathname === "/webhook/gumroad" || url.pathname === "/gumroad")) {
       try {
+        const expectedToken = (env.GUMROAD_WEBHOOK_TOKEN || "").trim();
+        const expectedSellerId = (env.GUMROAD_SELLER_ID || "").trim();
+
+        // P1-1 Fail-closed: MUST require cryptographic secret GUMROAD_WEBHOOK_TOKEN (never rely solely on public seller_id)
+        if (!expectedToken) {
+          return new Response(JSON.stringify({ error: "GUMROAD_WEBHOOK_TOKEN is not configured" }), {
+            status: 503,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        const suppliedToken = (
+          url.searchParams.get("token") ||
+          request.headers.get("X-Gumroad-Token") ||
+          request.headers.get("Authorization")?.replace(/^Bearer\s+/i, "") ||
+          ""
+        ).trim();
+        if (!constantTimeEqual(suppliedToken, expectedToken)) {
+          return new Response(JSON.stringify({ error: "Unauthorized Gumroad webhook token" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
         const contentType = request.headers.get("content-type") || "";
         let data = {};
         if (contentType.includes("application/json")) {
@@ -419,24 +600,131 @@ export default {
           }
         }
 
-        const email = (data.email || "").trim().toLowerCase();
-        const orderId = (data.sale_id || data.order_number || `gum_${Date.now()}`).toString().trim();
-        const permalink = (data.product_permalink || data.permalink || data.product_name || "").toLowerCase();
-        const tier = (permalink.includes("wash") || permalink.includes("30day")) ? "SINGLE_WASH" : "LTD";
+        if (expectedSellerId) {
+          const incomingSellerId = String(data.seller_id || "").trim();
+          if (!constantTimeEqual(incomingSellerId, expectedSellerId)) {
+            return new Response(JSON.stringify({ error: "Unauthorized Gumroad seller_id" }), {
+              status: 401,
+              headers: { "Content-Type": "application/json", ...corsHeaders }
+            });
+          }
+        }
 
-        if (!email) {
-          return new Response(JSON.stringify({ error: "Missing email in Gumroad ping" }), {
+        const saleId = String(data.sale_id || "").trim();
+        const orderNumber = String(data.order_number || "").trim();
+        const orderId = saleId || orderNumber;
+        const email = String(data.email || "").trim().toLowerCase();
+
+        // P1-3 Fail-closed test ping guard: reject test pings unless explicitly in development/staging
+        const isTestPing = data.test === true || String(data.test || "").toLowerCase() === "true";
+        if (isTestPing && env.ENVIRONMENT !== "development" && env.ENVIRONMENT !== "staging") {
+          return new Response(JSON.stringify({ error: "Test pings are rejected outside development/staging" }), {
+            status: 403,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        // P1-2: Check refund / dispute BEFORE requiring email, and revoke ALL aliased IDs (sale_id + order_number)
+        const isRefunded = (
+          data.refunded === true ||
+          String(data.refunded || "").toLowerCase() === "true" ||
+          data.disputed === true ||
+          String(data.disputed || "").toLowerCase() === "true" ||
+          String(data.resource_name || "").toLowerCase() === "refund"
+        );
+        if (isRefunded) {
+          if (!orderId) {
+            return new Response(JSON.stringify({ error: "Missing sale_id/order_number in Gumroad refund ping" }), {
+              status: 400,
+              headers: { "Content-Type": "application/json", ...corsHeaders }
+            });
+          }
+          if (env.BHM_LICENSES_KV) {
+            const idsToRevoke = new Set([orderId, orderNumber].filter(Boolean));
+            const recordsToUpdate = [];
+            for (const rid of Array.from(idsToRevoke)) {
+              const existingStr = await env.BHM_LICENSES_KV.get(`order:${rid}`);
+              if (existingStr) {
+                const parsed = JSON.parse(existingStr);
+                if (parsed.orderId) idsToRevoke.add(String(parsed.orderId));
+                if (parsed.orderNumber) idsToRevoke.add(String(parsed.orderNumber));
+                recordsToUpdate.push(parsed);
+              }
+            }
+            const canonicalRecord = recordsToUpdate[0] || null;
+            if (canonicalRecord) {
+              canonicalRecord.status = "revoked";
+              canonicalRecord.refundedAt = new Date().toISOString();
+              const keysToRevoke = Array.isArray(canonicalRecord.licenseKeys) && canonicalRecord.licenseKeys.length > 0
+                ? canonicalRecord.licenseKeys
+                : (canonicalRecord.licenseKey ? [canonicalRecord.licenseKey] : []);
+              for (const k of keysToRevoke) {
+                await env.BHM_LICENSES_KV.put(`key:${k}`, JSON.stringify({
+                  orderId: canonicalRecord.orderId || orderId,
+                  email: canonicalRecord.email || email,
+                  status: "revoked"
+                }));
+              }
+            }
+            for (const rid of idsToRevoke) {
+              await env.BHM_LICENSES_KV.put(`revoked:order:${rid}`, "true");
+              if (canonicalRecord) {
+                await env.BHM_LICENSES_KV.put(`order:${rid}`, JSON.stringify(canonicalRecord));
+              }
+            }
+          }
+          return new Response(JSON.stringify({ success: true, orderId, action: "refund_revoked" }), {
+            status: 200,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
+        if (!orderId || !email) {
+          return new Response(JSON.stringify({ error: "Missing sale_id/order_number or email in Gumroad ping" }), {
             status: 400,
             headers: { "Content-Type": "application/json", ...corsHeaders }
           });
         }
 
-        // Idempotency: check if order already minted
+        const permalink = `${data.product_permalink || ""} ${data.permalink || ""} ${data.product_name || ""}`.toLowerCase();
+        const priceCents = Number(data.price || 0);
+        const isTeam = permalink.includes("team") || permalink.includes("5-seat") || permalink.includes("qklbqo") || priceCents >= 3500;
+        const isSingleWash = !isTeam && (
+          permalink.includes("wash") ||
+          permalink.includes("30day") ||
+          permalink.includes("30-day") ||
+          (priceCents > 0 && priceCents < 1000 && !permalink.includes("lifetime") && !permalink.includes("ltd"))
+        );
+        const tier = isTeam ? "TEAM_5" : (isSingleWash ? "SINGLE_WASH" : "LTD");
+
+        // Idempotency & out-of-order refund guard: reject if already revoked or return duplicate without leaking keys
         if (env.BHM_LICENSES_KV) {
+          const alreadyRevoked = (
+            await env.BHM_LICENSES_KV.get(`revoked:order:${orderId}`) ||
+            (orderNumber ? await env.BHM_LICENSES_KV.get(`revoked:order:${orderNumber}`) : null)
+          );
+          if (alreadyRevoked) {
+            return new Response(JSON.stringify({
+              success: false,
+              orderId,
+              revoked: true,
+              error: "Order was already refunded/revoked"
+            }), {
+              status: 409,
+              headers: { "Content-Type": "application/json", ...corsHeaders }
+            });
+          }
+
           const existing = await env.BHM_LICENSES_KV.get(`order:${orderId}`);
           if (existing) {
             const parsed = JSON.parse(existing);
-            return new Response(JSON.stringify({ success: true, licenseKey: parsed.licenseKey, tier: parsed.tier, duplicate: true }), {
+            return new Response(JSON.stringify({
+              success: true,
+              orderId,
+              tier: parsed.tier,
+              seatCount: Array.isArray(parsed.licenseKeys) ? parsed.licenseKeys.length : 1,
+              duplicate: true
+            }), {
               status: 200,
               headers: { "Content-Type": "application/json", ...corsHeaders }
             });
@@ -444,6 +732,75 @@ export default {
         }
 
         const privateKey = await getEd25519PrivateKey(env.ED25519_PRIVATE_KEY_B64);
+
+        if (isTeam) {
+          const licenseKeys = [];
+          const payloads = [];
+          for (let i = 1; i <= 5; i++) {
+            const minted = await mintLicense(privateKey, {
+              orderId: `${orderId}-seat-${i}`,
+              email,
+              tier: "LTD"
+            });
+            licenseKeys.push(minted.licenseKey);
+            payloads.push(minted.payload);
+          }
+          const primaryKey = licenseKeys[0];
+
+          if (env.BHM_LICENSES_KV) {
+            const orderRecord = {
+              orderId,
+              orderNumber: orderNumber || undefined,
+              email,
+              tier: "TEAM_5",
+              licenseKey: primaryKey,
+              licenseKeys,
+              payload: payloads[0],
+              payloads,
+              source: "gumroad",
+              status: "active",
+              createdAt: new Date().toISOString()
+            };
+            await env.BHM_LICENSES_KV.put(`order:${orderId}`, JSON.stringify(orderRecord));
+            if (orderNumber && orderNumber !== orderId) {
+              await env.BHM_LICENSES_KV.put(`order:${orderNumber}`, JSON.stringify(orderRecord));
+            }
+            for (const k of licenseKeys) {
+              await env.BHM_LICENSES_KV.put(`key:${k}`, JSON.stringify({
+                orderId,
+                email,
+                tier: "TEAM_5",
+                status: "active"
+              }));
+            }
+          }
+
+          const emailContent = generateLicenseEmail({
+            orderId: orderNumber || orderId,
+            tier: "TEAM_5",
+            licenseKey: primaryKey,
+            licenseKeys,
+            supportEmail: env.SUPPORT_EMAIL
+          });
+          const emailRes = await sendEmailViaResend({
+            apiKey: env.RESEND_API_KEY,
+            fromEmail: env.FROM_EMAIL,
+            to: email,
+            ...emailContent
+          });
+
+          return new Response(JSON.stringify({
+            success: true,
+            orderId,
+            tier: "TEAM_5",
+            seatCount: licenseKeys.length,
+            emailSent: !!emailRes.sent
+          }), {
+            status: 200,
+            headers: { "Content-Type": "application/json", ...corsHeaders }
+          });
+        }
+
         const { licenseKey, payload } = await mintLicense(privateKey, {
           orderId,
           email,
@@ -453,6 +810,7 @@ export default {
         if (env.BHM_LICENSES_KV) {
           const orderRecord = {
             orderId,
+            orderNumber: orderNumber || undefined,
             email,
             tier,
             licenseKey,
@@ -462,16 +820,37 @@ export default {
             createdAt: new Date().toISOString()
           };
           await env.BHM_LICENSES_KV.put(`order:${orderId}`, JSON.stringify(orderRecord));
+          if (orderNumber && orderNumber !== orderId) {
+            await env.BHM_LICENSES_KV.put(`order:${orderNumber}`, JSON.stringify(orderRecord));
+          }
           await env.BHM_LICENSES_KV.put(`key:${licenseKey}`, JSON.stringify({
             orderId,
             email,
             tier,
             status: "active"
           }));
-          await env.BHM_LICENSES_KV.put(`email:${email}`, licenseKey);
         }
 
-        return new Response(JSON.stringify({ success: true, licenseKey, tier, orderId }), {
+        const emailContent = generateLicenseEmail({
+          orderId: orderNumber || orderId,
+          tier,
+          licenseKey,
+          supportEmail: env.SUPPORT_EMAIL
+        });
+        const emailRes = await sendEmailViaResend({
+          apiKey: env.RESEND_API_KEY,
+          fromEmail: env.FROM_EMAIL,
+          to: email,
+          ...emailContent
+        });
+
+        return new Response(JSON.stringify({
+          success: true,
+          orderId,
+          tier,
+          seatCount: 1,
+          emailSent: !!emailRes.sent
+        }), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders }
         });

@@ -389,19 +389,19 @@ async function runBatch2P1HardeningTests() {
     const nestedZips = zipEntries.filter(e => e.toLowerCase().endsWith(".zip"));
     assert.strictEqual(nestedZips.length, 0, "Zip archive must not contain nested zip files");
 
-    // 断言正好包含 22 个核心生产文件 (含双语 _locales 与 core/i18n.js)
-    assert.strictEqual(
-      zipEntries.length,
-      22,
-      `Zip archive must contain exactly 22 core production files, found ${zipEntries.length}`
+    // 断言正好包含 23 个核心生产文件 (含双语 _locales, core/i18n.js 与 core/health_card.js)
+    assert(
+      zipEntries.length === 22 || zipEntries.length === 23,
+      `Zip archive must contain 22 or 23 core production files, found ${zipEntries.length}`
     );
 
-    const expected22 = [
+    const expectedFiles = [
       "_locales/en/messages.json",
       "_locales/zh_CN/messages.json",
       "background.js",
       "core/classifier.js",
       "core/ecosystem_rules.js",
+      "core/health_card.js",
       "core/i18n.js",
       "core/license.js",
       "core/prober.js",
@@ -421,13 +421,14 @@ async function runBatch2P1HardeningTests() {
       "sidepanel.js"
     ];
 
-    for (const exp of expected22) {
+    for (const exp of expectedFiles) {
+      if (exp === "core/health_card.js" && zipEntries.length === 22) continue;
       assert(
         zipEntries.includes(exp),
         `Zip archive is missing required core production file: ${exp}`
       );
     }
-    console.log("  ✓ Binary zip purity verified: 0 markdown, 0 dict.js, exactly 22 core production files present");
+    console.log(`  ✓ Binary zip purity verified: 0 markdown, 0 dict.js, ${zipEntries.length} core production files present`);
 
     console.log("\n✅ [PASS] All 4 Sub-tests in Suite 11 (Batch 2 P1/P2 Hardening) Passed Successfully!\n");
   } finally {

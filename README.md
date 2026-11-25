@@ -12,11 +12,11 @@
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn"><img src="https://img.shields.io/badge/Chrome_Web_Store-Available_Now-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Web Store" /></a>
-  <a href="https://github.com/qq136692547-cmyk/bookmark-health-master/releases"><img src="https://img.shields.io/badge/Version-v2.1.0-emerald?style=for-the-badge" alt="Version 2.1.0" /></a>
+  <a href="https://github.com/qq136692547-cmyk/bookmark-health-master/releases"><img src="https://img.shields.io/badge/Version-v2.2.0-emerald?style=for-the-badge" alt="Version 2.2.0" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License MIT" /></a>
   <a href="#"><img src="https://img.shields.io/badge/Manifest-V3_Ready-orange?style=for-the-badge&logo=googlechrome" alt="Manifest V3" /></a>
   <a href="SECURITY.md"><img src="https://img.shields.io/badge/Privacy-100%25_Local--First_%2F_Zero_Telemetry-9cf?style=for-the-badge" alt="Privacy: 100% Local-First / Zero Telemetry" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/Tests-15%2F15_Suites_Passing-brightgreen?style=for-the-badge" alt="Tests 100% Passing" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Tests-20%2F20_Suites_Passing-brightgreen?style=for-the-badge" alt="Tests 100% Passing" /></a>
 </p>
 
 <p align="center">
@@ -24,8 +24,8 @@
     <img src="https://img.shields.io/badge/%E2%96%B6_Add_to_Chrome-Free_Install-1a73e8?style=for-the-badge&logo=google-chrome&logoColor=white" height="38" alt="Add to Chrome" />
   </a>
   &nbsp;&nbsp;
-  <a href="https://bhm-pro-ern.pages.dev/">
-    <img src="https://img.shields.io/badge/%E2%9C%A8_Official_Website-bhm--pro--ern.pages.dev-6366f1?style=for-the-badge" height="38" alt="Official Website" />
+  <a href="https://bhm.geoscore.help/">
+    <img src="https://img.shields.io/badge/%E2%9C%A8_Official_Website-bhm.geoscore.help-6366f1?style=for-the-badge" height="38" alt="Official Website" />
   </a>
 </p>
 
@@ -52,8 +52,11 @@ Traditional cleaners mistake Cloudflare WAF anti-crawler challenges (HTTP 403 / 
   <img src="landing-page/assets/01-health-scan-doh.png" alt="Dual-Stage Health Scan with DoH" width="850" />
 </p>
 
-### 2. 16 Tech Titans Ecosystem Auto-Clustering
-Automatically groups disorganized bookmarks across 16 global technology giants into dedicated branded hierarchies, while cleanly isolating sub-domains (e.g. AWS Cloud, Google Cloud, Microsoft Azure, Meta AI, OpenAI, Cloudflare, NVIDIA, Apple Developer).
+### 2. 16 Tech Titans Ecosystem Auto-Clustering + Custom Rules & Folder Protection (v2.2.0)
+Automatically groups disorganized bookmarks across 16 global technology giants using Longest-Suffix Specificity (e.g. AWS Cloud, Google Cloud, Gemini, Microsoft Azure, OpenAI, Cloudflare, NVIDIA, Apple Developer). **New in v2.2.0**:
+- **🔒 Protected Folders Whitelist**: Click to recursively lock your existing folders (e.g. `My Self-Hosted` / `自建网站`) so reorganization never breaks your custom hierarchy.
+- **🎯 Safe Default Scope**: Defaults to *Loose Root Bookmarks Only*—keeping all existing user folders intact.
+- **✨ Personal Custom Domain Rules**: Highest-priority user rules (`geoscore.help`, `*.pages.dev`, `github.com/myorg`) that route straight into your chosen Bookmarks Bar folder.
 
 <p align="center">
   <img src="landing-page/assets/02-16-titans-organizer.png" alt="16 Tech Titans Ecosystem Clustering" width="850" />
@@ -69,8 +72,8 @@ Every movement and quarantine is recorded in an append-only `MoveJournal`. If yo
   <img src="landing-page/assets/03-time-machine-undo.png" alt="Time-Machine Sibling Anchor Rollback" width="850" />
 </p>
 
-### 5. Native Chrome SidePanel & Deep Workspace
-Work directly alongside your active tab with the native Chrome SidePanel, or expand into the full-screen Diagnostic Dashboard for deep inspection of 10,000+ bookmark collections.
+### 5. Exact URL-Preserving Deduplication & Native Chrome SidePanel (v2.2.0)
+Detects and quarantines exact duplicate bookmarks while strictly preserving `?query` params and `#hash` fragments so distinct docs pages are never merged by mistake. Work directly alongside your active tab with the native Chrome SidePanel (powered by lightweight `activeTab` capture), or expand into the full-screen Diagnostic Dashboard for 10,000+ bookmark collections.
 
 <p align="center">
   <img src="landing-page/assets/04-native-sidepanel.png" alt="Native Chrome SidePanel Interface" width="850" />
@@ -125,7 +128,7 @@ Work directly alongside your active tab with the native Chrome SidePanel, or exp
 
 ## 📊 Feature Comparison Matrix (Open-Core Strategy)
 
-| Feature | Community Edition (Free) | Single Wash Pass ($9.90) | BHM-PRO Lifetime Buyout ($24.90) |
+| Feature | Community Edition (Free) | Single Wash Pass ($4.90) | BHM-PRO Lifetime Buyout ($14.90) |
 | :--- | :---: | :---: | :---: |
 | **Dead Link Prober (HTTP Stage 1)** | ✅ Up to 100 Links | ✅ Up to 500 Links | 🚀 **Unlimited Forever** |
 | **DNS-over-HTTPS (DoH) Deep NXDOMAIN** | ✅ Full Access | ✅ Full Access | 🚀 **Unlimited Forever** |
@@ -135,12 +138,14 @@ Work directly alongside your active tab with the native Chrome SidePanel, or exp
 | **Sibling-Anchor Move Journal Undo** | ✅ Last 5 Actions | ✅ 30 Days History | 🚀 **Unlimited Perpetual History** |
 | **16 Tech Titans Auto-Clustering** | ⚠️ Preview Only | ✅ 30 Days Access | 🚀 **Full Uncapped Engine** |
 | **UGC Docs Protective Isolation** | ✅ Included | ✅ Included | 🚀 **Included** |
+| **Protected Folders & Custom Rules (v2.2.0)** | ✅ Included | ✅ 30 Days Access | 🚀 **Full Uncapped Engine** |
+| **Exact URL-Preserving Deduplication (v2.2.0)** | ✅ Scan + 10 Quarantine | ✅ Up to 500 Links | 🚀 **Unlimited Forever** |
 | **Native Chrome SidePanel Integration** | ✅ Included | ✅ Included | 🚀 **Included** |
 | **Cloud Telemetry & Privacy Tracking** | ❌ **Zero (100% Local)** | ❌ **Zero (100% Local)** | ❌ **Zero (100% Local)** |
 | **License Verification Method** | Open Source | 100% Offline Ed25519 | 100% Offline Ed25519 |
-| **Price** | **Free (MIT License)** | **$9.90 (30-day pass)** | **$24.90 (One-Time Buyout)** |
+| **Price** | **Free (MIT License)** | **$4.90 (30-day pass)** | **$14.90 (One-Time Buyout)** |
 
-👉 Upgrade to BHM-PRO Lifetime Buyout: **[https://bhm-pro-ern.pages.dev/](https://bhm-pro-ern.pages.dev/)**
+👉 Upgrade to BHM-PRO Lifetime Buyout: **[https://bhm.geoscore.help/](https://bhm.geoscore.help/)**
 
 ---
 
@@ -161,7 +166,7 @@ node tests/run_all_tests.js
 ```
 Expected output:
 ```
-Total Suites: 15 | Passed: 15 | Failed: 0
+Total Suites: 20 | Passed: 20 | Failed: 0
 🎉 ALL 4 TIERS OF E2E TESTS PASSED WITH 100% SUCCESS RATE!
 ```
 
@@ -196,5 +201,5 @@ This repository is distributed under the **MIT License**. See the [`LICENSE`](LI
 
 <p align="center">
   Crafted with care by the <b>BHM-PRO Team / L.D. Studio (2026)</b><br>
-  Official Landing Page: <a href="https://bhm-pro-ern.pages.dev/">https://bhm-pro-ern.pages.dev/</a> &bull; Chrome Web Store: <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn">Add to Chrome</a>
+  Official Landing Page: <a href="https://bhm.geoscore.help/">https://bhm.geoscore.help/</a> &bull; Chrome Web Store: <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn">Add to Chrome</a>
 </p>

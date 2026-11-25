@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E242MNXMRD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-E242MNXMRD');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Delete Dead & Broken Bookmarks in Chrome (404 Cleaner & DoH Checker)</title>
+  <meta name="description" content="Learn how to find and clean broken 404 bookmarks in Google Chrome safely without false alarms from Cloudflare. 100% local-first prober with atomic rollback.">
+  <meta name="keywords" content="how to delete broken bookmarks chrome, chrome 404 bookmark checker, clean dead links chrome, find broken bookmarks, bookmark health master">
+  <link rel="canonical" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html">
+
+  <link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html?lang=en">
+  <link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html?lang=zh">
+  <link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html">
+
+  <!-- OpenGraph & Social Cards -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html">
+  <meta property="og:title" content="How to Clean Broken 404 Bookmarks in Chrome with Anti-Cloudflare DoH">
+  <meta property="og:description" content="Stop drowning in broken 404 links. Use BHM-PRO's dual-stage DoH probe to detect genuine dead sites with 100% zero-telemetry local privacy.">
+  <meta property="og:image" content="https://bhm.geoscore.help/assets/twitter-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="assets/icon-128.png">
+  <link rel="stylesheet" href="styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Clean Broken Bookmarks in Google Chrome Without False Deletions",
+    "description": "Step-by-step guide to scanning thousands of bookmarks, filtering out Cloudflare anti-bot blocks, and safely quarantining true 404s with atomic undo.",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Install Bookmark Health Master (BHM-PRO)",
+        "text": "Add the 100% local-first BHM-PRO extension from the Chrome Web Store."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Run Dual-Stage Health Probe",
+        "text": "Execute the dual-stage HEAD and Range-GET probe with DNS-over-HTTPS (DoH) cross-validation."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Review & Atomic Quarantine",
+        "text": "Safely quarantine true dead links to a dedicated folder with an instant local time-machine snapshot."
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <img src="assets/icon-128.png" alt="BHM-PRO Logo" width="36" height="36">
+        <span>BHM-PRO</span>
+        <span class="brand-badge">GUIDE</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#pricing">Pricing</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="clean-dead-chrome-bookmarks.html" class="active">404 Cleaner</a></li>
+        <li><a href="organize-developer-bookmarks.html">Dev Organizer</a></li>
+        <li><a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Add to Chrome (Free)</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Content Section -->
+  <main class="container" style="max-width: 860px; margin: 48px auto 80px; padding: 0 20px; text-align: left;">
+    <nav class="breadcrumb-nav" aria-label="Breadcrumb" style="margin-bottom: 24px; font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 8px;">
+      <a href="index.html" style="color: #38bdf8; text-decoration: none;">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="blog.html" style="color: #38bdf8; text-decoration: none;">Blog & Guides</a>
+      <span aria-hidden="true">/</span>
+      <span style="color: #94a3b8;">404 Dead Link Cleaner</span>
+    </nav>
+
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: #ffffff; line-height: 1.3; margin-bottom: 16px;">
+      How to Delete Dead & Broken Bookmarks in Chrome (Without False Positives)
+    </h1>
+    <p style="font-size: 1.05rem; color: #94a3b8; line-height: 1.6; margin-bottom: 32px;">
+      Over time, personal and developer Chrome bookmark libraries turn into digital graveyards: discontinued SaaS endpoints, migrated blogs, and expired documentation. Here is why conventional tools fail and how BHM-PRO fixes it locally.
+    </p>
+
+    <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(51, 65, 85, 0.8); border-radius: 14px; padding: 24px; margin-bottom: 32px;">
+      <h2 style="font-size: 1.3rem; color: #f8fafc; margin-bottom: 12px;">The Core Problem: Cloudflare & Anti-Bot False Alarms</h2>
+      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.7; margin-bottom: 14px;">
+        Traditional bookmark checkers send naive HTTP HEAD requests. When these requests hit modern websites protected by <strong>Cloudflare Turnstile, Cloudflare WAF, or Akamai</strong>, the server responds with <code>403 Forbidden</code> or <code>503 Challenge Required</code>. Outdated extensions mistake this for a dead website and delete active, valuable bookmarks!
+      </p>
+      <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.7;">
+        <strong>Bookmark Health Master (BHM-PRO)</strong> solves this by using a secondary <strong>RFC8484 DNS-over-HTTPS (DoH)</strong> probe directly against <code>1.1.1.1</code> and <code>8.8.8.8</code>. If the domain's DNS is intact and active, BHM-PRO safeguards the link in a protected review zone rather than falsely destroying it.
+      </p>
+    </div>
+
+    <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(51, 65, 85, 0.8); border-radius: 14px; padding: 24px; margin-bottom: 32px;">
+      <h2 style="font-size: 1.3rem; color: #f8fafc; margin-bottom: 12px;">Step-by-Step: Clean 1,000+ Bookmarks in 3 Minutes</h2>
+      <ol style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.8; padding-left: 20px;">
+        <li><strong>Install BHM-PRO:</strong> From the official Chrome Web Store (Manifest V3, 100% Local-First).</li>
+        <li><strong>Run Two-Stage Health Scan:</strong> Click <em>Start Full Scan</em>. The engine runs adaptive concurrent probes with private intranet IP shielding.</li>
+        <li><strong>Review Diagnosed Categories:</strong> Filter between <em>Confirmed Dead (404/410/NXDOMAIN)</em>, <em>WAF Protected</em>, and <em>301 Permanent Redirects</em>.</li>
+        <li><strong>Batch Quarantine to Trash:</strong> Isolate dead links with 1-click. A full cryptographic snapshot is recorded locally in your browser's private storage.</li>
+        <li><strong>Atomic Rollback Anytime:</strong> If you ever need to restore, click <em>Time-Machine Rollback</em> to revert every bookmark to its exact original folder and index position.</li>
+      </ol>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding: 32px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(245, 158, 11, 0.1)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px;">
+      <h3 style="color: #ffffff; font-size: 1.4rem; margin-bottom: 12px;">Ready to Resurrect Your Bookmarks?</h3>
+      <p style="color: #94a3b8; font-size: 0.92rem; margin-bottom: 20px;">100% Free Health Audit · Zero Telemetry · Local Sandbox</p>
+      <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+        <a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-cws btn-md">Install Free Extension</a>
+        <a href="https://dengli.gumroad.com/l/bhm-pro-lifetime?wanted=true" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-md">Get Early-Bird Lifetime ($14.90)</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: #64748b; font-size: 0.85rem; padding: 24px 0;">
+      <p style="margin: 0;">© 2026 Bookmark Health Master (BHM-PRO) by L.D. Studio. All rights reserved. 100% Local-First Architecture.</p>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <a href="index.html" style="color: var(--text-muted); text-decoration: none;">Home</a>
+        <a href="blog.html" style="color: var(--text-muted); text-decoration: none;">Blog & Guides</a>
+        <a href="terms.html" style="color: var(--text-muted); text-decoration: none;">Terms</a>
+        <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;">Privacy</a>
+        <a href="refund.html" style="color: var(--text-muted); text-decoration: none;">Refunds</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

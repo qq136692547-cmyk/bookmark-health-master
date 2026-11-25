@@ -32,12 +32,108 @@ const UGC_NAMES = {
 class EcosystemClassifier {
   constructor(customRules = null, options = {}) {
     // 兼容首参传入 options 配置项
-    if (customRules && !Array.isArray(customRules) && typeof customRules === "object" && customRules.lang) {
+    if (customRules && !Array.isArray(customRules) && typeof customRules === "object" && (customRules.lang || customRules.userCustomRules)) {
       options = customRules;
       customRules = null;
     }
     this.rules = (Array.isArray(customRules) && customRules.length > 0) ? customRules : ECOSYSTEMS;
     this.lang = (options && options.lang === "en") ? "en" : "zh";
+    this.userCustomRules = EcosystemClassifier.sanitizeCustomRules(options && options.userCustomRules);
+  }
+
+  setCustomRules(rulesList) {
+    this.userCustomRules = EcosystemClassifier.sanitizeCustomRules(rulesList);
+  }
+
+  /**
+   * 清洗并规范化用户自定义专属规则列表
+   * 每条规则格式: { id, folderName, icon?, domains: string[] }
+   */
+  static sanitizeCustomRules(rawList) {
+    if (!Array.isArray(rawList)) return [];
+    const out = [];
+    for (let i = 0; i < rawList.length; i++) {
+      const r = rawList[i];
+      if (!r || typeof r !== "object") continue;
+      const folderName = String(r.folderName || r.name || "").trim();
+      if (!folderName) continue;
+      const rawDomains = Array.isArray(r.domains)
+        ? r.domains
+        : String(r.domains || "").split(/[\n,;，；\s]+/);
+      const domains = [];
+      for (const d of rawDomains) {
+        let cleaned = String(d || "").trim().toLowerCase()
+          .replace(/^https?:\/\//i, "")
+          .replace(/[?#].*$/, "")
+          .replace(/^www\./i, "")
+          .replace(/\/+$/, "");
+        // 剥离主机段端口号（如 my-site.io:8443/admin -> my-site.io/admin）
+        const slashIdx = cleaned.indexOf("/");
+        if (slashIdx === -1) {
+          cleaned = cleaned.replace(/:\d+$/, "");
+        } else {
+          cleaned = cleaned.slice(0, slashIdx).replace(/:\d+$/, "") + cleaned.slice(slashIdx);
+        }
+        const hostCheck = cleaned.split("/")[0].replace(/^\*\./, "").replace(/^www\./i, "");
+        if (hostCheck && hostCheck !== "*" && !hostCheck.includes("*")) {
+          domains.push(cleaned);
+        }
+      }
+      if (domains.length === 0) continue;
+      const id = String(r.id || `rule_${i + 1}`).replace(/[^a-zA-Z0-9_-]/g, "_");
+      out.push({
+        id,
+        folderName,
+        icon: String(r.icon || "📁").trim() || "📁",
+        domains: Array.from(new Set(domains))
+      });
+    }
+    return out;
+  }
+
+  /**
+   * 匹配用户自定义专属规则（最高优先级，支持域名、*.通配子域与 domain/path 路径前缀）
+   */
+  static matchCustomRules(userCustomRules, hostname, pathname) {
+    if (!Array.isArray(userCustomRules) || userCustomRules.length === 0 || !hostname) {
+      return null;
+    }
+    const cleanHost = hostname.toLowerCase().replace(/^www\./i, "");
+    const cleanPath = (pathname || "/").toLowerCase();
+    let bestRule = null;
+    let bestScore = -1;
+
+    for (const rule of userCustomRules) {
+      for (const rawPattern of (rule.domains || [])) {
+        const pattern = String(rawPattern || "").toLowerCase().trim();
+        if (!pattern) continue;
+
+        const slashIdx = pattern.indexOf("/");
+        let hostPat = slashIdx === -1 ? pattern : pattern.slice(0, slashIdx);
+        const pathPat = slashIdx === -1 ? "" : pattern.slice(slashIdx).replace(/\/+$/, "");
+
+        if (hostPat.startsWith("*.")) hostPat = hostPat.slice(2);
+        hostPat = hostPat.replace(/^www\./i, "");
+        if (!hostPat) continue;
+
+        const exactHost = cleanHost === hostPat;
+        const subHost = cleanHost.endsWith(`.${hostPat}`);
+        if (!exactHost && !subHost) continue;
+
+        if (pathPat) {
+          const pathMatch = cleanPath === pathPat || cleanPath.startsWith(`${pathPat}/`);
+          if (!pathMatch) continue;
+        }
+
+        const score = (exactHost ? 1000 : 0) + hostPat.length + (pathPat ? 2000 + pathPat.length : 0);
+        if (score > bestScore) {
+          bestScore = score;
+          bestRule = rule;
+        }
+      }
+    }
+
+    return bestRule;
   }
 
   /**
@@ -131,6 +227,27 @@ class EcosystemClassifier {
     const isEn = this.lang === "en";
     const fallbackDomain = isEn ? "Other" : "其它未知";
 
+    // -1. [最高优先级] 用户自定义专属规则（如「自建网站」），优先于 UGC 文档与 16 大科技巨头
+    const matchedCustom = EcosystemClassifier.matchCustomRules(this.userCustomRules, hostname, pathname);
+    if (matchedCustom) {
+      const ecoId = `custom_${matchedCustom.id}`;
+      return {
+        isEcosystem: true,
+        isCustomRule: true,
+        isUgcDoc: false,
+        ecoId,
+        ecoName: matchedCustom.folderName,
+        ecoEnName: matchedCustom.folderName,
+        ecoFolderName: matchedCustom.folderName,
+        icon: matchedCustom.icon || "📁",
+        color: "#14B8A6",
+        subcategoryId: "direct",
+        subcategoryName: isEn ? "Custom Rule" : "自定义专属规则",
+        matchedDomain: hostname,
+        normalizedUrl: EcosystemClassifier.normalizeUrl(rawUrl)
+      };
+    }
+
     // 0. [UGC 防污染守卫]：多租户文档协同与个人知识库隔离
     let isUgcDocs = false;
     let ugcSubId = "docs_portal";
@@ -202,13 +319,36 @@ class EcosystemClassifier {
       }
 
       if (isDomainMatch) {
-        // 3. 细分路由到子分类
+        // 3. 细分路由到子分类（P0-4: 最长域名后缀特异性优先匹配，杜绝根域名遮蔽子服务）
         let targetSub = null;
+        let bestDomainScore = -1;
+        let bestRegexMatch = false;
 
-        // 优先依据子域名白名单匹配
-        targetSub = eco.subcategories.find(sub =>
-          sub.domainWhitelist.some(d => hostname === d || hostname.endsWith(`.${d}`))
-        );
+        for (const sub of (eco.subcategories || [])) {
+          let subBestScore = -1;
+          for (const d of (sub.domainWhitelist || [])) {
+            const cleanD = String(d || "").toLowerCase();
+            if (!cleanD) continue;
+            if (hostname === cleanD) {
+              const score = cleanD.length + 1000;
+              if (score > subBestScore) subBestScore = score;
+            } else if (hostname.endsWith(`.${cleanD}`)) {
+              const score = cleanD.length;
+              if (score > subBestScore) subBestScore = score;
+            }
+          }
+          if (subBestScore >= 0) {
+            const hasRegexHit = !!(sub.titleRegex && sub.titleRegex.test(lowerTitle));
+            if (
+              subBestScore > bestDomainScore ||
+              (subBestScore === bestDomainScore && hasRegexHit && !bestRegexMatch)
+            ) {
+              bestDomainScore = subBestScore;
+              bestRegexMatch = hasRegexHit;
+              targetSub = sub;
+            }
+          }
+        }
 
         // 其次依据标题正则细分
         if (!targetSub) {
@@ -242,6 +382,7 @@ class EcosystemClassifier {
           color: eco.color,
           subcategoryId: targetSub ? targetSub.id : "default",
           subcategoryName: subName,
+          matchedDomain: hostname,
           normalizedUrl: EcosystemClassifier.normalizeUrl(rawUrl)
         };
       }
@@ -270,6 +411,41 @@ class EcosystemClassifier {
   }
 
   /**
+   * 检测基于完整规范化 URL（保留 query 与 hash）的精准重复书签
+   * @param {Array} bookmarks
+   * @returns {{ duplicates: Array, duplicateGroups: Array<{ normalizedUrl: string, keep: Object, duplicates: Array }> }}
+   */
+  static findDuplicates(bookmarks) {
+    const groupsMap = new Map();
+    for (const bm of (bookmarks || [])) {
+      if (!bm || !bm.url) continue;
+      const norm = EcosystemClassifier.normalizeUrl(bm.url);
+      if (!norm) continue;
+      if (!groupsMap.has(norm)) {
+        groupsMap.set(norm, [bm]);
+      } else {
+        groupsMap.get(norm).push(bm);
+      }
+    }
+
+    const duplicates = [];
+    const duplicateGroups = [];
+    for (const [normalizedUrl, list] of groupsMap.entries()) {
+      if (list.length > 1) {
+        // 按创建时间升序保留最早一条，其余标为可清理重复副本
+        const sorted = list.slice().sort((a, b) => (a.dateAdded || 0) - (b.dateAdded || 0));
+        const keep = sorted[0];
+        const dups = sorted.slice(1);
+        duplicateGroups.push({ normalizedUrl, keep, duplicates: dups });
+        for (const d of dups) {
+          duplicates.push({ ...d, normalizedUrl, keepId: keep.id, keepTitle: keep.title });
+        }
+      }
+    }
+    return { duplicates, duplicateGroups };
+  }
+
+  /**
    * 批量聚类分析全量书签
    * P0-5: 为未命中 16 巨头与 UGC 的书签提供「📁 未分类 (按主域名建夹)」归拢出口，按主域名自动建夹
    * P0-7: 采用完整 URL 规范化键（保留 search 与 hash）精准去重，杜绝静默丢失有效书签
@@ -280,6 +456,35 @@ class EcosystemClassifier {
     const fallbackDomain = isEn ? "Other" : "其它未知";
 
     const ecosystemGroups = {};
+
+    // 0. 优先挂载用户自定义专属规则分组（直接位于书签栏，不建多余嵌套子夹）
+    for (const cr of (this.userCustomRules || [])) {
+      const customEcoId = `custom_${cr.id}`;
+      const subLabel = isEn ? "Custom Rule" : "自定义专属规则";
+      ecosystemGroups[customEcoId] = {
+        meta: {
+          id: customEcoId,
+          ruleId: cr.id,
+          name: cr.folderName,
+          enName: cr.folderName,
+          folderName: cr.folderName,
+          zhFolderName: cr.folderName,
+          enFolderName: cr.folderName,
+          icon: cr.icon || "📁",
+          color: "#14B8A6",
+          isCustomRule: true,
+          domains: cr.domains.slice()
+        },
+        totalCount: 0,
+        subcategories: {
+          direct: {
+            meta: { id: "direct", name: subLabel, zhName: "自定义专属规则", enName: "Custom Rule" },
+            items: []
+          }
+        }
+      };
+    }
+
     for (const eco of this.rules) {
       const ecoDisplayName = isEn ? (eco.enName || eco.name) : eco.name;
       const ecoFolder = isEn ? `${eco.icon} ${eco.enName || eco.name}` : eco.folderName;
@@ -435,14 +640,25 @@ class EcosystemClassifier {
     // 挂载未分类分组到 ecosystemGroups 方便全景遍历
     ecosystemGroups["uncategorized"] = uncategorizedGroup;
 
+    const { duplicates, duplicateGroups } = EcosystemClassifier.findDuplicates(bookmarks);
+    let totalCustomCount = 0;
+    for (const key of Object.keys(ecosystemGroups)) {
+      if (ecosystemGroups[key]?.meta?.isCustomRule) {
+        totalCustomCount += ecosystemGroups[key].totalCount || 0;
+      }
+    }
+
     return {
       ecosystemGroups,
       uncategorizedGroup,
       nonEcosystemGroup: uncategorizedGroup,
       nonEcosystemItems,
       totalEcosystemCount,
+      totalCustomCount,
       totalUncategorizedCount: uncategorizedGroup.totalCount,
-      dedupedCount: dedupeSet.size
+      dedupedCount: dedupeSet.size,
+      duplicates,
+      duplicateGroups
     };
   }
 }

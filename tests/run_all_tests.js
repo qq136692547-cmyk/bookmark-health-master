@@ -47,7 +47,10 @@ async function main() {
     { id: "SUITE-14", name: "Lemon Squeezy Webhook & Automated Issuance E2E Suite", fn: runScriptFile("test_lemon_squeezy_webhook_e2e.js") },
     { id: "SUITE-15", name: "Open Source Compliance & Repository Security Audit", fn: runScriptFile("verify_open_source_release.js") },
     { id: "SUITE-16", name: "Official Landing Page Bilingual i18n & Client-Side Localization", fn: runScriptFile("test_landing_i18n_e2e.js") },
-    { id: "SUITE-17", name: "Gumroad Payment Integration & Automated Issuance E2E Suite", fn: runScriptFile("test_gumroad_integration.js") }
+    { id: "SUITE-17", name: "Gumroad Payment Integration & Automated Issuance E2E Suite", fn: runScriptFile("test_gumroad_integration.js") },
+    { id: "SUITE-18", name: "Dynamic SVG Health Badge & Extension Paywall Conversion Suite", fn: runScriptFile("test_badge_and_paywall.js") },
+    { id: "SUITE-19", name: "Phase 1 Hotfix v2.1.5 Strict P0/P1 Regression & Security Suite", fn: runScriptFile("test_phase1_hotfix_regression.js") },
+    { id: "SUITE-20", name: "v2.2.0 Protected Folders, Reorg Scope & Custom Rules E2E Suite", fn: runScriptFile("test_v22_protection_and_custom_rules.js") }
   ];
 
   const results = [];

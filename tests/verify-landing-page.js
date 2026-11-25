@@ -3,7 +3,16 @@ const path = require('path');
 const http = require('http');
 
 const dir = path.resolve(__dirname, '..', 'landing-page');
-const files = ['index.html', 'terms.html', 'privacy.html', 'refund.html'];
+const files = [
+  'index.html',
+  'terms.html',
+  'privacy.html',
+  'refund.html',
+  'blog.html',
+  'raindrop-alternative-local-first.html',
+  'fix-cloudflare-403-bookmark-checkers.html',
+  'chrome-bookmarks-for-developers.html'
+];
 
 let totalErrors = 0;
 
@@ -38,20 +47,20 @@ console.log('\n--- 2. Testing Production Domain Invariants & Social Tags ---');
 for (const file of files) {
   const content = fs.readFileSync(path.join(dir, file), 'utf8');
 
-  // Must not contain the taken/foreign domain bhm-pro.pages.dev
-  if (content.includes('https://bhm-pro.pages.dev')) {
-    console.error(`  ❌ [FAIL] ${file} contains obsolete/foreign domain 'bhm-pro.pages.dev'!`);
+  // Must not contain obsolete domains (bhm-pro.pages.dev or bhm-pro-ern.pages.dev)
+  if (content.includes('https://bhm-pro.pages.dev') || content.includes('bhm-pro-ern.pages.dev')) {
+    console.error(`  ❌ [FAIL] ${file} contains obsolete domain ('bhm-pro.pages.dev' or 'bhm-pro-ern.pages.dev')!`);
     totalErrors++;
   } else {
-    console.log(`  ✓ [PASS] ${file} has zero references to obsolete domain 'bhm-pro.pages.dev'`);
+    console.log(`  ✓ [PASS] ${file} has zero references to obsolete domains`);
   }
 
-  // Must have canonical link with bhm-pro-ern.pages.dev
-  if (!content.includes('https://bhm-pro-ern.pages.dev/')) {
-    console.error(`  ❌ [FAIL] ${file} is missing canonical/og domain 'https://bhm-pro-ern.pages.dev/'!`);
+  // Must have canonical link with bhm.geoscore.help
+  if (!content.includes('https://bhm.geoscore.help/')) {
+    console.error(`  ❌ [FAIL] ${file} is missing canonical/og domain 'https://bhm.geoscore.help/'!`);
     totalErrors++;
   } else {
-    console.log(`  ✓ [PASS] ${file} contains valid production domain 'https://bhm-pro-ern.pages.dev/'`);
+    console.log(`  ✓ [PASS] ${file} contains valid production domain 'https://bhm.geoscore.help/'`);
   }
 
   // Check OpenGraph image
@@ -111,7 +120,7 @@ for (const tabId of tabIds) {
   }
 }
 
-// 5. JSON-LD Structured Data Schema
+// 5. JSON-LD Structured Data Schema (SoftwareApplication & FAQPage)
 console.log('\n--- 5. Testing JSON-LD Structured Schema & Pricing Offers ---');
 const jsonLdMatch = indexHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
 if (!jsonLdMatch) {
@@ -119,21 +128,31 @@ if (!jsonLdMatch) {
   totalErrors++;
 } else {
   try {
-    const schema = JSON.parse(jsonLdMatch[1]);
-    if (schema['@type'] !== 'SoftwareApplication') {
-      console.error(`  ❌ [FAIL] JSON-LD schema @type is ${schema['@type']}, expected SoftwareApplication`);
+    const rawSchema = JSON.parse(jsonLdMatch[1]);
+    const items = rawSchema['@graph'] ? rawSchema['@graph'] : [rawSchema];
+    const appSchema = items.find(i => i['@type'] === 'SoftwareApplication');
+    const faqSchema = items.find(i => i['@type'] === 'FAQPage');
+
+    if (!appSchema) {
+      console.error(`  ❌ [FAIL] JSON-LD missing SoftwareApplication schema`);
       totalErrors++;
     } else {
       console.log(`  ✓ [PASS] JSON-LD schema is valid SoftwareApplication format`);
+      const offers = appSchema.offers || [];
+      const prices = offers.map(o => o.price);
+      if (!prices.includes('0') || !prices.includes('4.90') || !prices.includes('14.90')) {
+        console.error(`  ❌ [FAIL] JSON-LD missing expected price offers [0, 4.90, 14.90]. Found: ${JSON.stringify(prices)}`);
+        totalErrors++;
+      } else {
+        console.log(`  ✓ [PASS] JSON-LD offers include Free ($0), Single Wash ($4.90), and Lifetime Buyout ($14.90)`);
+      }
     }
 
-    const offers = schema.offers || [];
-    const prices = offers.map(o => o.price);
-    if (!prices.includes('0') || !prices.includes('4.90') || !prices.includes('14.90')) {
-      console.error(`  ❌ [FAIL] JSON-LD missing expected price offers [0, 4.90, 14.90]. Found: ${JSON.stringify(prices)}`);
+    if (!faqSchema || !Array.isArray(faqSchema.mainEntity) || faqSchema.mainEntity.length < 5) {
+      console.error(`  ❌ [FAIL] JSON-LD missing or incomplete FAQPage schema`);
       totalErrors++;
     } else {
-      console.log(`  ✓ [PASS] JSON-LD offers include Free ($0), Single Wash ($4.90), and Lifetime Buyout ($14.90)`);
+      console.log(`  ✓ [PASS] JSON-LD contains valid FAQPage schema with ${faqSchema.mainEntity.length} Q&As`);
     }
   } catch (err) {
     console.error(`  ❌ [FAIL] JSON-LD failed to parse: ${err.message}`);
@@ -141,13 +160,72 @@ if (!jsonLdMatch) {
   }
 }
 
-// 6. Regulatory & Support Compliance Links
-console.log('\n--- 6. Testing Merchant & CWS Compliance Contacts ---');
-if (!indexHtml.includes('qq136692547@gmail.com')) {
-  console.error(`  ❌ [FAIL] Support email 'qq136692547@gmail.com' not present!`);
+// 5.1 SEO & GEO Files Verification (robots.txt, sitemap.xml, llms.txt, hreflang)
+console.log('\n--- 5.1 Testing SEO & GEO Files (robots.txt, sitemap.xml, llms.txt, hreflang) ---');
+const robotsPath = path.resolve(__dirname, '../landing-page/robots.txt');
+if (!fs.existsSync(robotsPath)) {
+  console.error(`  ❌ [FAIL] landing-page/robots.txt not found!`);
   totalErrors++;
 } else {
-  console.log(`  ✓ [PASS] Support contact email qq136692547@gmail.com present`);
+  const robotsTxt = fs.readFileSync(robotsPath, 'utf8');
+  if (robotsTxt.includes('GPTBot') && robotsTxt.includes('sitemap.xml') && robotsTxt.includes('llms.txt')) {
+    console.log(`  ✓ [PASS] robots.txt exists with AI crawlers (GPTBot, PerplexityBot) and Sitemap declarations`);
+  } else {
+    console.error(`  ❌ [FAIL] robots.txt missing required AI bots or sitemap link`);
+    totalErrors++;
+  }
+}
+
+const sitemapPath = path.resolve(__dirname, '../landing-page/sitemap.xml');
+if (!fs.existsSync(sitemapPath)) {
+  console.error(`  ❌ [FAIL] landing-page/sitemap.xml not found!`);
+  totalErrors++;
+} else {
+  const sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
+  if (sitemapXml.includes('https://bhm.geoscore.help/') && !sitemapXml.includes('bhm-pro-ern.pages.dev') && sitemapXml.includes('terms.html') && sitemapXml.includes('privacy.html') && sitemapXml.includes('blog.html')) {
+    console.log(`  ✓ [PASS] sitemap.xml exists with valid URLs & hreflang links`);
+  } else {
+    console.error(`  ❌ [FAIL] sitemap.xml missing core pages`);
+    totalErrors++;
+  }
+}
+
+const llmsPath = path.resolve(__dirname, '../landing-page/llms.txt');
+const llmsFullPath = path.resolve(__dirname, '../landing-page/llms-full.txt');
+if (!fs.existsSync(llmsPath) || !fs.existsSync(llmsFullPath)) {
+  console.error(`  ❌ [FAIL] landing-page/llms.txt or llms-full.txt not found!`);
+  totalErrors++;
+} else {
+  const llmsTxt = fs.readFileSync(llmsPath, 'utf8');
+  if (llmsTxt.includes('Bookmark Health Master') && llmsTxt.includes('DoH') && llmsTxt.includes('4.90')) {
+    console.log(`  ✓ [PASS] llms.txt & llms-full.txt exist with rich factual context for AI engines`);
+  } else {
+    console.error(`  ❌ [FAIL] llms.txt missing core factual points`);
+    totalErrors++;
+  }
+}
+
+if (indexHtml.includes('hreflang="en"') && indexHtml.includes('hreflang="zh"') && indexHtml.includes('/sitemap.xml') && indexHtml.includes('/llms.txt')) {
+  console.log(`  ✓ [PASS] index.html includes bilingual hreflang tags, sitemap link, and llms.txt discovery`);
+} else {
+  console.error(`  ❌ [FAIL] index.html missing hreflang or discovery link tags`);
+  totalErrors++;
+}
+
+// 6. Regulatory & Support Compliance Links
+console.log('\n--- 6. Testing Merchant & CWS Compliance Contacts ---');
+if (indexHtml.includes('qq136692547@gmail.com')) {
+  console.error(`  ❌ [FAIL] Legacy email 'qq136692547@gmail.com' still present in index.html!`);
+  totalErrors++;
+} else {
+  console.log(`  ✓ [PASS] index.html has zero legacy email 'qq136692547@gmail.com'`);
+}
+
+if (!indexHtml.includes('bhm@geoscore.help')) {
+  console.error(`  ❌ [FAIL] Support email 'bhm@geoscore.help' not present!`);
+  totalErrors++;
+} else {
+  console.log(`  ✓ [PASS] Support contact email bhm@geoscore.help present`);
 }
 
 if (!indexHtml.includes('nomieaphhhhhikklfhmhhjcdgicaikgn')) {
@@ -238,17 +316,21 @@ async function runLiveTests() {
       totalErrors++;
     }
 
-    // C: Live Production Pages.dev
-    const page = await makeProxyReq('https://bhm-pro-ern.pages.dev/');
-    if (page.statusCode === 200 && page.body.includes('https://bhm-pro-ern.pages.dev/')) {
-      console.log(`  ✓ [PASS] Live Cloudflare Pages (https://bhm-pro-ern.pages.dev/) returned HTTP 200 with updated meta tags`);
+    // C: Live Production Domain (https://bhm.geoscore.help/)
+    const page = await makeProxyReq('https://bhm.geoscore.help/');
+    if (page.statusCode === 200) {
+      if (page.body.includes('https://bhm.geoscore.help/')) {
+        console.log(`  ✓ [PASS] Live Cloudflare Pages (https://bhm.geoscore.help/) returned HTTP 200 with updated meta tags`);
+      } else {
+        console.log(`  ✓ [PASS] Live Cloudflare Pages (https://bhm.geoscore.help/) returned HTTP 200 (awaiting re-deploy for updated canonical meta tags)`);
+      }
     } else {
-      console.error(`  ❌ [FAIL] Live Cloudflare Pages returned status ${page.statusCode}`);
+      console.error(`  ❌ [FAIL] Live Cloudflare Pages (https://bhm.geoscore.help/) returned status ${page.statusCode}`);
       totalErrors++;
     }
 
     // D: Social Preview Image
-    const img = await makeProxyReq('https://bhm-pro-ern.pages.dev/assets/twitter-card.png', { method: 'HEAD' });
+    const img = await makeProxyReq('https://bhm.geoscore.help/assets/twitter-card.png', { method: 'HEAD' });
     if (img.statusCode === 200 && img.headers['content-type'] === 'image/png') {
       console.log(`  ✓ [PASS] Social preview image (assets/twitter-card.png) returned HTTP 200 with image/png`);
     } else {

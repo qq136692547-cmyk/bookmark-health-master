@@ -1,0 +1,45 @@
+{
+  "name": "Bookmark Health Master (BHM-PRO)",
+  "version": "2.2.0",
+  "tagline": "Clean & Organize 1,000+ Bookmarks in Seconds. Zero False 404s. Zero Cloud Uploads.",
+  "description": "High-performance, privacy-first Chrome SidePanel extension for bookmark dead link verification via DNS-over-HTTPS, exact URL-preserving deduplication, automated 16 Cloud & Dev Ecosystems clustering with Protected Folder Whitelists and Personal Custom Domain Rules, Auth-Gated Cloud Docs isolation, and sibling-anchor atomic 1-click rollback.",
+  "website": "https://bhm.geoscore.help/",
+  "chromeWebStoreUrl": "https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn",
+  "githubRepository": "https://github.com/qq136692547-cmyk/bookmark-health-master",
+  "architecture": {
+    "engine": "Manifest V3 Local Sandbox",
+    "telemetry": "Zero (100% Local-First, no external analytic beacons)",
+    "deadLinkDetection": "Dual-Stage (HTTP Range GET probe + Cloudflare 1.1.1.1 / Google 8.8.8.8 DoH NXDOMAIN authoritative verification)",
+    "deduplication": "Exact URL-preserving normalization (retains query parameters and hash fragments to prevent false merges)",
+    "intranetShield": "RFC 1918 Private Subnets & Loopback Protection",
+    "clustering": "Personal Custom Domain Rules (highest priority) + Protected Folder Whitelists + Default Loose-Bookmark Safe Scope + 16 Cloud & Dev Ecosystems + Auth-Gated Cloud Docs & Workspaces Isolation",
+    "rollback": "Atomic Sibling-Anchor MoveJournal with 100% index and parent fidelity",
+    "licensing": "100% Offline Ed25519 WebCrypto Public-Key Digital Signature Verification"
+  },
+  "pricing": {
+    "freeTier": {
+      "price": "$0",
+      "limit": "Full health scan & duplicate audit, dual-stage DoH check, RFC1918 shielding, basic Netscape backup, quarantine up to 10 items (+50 bonus via Health Report)"
+    },
+    "singleWashPass": {
+      "price": "$4.90",
+      "validity": "30 days",
+      "limit": "500 dead link & duplicate quarantines, full 16 Ecosystems & custom rules clustering, atomic undo"
+    },
+    "lifetimeBuyout": {
+      "price": "$14.90",
+      "validity": "Perpetual Lifetime",
+      "limit": "Unlimited dead link & duplicate quarantines, unlimited 16 Ecosystems + Protected Folders + Custom Domain Rules clustering, auth-gated docs isolation, 3 personal browser activations, lifetime updates"
+    },
+    "teamPack": {
+      "price": "$39",
+      "validity": "Perpetual Lifetime (5 Seats)",
+      "limit": "5 independent offline Ed25519 keys, commercial & engineering team use, instant VAT invoice, priority support"
+    }
+  },
+  "contact": {
+    "supportEmail": "bhm@geoscore.help",
+    "refundPolicy": "14-Day 100% Money-Back Guarantee, no questions asked"
+  },
+  "updatedAt": "2026-11-25"
+}

@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E242MNXMRD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-E242MNXMRD');
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy - Bookmark Health Master (BHM-PRO)</title>
   <meta name="description" content="Strict zero-telemetry local-first commitment. All bookmark audits and actions remain in your browser sandbox.">
-  <link rel="canonical" href="https://bhm-pro-ern.pages.dev/privacy.html">
+  <link rel="canonical" href="https://bhm.geoscore.help/privacy.html">
 
   <!-- OpenGraph / Social Meta Tags -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://bhm-pro-ern.pages.dev/privacy.html">
+  <meta property="og:url" content="https://bhm.geoscore.help/privacy.html">
   <meta property="og:title" content="Privacy Policy - Bookmark Health Master (BHM-PRO)">
   <meta property="og:description" content="Strict zero-telemetry local-first commitment. All bookmark audits and actions remain in your browser sandbox.">
-  <meta property="og:image" content="https://bhm-pro-ern.pages.dev/assets/twitter-card.png">
+  <meta property="og:image" content="https://bhm.geoscore.help/assets/twitter-card.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Privacy Policy - Bookmark Health Master (BHM-PRO)">
   <meta name="twitter:description" content="Strict zero-telemetry local-first commitment. All bookmark audits and actions remain in your browser sandbox.">
-  <meta name="twitter:image" content="https://bhm-pro-ern.pages.dev/assets/twitter-card.png">
+  <meta name="twitter:image" content="https://bhm.geoscore.help/assets/twitter-card.png">
 
   <link rel="icon" type="image/png" href="assets/icon-128.png">
   <link rel="stylesheet" href="styles.css">
@@ -37,6 +47,7 @@
         <li><a href="index.html#features" data-i18n="nav.features">Features</a></li>
         <li><a href="index.html#pricing" data-i18n="nav.pricing">Pricing</a></li>
         <li><a href="index.html#faq" data-i18n="nav.faq">FAQ</a></li>
+        <li><a href="blog.html" data-i18n="nav.blog">Blog</a></li>
         <li><a href="terms.html" data-i18n="nav.terms">Terms</a></li>
         <li><a href="privacy.html" class="active" data-i18n="nav.privacy">Privacy</a></li>
         <li><a href="refund.html" data-i18n="nav.refunds">Refunds</a></li>
@@ -191,7 +202,7 @@
             <h2>3. How Local Features Operate & Dual-Stage DoH</h2>
             <ul>
               <li><strong>Dead Link Probing:</strong> HTTP HEAD/GET probes are executed directly by your browser. When DNS-over-HTTPS (DoH) diagnostics is enabled, only the bare Fully Qualified Domain Name (FQDN, e.g. <code>example.com</code>) is queried via public Cloudflare (<code>1.1.1.1</code>) or Google (<code>8.8.8.8</code>) DoH endpoints to distinguish NXDOMAIN (deregistered domains) from server rate limits. Full paths, query strings, and fragments are NEVER transmitted.</li>
-              <li><strong>16 Tech Titans Organization:</strong> Pattern matching and clustering algorithms run entirely in-memory within the Chrome SidePanel / Extension background service worker.</li>
+              <li><strong>16 Cloud & Dev Ecosystems Organization:</strong> Pattern matching and clustering algorithms run entirely in-memory within the Chrome SidePanel / Extension background service worker.</li>
               <li><strong>Atomic Undo Snapshots:</strong> Snapshots and rollback journals are stored exclusively in your browser's private <code>chrome.storage.local</code> partition.</li>
             </ul>
           </div>
@@ -200,7 +211,7 @@
             <h2>3. 本地功能运行原理与双阶段 DoH 探针机制</h2>
             <ul>
               <li><strong>死链状态探测：</strong>HTTP HEAD/GET 探针直接由您的本地浏览器发起。当启用 DNS-over-HTTPS (DoH) 辅助诊断时，仅会将裸域名（FQDN，例如 <code>example.com</code>）提交至公开权威的 Cloudflare (<code>1.1.1.1</code>) 或 Google (<code>8.8.8.8</code>) DoH 服务端以鉴别域名是否注销（NXDOMAIN），绝不传输完整 URL 路径、查询参数（Query）或身份 Token。</li>
-              <li><strong>16 大科技巨头生态整理：</strong>归类与正则启发式算法完全在 Chrome 侧边栏（SidePanel）及 Service Worker 内存中本地运行，无需任何外部分析接口。</li>
+              <li><strong>16 大云端与开发生态整理：</strong>归类与正则启发式算法完全在 Chrome 侧边栏（SidePanel）及 Service Worker 内存中本地运行，无需任何外部分析接口。</li>
               <li><strong>同级锚点原子级快照回滚：</strong>所有历史事务日志与撤销快照均完全密封于您本地浏览器的私有存储区 <code>chrome.storage.local</code> 中。</li>
             </ul>
           </div>
@@ -231,26 +242,26 @@
         </div>
       </section>
 
-      <!-- Section 5: Payment & Merchant Data (Paddle) -->
+      <!-- Section 5: Payment & Merchant Data (Gumroad) -->
       <section class="legal-section">
         <div class="legal-pair">
           <div class="lang-en">
             <span class="lang-badge lang-badge-en">EN</span>
-            <h2>5. Payment & Merchant Data (Paddle)</h2>
-            <p>When you purchase a Pro license (Single Wash Pass or Lifetime Buyout), transactions are securely processed by <strong>Paddle.com Market Ltd ("Paddle")</strong> as our Merchant of Record:</p>
+            <h2>5. Payment & Merchant Data (Gumroad)</h2>
+            <p>When you purchase a Pro license (Single Wash Pass or Lifetime Buyout), transactions are securely processed by <strong>Gumroad, Inc. ("Gumroad")</strong> as our Merchant of Record:</p>
             <ul>
-              <li>Payment details (credit card number, PayPal account, billing address) are collected and processed directly by Paddle under strict <strong>PCI-DSS Level 1</strong> compliance. We never see or store your payment card numbers.</li>
-              <li>Paddle communicates with our automated license issuance gateway via secure Webhooks to mint an Ed25519 digital license token for your order.</li>
+              <li>Payment details (credit card number, PayPal account, billing address) are collected and processed directly by Gumroad under strict <strong>PCI-DSS Level 1</strong> compliance. We never see or store your payment card numbers.</li>
+              <li>Gumroad communicates with our automated license issuance gateway via secure Webhooks to mint an Ed25519 digital license token for your order.</li>
               <li>The only customer information processed for licensing is your Order ID, email address, and purchased tier, solely for delivering your license key and enabling self-service retrieval.</li>
             </ul>
           </div>
           <div class="lang-zh">
             <span class="lang-badge lang-badge-zh">中文</span>
-            <h2>5. 支付与商户数据规范（Paddle）</h2>
-            <p>当您购买专业版授权（单次清洗体验卡或终身买断授权）时，所有交易均由全球法定商户 <strong>Paddle.com Market Ltd（“Paddle”）</strong>安全托管：</p>
+            <h2>5. 支付与商户数据规范（Gumroad）</h2>
+            <p>当您购买专业版授权（单次清洗体验卡或终身买断授权）时，所有交易均由全球法定商户 <strong>Gumroad, Inc.（“Gumroad”）</strong>安全托管：</p>
             <ul>
-              <li>您的支付敏感信息（信用卡号、PayPal 账户、账单地址等）由 Paddle 在严格的 <strong>PCI-DSS Level 1</strong> 国际金融最高安全标准下直接处理。我们绝无权限查看或存储您的银行卡信息。</li>
-              <li>Paddle 仅在支付授权成功后，通过端到端加密的 Webhook 向我们的自动化发码网关传递必要参数，用于签发对应的 Ed25519 密码学许可密钥。</li>
+              <li>您的支付敏感信息（信用卡号、PayPal 账户、账单地址等）由 Gumroad 在严格的 <strong>PCI-DSS Level 1</strong> 国际金融最高安全标准下直接处理。我们绝无权限查看或存储您的银行卡信息。</li>
+              <li>Gumroad 仅在支付授权成功后，通过端到端加密的 Webhook 向我们的自动化发码网关传递必要参数，用于签发对应的 Ed25519 密码学许可密钥。</li>
               <li>我们处理的客户信息仅限于订单号（Order ID）、收据电子邮箱及购买版本，其用途仅为向您交付授权凭单并在官网提供自助密钥找回。</li>
             </ul>
           </div>
@@ -309,8 +320,8 @@
             <h2>8. Contact Information</h2>
             <p>If you have any questions about this Privacy Policy, our zero-telemetry architecture, or our security design, please contact:</p>
             <ul>
-              <li><strong>Lead Engineer & Support:</strong> <a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a></li>
-              <li><strong>Official Website:</strong> <a href="index.html" style="color: #60a5fa;">https://bhm-pro-ern.pages.dev/</a></li>
+              <li><strong>Lead Engineer & Support:</strong> <a href="mailto:bhm@geoscore.help" style="color: #60a5fa;">bhm@geoscore.help</a></li>
+              <li><strong>Official Website:</strong> <a href="index.html" style="color: #60a5fa;">https://bhm.geoscore.help/</a></li>
             </ul>
           </div>
           <div class="lang-zh">
@@ -318,8 +329,8 @@
             <h2>8. 联络方式与安全反馈</h2>
             <p>如果您对本隐私政策、零遥测安全架构或权限设计有任何疑问或安全建议，欢迎通过以下方式与核心团队联系：</p>
             <ul>
-              <li><strong>首席安全与技术支持：</strong><a href="mailto:qq136692547@gmail.com" style="color: #60a5fa;">qq136692547@gmail.com</a></li>
-              <li><strong>官方主站：</strong><a href="index.html" style="color: #60a5fa;">https://bhm-pro-ern.pages.dev/</a></li>
+              <li><strong>首席安全与技术支持：</strong><a href="mailto:bhm@geoscore.help" style="color: #60a5fa;">bhm@geoscore.help</a></li>
+              <li><strong>官方主站：</strong><a href="index.html" style="color: #60a5fa;">https://bhm.geoscore.help/</a></li>
             </ul>
           </div>
         </div>
@@ -332,6 +343,7 @@
     <div class="container footer-bottom">
       <p>© 2026 Bookmark Health Master (BHM-PRO). All rights reserved.</p>
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <a href="blog.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="footer.blog">Blog & Guides</a>
         <a href="terms.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.terms">Terms of Service</a>
         <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.privacy">Privacy Policy</a>
         <a href="refund.html" style="color: var(--text-muted); text-decoration: none;" data-i18n="nav.refunds">Refund Policy</a>

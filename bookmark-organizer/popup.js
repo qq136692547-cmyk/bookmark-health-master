@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const langToggleBtn = document.getElementById("langToggleBtn");
   const openSidePanelBtn = document.getElementById("openSidePanelBtn");
   const openDashboardBtn = document.getElementById("openDashboardBtn");
+  const popupUpgradeBtn = document.getElementById("popupUpgradeBtn");
+  const popupProActive = document.getElementById("popupProActive");
+  const popupProActiveText = document.getElementById("popupProActiveText");
 
   // 初始化双语引擎
   if (typeof BHM_I18N !== "undefined") {
@@ -35,7 +38,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 生态矩阵状态
     ecoCountEl.textContent = BHM_I18N.t("popup.ecoCountVal");
 
-    // 授权等级标签
+    // 授权等级标签与升级入口
+    const isPaid = currentTier === "LTD" || currentTier === "PRO" || currentTier === "SINGLE_WASH";
+    if (popupUpgradeBtn) {
+      popupUpgradeBtn.style.display = isPaid ? "none" : "flex";
+    }
+    if (popupProActive) {
+      popupProActive.style.display = isPaid ? "block" : "none";
+      if (popupProActiveText) {
+        const tierLabel = (currentTier === "SINGLE_WASH")
+          ? BHM_I18N.t("popup.washEdition")
+          : BHM_I18N.t("popup.ltdEdition");
+        popupProActiveText.textContent = BHM_I18N.t("popup.tierActive", { tier: tierLabel });
+      }
+    }
+
     if (proBadge) {
       if (currentTier === "LTD" || currentTier === "PRO") {
         proBadge.textContent = BHM_I18N.t("popup.ltdEdition");

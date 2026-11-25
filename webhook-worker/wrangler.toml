@@ -10,5 +10,5 @@ id = "da44bda9619347ae8800b9090b19cd4e"
 [vars]
 ENVIRONMENT = "production"
 EXTENSION_ID = "nomieaphhhhhikklfhmhhjcdgicaikgn"
-SUPPORT_EMAIL = "qq136692547@gmail.com"
-FROM_EMAIL = "BHM-PRO Licensing <licenses@bhm-pro.com>"
+SUPPORT_EMAIL = "bhm@geoscore.help"
+FROM_EMAIL = "BHM-PRO Licensing <bhm@geoscore.help>"

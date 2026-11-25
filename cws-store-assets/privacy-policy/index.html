@@ -190,6 +190,10 @@
           <td>Required to open the native Chrome Side Panel companion for fast bookmark search and access.</td>
         </tr>
         <tr>
+          <td><code>activeTab</code></td>
+          <td>Used strictly when you explicitly click "Bookmark Current Page" inside the Side Panel to read the active tab's title and URL without ever requesting background browsing permissions.</td>
+        </tr>
+        <tr>
           <td><code>alarms</code></td>
           <td>Required to manage Service Worker keepalive cycles during active user-initiated scans to prevent Chromium idle timeout.</td>
         </tr>
@@ -218,10 +222,10 @@
 
   <section>
     <h2>4. Payment Processing (Merchant of Record)</h2>
-    <p>Commercial licensing is processed securely through <strong>Lemon Squeezy</strong> as the Merchant of Record (MoR).</p>
+    <p>Commercial licensing is processed securely through <strong>Gumroad (Gumroad, Inc.)</strong> as the Merchant of Record (MoR).</p>
     <ul>
-      <li>When purchasing a license, payment details (credit card, PayPal, Apple Pay) are processed directly by Lemon Squeezy under PCI-DSS Level 1 compliance.</li>
-      <li>BHM-PRO does not store or process your financial information. The extension only stores your activation license key locally in <code>chrome.storage.local</code> to unlock premium capabilities.</li>
+      <li>When purchasing a license, payment details (credit card, PayPal, Apple Pay) are processed directly by Gumroad under PCI-DSS compliance.</li>
+      <li>BHM-PRO does not store or process your financial information. The extension only stores your offline Ed25519 activation license key locally in <code>chrome.storage.local</code> (and optionally syncs the key via Chrome's built-in <code>chrome.storage.sync</code> across your own signed-in Chrome browsers) to unlock premium capabilities.</li>
     </ul>
   </section>
 
@@ -229,7 +233,7 @@
     <h2>5. Contact &amp; Questions</h2>
     <p>If you have any questions or feedback regarding this Privacy Policy, please contact our support team at:</p>
     <ul>
-      <li><strong>Support Email:</strong> <code>support@bookmarkhealthmaster.com</code> (or submit an issue via our official repository)</li>
+      <li><strong>Support Email:</strong> <code>bhm@geoscore.help</code> (or submit an issue via our official repository)</li>
     </ul>
   </section>
 
@@ -242,10 +246,11 @@
 
       <h3>2. 权限申请与技术用途披露（遵循 Chrome Web Store 最小权限原则）</h3>
       <ul>
-        <li><code>bookmarks</code>：用于读取书签层级、按生态目录归类整理，以及经用户确认后将死链移入隔离回收站。</li>
+        <li><code>bookmarks</code>：用于读取书签层级、按生态目录归类整理，以及经用户确认后将死链或重复项移入隔离回收站。</li>
         <li><code>storage</code> / <code>unlimitedStorage</code>：用于在本地 <code>chrome.storage.local</code> 保存原子撤销操作日志 (Move Journals) 与灾难恢复快照。</li>
         <li><code>sidePanel</code>：用于唤起 Chrome 原生侧边栏伴侣面板，便捷检索书签。</li>
-        <li><code>alarms</code>：用于在扫描期间保持后台 Service Worker 活跃，防止浏览器空闲超时终止任务。</li>
+        <li><code>activeTab</code>：仅在您于侧边栏主动点击“收藏当前页”时读取当前活动标签页的标题与网址，绝不申请后台全网浏览权限。</li>
+        <li><code>alarms</code>：用于定期执行安全卫生巡检，确保扫描结束或异常关闭后残留的临时规则被彻底清理。</li>
         <li><code>declarativeNetRequest</code>：仅在用户主动发起书签健康体检期间，通过会话级临时规则 (<code>updateSessionRules</code>) 仅针对插件自身全景大盘页面或后台 Service Worker 发往待测书签域名的探测请求移除 <code>Origin</code> 请求头，避免跨域请求头干扰状态码探测，体检结束或中断时立即卸载该规则，绝不监控、收集或修改用户在普通网页标签页中的日常浏览流量。</li>
         <li><code>optional_host_permissions</code> (<code>*://*/*</code>)：<strong>安装时绝不索取</strong>。仅在用户主动点击“开始死链体检”时动态提示授权，供浏览器向书签目标站点发起轻量连通性探测。</li>
       </ul>
@@ -258,10 +263,10 @@
       </ul>
 
       <h3>4. 商业支付与安全处理</h3>
-      <p>商业授权由全球知名备案商家 <strong>Lemon Squeezy (Merchant of Record, MoR)</strong> 在 PCI-DSS Level 1 安全合规标准下托管处理。本插件绝不收集或储存任何银行卡号或财务信息，仅在本地 <code>chrome.storage.local</code> 存储激活码以离线解锁 Pro 权益。</p>
+      <p>商业授权由全球知名创作者与软件收银平台 <strong>Gumroad (Gumroad, Inc.，作为商户记录方 / Merchant of Record)</strong> 在 PCI-DSS 安全合规标准下托管处理。本插件绝不收集或储存任何银行卡号或财务信息，仅在本地 <code>chrome.storage.local</code> 存储离线 Ed25519 激活码（并可选通过 Chrome 内置 <code>chrome.storage.sync</code> 在您本人已登录的 Chrome 浏览器间同步该激活码）以解锁 Pro 权益。</p>
 
       <h3>5. 联系方式</h3>
-      <p>如有任何疑问，请联系官方支持邮箱：<code>support@bookmarkhealthmaster.com</code></p>
+      <p>如有任何疑问，请联系官方支持邮箱：<code>bhm@geoscore.help</code></p>
     </div>
   </details>
 
