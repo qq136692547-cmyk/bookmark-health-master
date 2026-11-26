@@ -172,7 +172,7 @@ test('OPEN_SOURCE_LAUNCH_KIT.md contains HN, Reddit, Twitter drafts and authenti
   assert(kit.includes('r/webdev'), 'Missing r/webdev draft');
   assert(kit.includes('Twitter / X'), 'Missing Twitter / X draft');
   assert(kit.includes('https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn'), 'Missing CWS link in launch kit');
-  assert(kit.includes('https://bhm-pro-ern.pages.dev/'), 'Missing landing page link in launch kit');
+  assert(kit.includes('https://bhm.geoscore.help/'), 'Missing landing page link in launch kit');
   assert(kit.includes('bookmark-health-master'), 'Missing GitHub repo link in launch kit');
   assert(!kit.includes('modules/classifier.js'), 'Launch kit must NOT reference nonexistent modules/classifier.js');
 });

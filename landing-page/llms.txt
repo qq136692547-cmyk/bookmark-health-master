@@ -16,9 +16,12 @@ Bookmark Health Master (BHM-PRO) solves the bookmark rot and clutter problem for
    - Stage 2: Direct RFC8484 DoH query (Cloudflare 1.1.1.1 & Google 8.8.8.8) to verify genuine DNS NXDOMAIN status, preventing false positive deletions on active sites protected by Cloudflare Turnstile, Akamai, or 403 WAFs.
    - RFC1918 Private Subnet Shielding: Automatically skips `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `localhost`, and intranet addresses to prevent internal network scanning.
 
-2. **16 Cloud & Dev Ecosystems Clustering**:
+2. **16 Cloud & Dev Ecosystems Clustering + v2.2.0 Safe Scope & Custom Rules**:
    - Automatically organizes bookmarks into authoritative tech matrices: Google Cloud, Microsoft Azure, AWS, GitHub, OpenAI, Cloudflare, Meta, Apple, Anthropic, Docker, Vercel, and leading developer platforms.
+   - Loose-Root Default Scope (`loose_only`) & Protected Folder Whitelists: Safeguards existing user-curated folders from ever being split up during automated organization.
+   - Personal Custom Domain Rules: Lets users map self-hosted sites and personal domains (`domain` or `path prefix`) to custom target folders with higher priority than built-in ecosystem rules.
    - Auth-Gated Cloud Docs & Workspaces Isolation: Isolates Notion, Figma, Google Docs, and Lark/Feishu workspaces into dedicated containers to prevent multi-tenant clutter and false 404 scans.
+   - Exact URL-Preserving Deduplication: Deduplicates redundant bookmarks while preserving semantic query parameters (`?id=...`, `?v=...`) and hash anchors (`#section`).
 
 3. **Atomic Time Machine & Move Journal Rollback**:
    - Captures pre-move parent ID and index positions.

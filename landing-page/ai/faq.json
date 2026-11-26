@@ -1,6 +1,6 @@
 {
   "title": "Bookmark Health Master (BHM-PRO) AI Knowledge Base & FAQ",
-  "updatedAt": "2026-11-20",
+  "updatedAt": "2026-11-26",
   "faqs": [
     {
       "question": "Does Bookmark Health Master upload or transmit my bookmarks to cloud servers?",
@@ -21,6 +21,10 @@
     {
       "question": "How does offline license verification work?",
       "answer": "BHM-PRO verifies digital license tokens entirely offline in your browser using the native Web Crypto API with an embedded Ed25519 SPKI public key. There are zero heartbeats or telemetry pings to external activation servers."
+    },
+    {
+      "question": "Will BHM-PRO scramble my existing folders or self-hosted site bookmarks?",
+      "answer": "No. Since v2.2.0, BHM-PRO defaults to Loose-Root Safe Scope (only organizing unfiled root bookmarks), lets you add any folder to a Protected Folder Whitelist, and supports Personal Custom Domain Rules that take priority over built-in ecosystem clustering for self-hosted sites."
     }
   ]
 }

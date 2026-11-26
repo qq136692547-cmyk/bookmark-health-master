@@ -47,6 +47,9 @@ Bookmark Health Master (BHM-PRO) is a commercial-grade, privacy-first Chrome Ext
   16. JD.com (jd.com, jdcloud.com)
 - Auth-Gated Cloud Docs & Workspaces Isolation:
   - Automatically segregates Google Docs (`docs.google.com/document/d/...`), Google Sheets, Feishu/Lark docs (`feishu.cn/docx/...`), and Yuque docs (`yuque.com/...`) into a dedicated "Auth-Gated Cloud Docs & Workspaces" folder, preventing them from being scattered.
+- Protected Folders & Safe Scope (`v2.2.0`):
+  - Defaults to `loose_only` reorganization scope so existing user-curated folders are never disrupted unless explicitly opted in.
+  - Supports user-defined Protected Folder Whitelists and priority Custom Domain Rules (domain or path-prefix routing for self-hosted sites).
 - Deduplication with Query & Hash Preservation:
   - URL normalization preserves semantic query params (`?id=...`, `?v=...`) and hash anchors (`#heading-1`).
 
@@ -73,8 +76,8 @@ Bookmark Health Master (BHM-PRO) is a commercial-grade, privacy-first Chrome Ext
 
 ---
 
-## 2. Test Suite & Quality Verification Matrix
-The codebase undergoes continuous regression testing across 17 automated test suites:
+## 2. Test Suite & Quality Verification Matrix (v2.2.0)
+The codebase undergoes continuous regression testing across 20 automated test suites:
 - SUITE-01: Prober, RFC1918 Shielding & Cloudflare DoH (Tier 1/2)
 - SUITE-02: 16 Cloud & Dev Ecosystems & Auth-Gated Docs Isolation Engine (Tier 1/2)
 - SUITE-03: SafetyManager & Move Journal Rollback (Tier 1/2)
@@ -92,8 +95,11 @@ The codebase undergoes continuous regression testing across 17 automated test su
 - SUITE-15: Open Source Compliance & Repository Security Audit
 - SUITE-16: Official Landing Page Bilingual i18n & Client-Side Localization
 - SUITE-17: Gumroad Payment Integration & Automated Issuance E2E Suite
+- SUITE-18: Dynamic SVG Health Badge & Extension Paywall Conversion Suite
+- SUITE-19: Phase 1 Hotfix v2.1.5 Strict P0/P1 Regression & Security Suite
+- SUITE-20: v2.2.0 Protected Folders, Reorg Scope & Custom Rules E2E Suite
 
-Result: 17/17 Suites Passing (100% Success Rate).
+Result: 20/20 Suites Passing (100% Success Rate).
 
 ---
 

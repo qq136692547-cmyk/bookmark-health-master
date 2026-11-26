@@ -40,7 +40,7 @@ We also designed the license verification to be **100% offline**: digital tokens
 
 - **GitHub Repo**: https://github.com/qq136692547-cmyk/bookmark-health-master
 - **Chrome Web Store**: https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn
-- **Official Website**: https://bhm-pro-ern.pages.dev/
+- **Official Website**: https://bhm.geoscore.help/
 
 I would love to hear feedback on the DoH fallback logic and ideas for refining community domain classification rules!
 ```
@@ -89,7 +89,7 @@ Contributions are welcome—especially PRs for expanding developer ecosystem cat
 
 **Title**:
 ```
-I got tired of bookmark cleaners deleting working links, so I built a local-first extension that checks DNS records first (17 test suites, MV3)
+I got tired of bookmark cleaners deleting working links, so I built a local-first extension that checks DNS records first (20 test suites, MV3)
 ```
 
 **Body**:
@@ -116,7 +116,7 @@ So I spent the last few months building **Bookmark Health Master (BHM)**.
 Check out the project:
 - GitHub: https://github.com/qq136692547-cmyk/bookmark-health-master
 - Chrome Web Store: https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn
-- Landing Page: https://bhm-pro-ern.pages.dev/
+- Landing Page: https://bhm.geoscore.help/
 
 Would love any thoughts on the UI or feature suggestions!
 ```
@@ -152,7 +152,7 @@ To prevent background fetches from leaking sensitive referer data to probed serv
 To minimize network usage across 1,000+ links, the fetch response body is immediately cancelled via `response.body.cancel()` right after reading response headers, preventing multi-megabyte payloads from downloading.
 
 ### 4. Zero External Dependencies
-The entire test harness (17 suites, unit/integration/stress testing 1,500+ bookmarks) is written in native Node.js with zero npm modules.
+The entire test harness (20 suites, unit/integration/stress testing 1,500+ bookmarks) is written in native Node.js with zero npm modules.
 
 Source code and architecture docs are available on GitHub:
 👉 https://github.com/qq136692547-cmyk/bookmark-health-master
@@ -170,7 +170,7 @@ Happy to discuss MV3 performance tuning, service worker lifecycle tricks, or DoH
 > 
 > When Cloudflare or Akamai blocks their scraper (HTTP 403/503), they falsely assume the page is dead and delete your alive links.
 > 
-> Today we’re open-sourcing Bookmark Health Master (BHM) v2.1.4 on GitHub! 🧵👇
+> Today we’re open-sourcing Bookmark Health Master (BHM) v2.2.0 on GitHub! 🧵👇
 > 
 > [Attach landing-page/assets/01-health-scan-doh.png]
 
@@ -201,6 +201,6 @@ Happy to discuss MV3 performance tuning, service worker lifecycle tricks, or DoH
 > 
 > ⭐ Star the repo: https://github.com/qq136692547-cmyk/bookmark-health-master
 > 💻 Install free on Chrome Web Store: https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn
-> 🌐 Website: https://bhm-pro-ern.pages.dev/
+> 🌐 Website: https://bhm.geoscore.help/
 > 
 > RTs appreciated! 🚀

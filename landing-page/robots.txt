@@ -29,5 +29,5 @@ User-agent: cohere-ai
 Allow: /
 
 # Sitemaps & Machine-Readable Context
+# LLMs Context: https://bhm.geoscore.help/llms.txt
 Sitemap: https://bhm.geoscore.help/sitemap.xml
-Sitemap: https://bhm.geoscore.help/llms.txt
