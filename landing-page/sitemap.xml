@@ -11,97 +11,97 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/terms.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/terms.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/terms.html?lang=zh"/>
+    <loc>https://bhm.geoscore.help/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/terms?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/terms?lang=zh"/>
     <lastmod>2026-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/privacy.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/privacy.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/privacy.html?lang=zh"/>
+    <loc>https://bhm.geoscore.help/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/privacy?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/privacy?lang=zh"/>
     <lastmod>2026-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/refund.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/refund.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/refund.html?lang=zh"/>
+    <loc>https://bhm.geoscore.help/refund</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/refund?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/refund?lang=zh"/>
     <lastmod>2026-11-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/blog.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/blog.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/blog.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/blog.html"/>
+    <loc>https://bhm.geoscore.help/blog</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/blog?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/blog?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/blog"/>
     <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks.html"/>
+    <loc>https://bhm.geoscore.help/clean-dead-chrome-bookmarks</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/clean-dead-chrome-bookmarks"/>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/organize-developer-bookmarks.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/organize-developer-bookmarks.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/organize-developer-bookmarks.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/organize-developer-bookmarks.html"/>
+    <loc>https://bhm.geoscore.help/organize-developer-bookmarks</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/organize-developer-bookmarks?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/organize-developer-bookmarks?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/organize-developer-bookmarks"/>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/local-first-bookmark-manager.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/local-first-bookmark-manager.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/local-first-bookmark-manager.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/local-first-bookmark-manager.html"/>
+    <loc>https://bhm.geoscore.help/local-first-bookmark-manager</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/local-first-bookmark-manager?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/local-first-bookmark-manager?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/local-first-bookmark-manager"/>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/export-backup-chrome-bookmarks.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/export-backup-chrome-bookmarks.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/export-backup-chrome-bookmarks.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/export-backup-chrome-bookmarks.html"/>
+    <loc>https://bhm.geoscore.help/export-backup-chrome-bookmarks</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/export-backup-chrome-bookmarks?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/export-backup-chrome-bookmarks?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/export-backup-chrome-bookmarks"/>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/raindrop-alternative-local-first.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/raindrop-alternative-local-first.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/raindrop-alternative-local-first.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/raindrop-alternative-local-first.html"/>
+    <loc>https://bhm.geoscore.help/raindrop-alternative-local-first</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/raindrop-alternative-local-first?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/raindrop-alternative-local-first?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/raindrop-alternative-local-first"/>
     <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html"/>
+    <loc>https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers"/>
     <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://bhm.geoscore.help/chrome-bookmarks-for-developers.html</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/chrome-bookmarks-for-developers.html?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/chrome-bookmarks-for-developers.html?lang=zh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/chrome-bookmarks-for-developers.html"/>
+    <loc>https://bhm.geoscore.help/chrome-bookmarks-for-developers</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/chrome-bookmarks-for-developers?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/chrome-bookmarks-for-developers?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/chrome-bookmarks-for-developers"/>
     <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

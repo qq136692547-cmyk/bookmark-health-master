@@ -15,15 +15,15 @@
   <title>Why Bookmark Checkers Trigger False 404/403 on Cloudflare — And How RFC 8484 DoH Fixes It</title>
   <meta name="description" content="Engineering breakdown of why legacy Chrome bookmark checkers falsely flag Cloudflare and Akamai WAF sites as dead 403/404 links, and how BHM-PRO solves it with Range-GET, credentials: 'omit', and RFC 8484 DoH NXDOMAIN verification.">
   <meta name="keywords" content="bookmark checker cloudflare 403 false positive, rfc 8484 doh dead link checker, chrome broken link checker waf bypass, range get bookmark probe, bhm-pro doh">
-  <link rel="canonical" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html">
+  <link rel="canonical" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers">
 
-  <link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html?lang=en">
-  <link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html?lang=zh">
-  <link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html">
+  <link rel="alternate" hreflang="en" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers?lang=en">
+  <link rel="alternate" hreflang="zh" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers?lang=zh">
+  <link rel="alternate" hreflang="x-default" href="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers">
 
   <!-- OpenGraph & Twitter Cards -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html">
+  <meta property="og:url" content="https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers">
   <meta property="og:title" content="Why Bookmark Checkers Trigger False 404/403 on Cloudflare — And How RFC 8484 DoH Fixes It">
   <meta property="og:description" content="Stop deleting live documentation behind Cloudflare Turnstile or Akamai WAFs. Learn how dual-stage Range-GET + RFC 8484 DoH eliminates false positives.">
   <meta property="og:image" content="https://bhm.geoscore.help/assets/twitter-card.png">
@@ -43,7 +43,7 @@
         "@type": "Article",
         "headline": "Why Bookmark Checkers Trigger False 404/403 on Cloudflare — And How RFC 8484 DoH Fixes It",
         "description": "Technical root-cause analysis of HTTP HEAD false positives on Cloudflare and Akamai WAFs, solved via dual-stage Range-GET fallback, credentials: 'omit', and RFC 8484 DNS-over-HTTPS NXDOMAIN cross-validation.",
-        "url": "https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html",
+        "url": "https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers",
         "datePublished": "2026-11-21T08:00:00Z",
         "dateModified": "2026-11-21T08:00:00Z",
         "image": "https://bhm.geoscore.help/assets/01-health-scan-doh.png",
@@ -104,13 +104,13 @@
             "@type": "ListItem",
             "position": 2,
             "name": "Blog & Guides",
-            "item": "https://bhm.geoscore.help/blog.html"
+            "item": "https://bhm.geoscore.help/blog"
           },
           {
             "@type": "ListItem",
             "position": 3,
             "name": "Fix Cloudflare 403 Bookmark Checkers",
-            "item": "https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers.html"
+            "item": "https://bhm.geoscore.help/fix-cloudflare-403-bookmark-checkers"
           }
         ]
       }
@@ -124,19 +124,19 @@
   <!-- Header -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="index.html" class="brand">
+      <a href="/" class="brand">
         <img src="assets/icon-128.png" alt="BHM-PRO Logo" width="36" height="36">
         <span>BHM-PRO</span>
         <span class="brand-badge">RFC 8484</span>
       </a>
       <ul class="nav-links">
-        <li><a href="index.html#features">Features</a></li>
-        <li><a href="index.html#pricing">Pricing</a></li>
-        <li><a href="index.html#faq">FAQ</a></li>
-        <li><a href="blog.html">Blog</a></li>
-        <li><a href="raindrop-alternative-local-first.html">vs Raindrop</a></li>
-        <li><a href="fix-cloudflare-403-bookmark-checkers.html" class="active">DoH vs WAF</a></li>
-        <li><a href="chrome-bookmarks-for-developers.html">For Teams</a></li>
+        <li><a href="/#features">Features</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="/#faq">FAQ</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/raindrop-alternative-local-first">vs Raindrop</a></li>
+        <li><a href="/fix-cloudflare-403-bookmark-checkers" class="active">DoH vs WAF</a></li>
+        <li><a href="/chrome-bookmarks-for-developers">For Teams</a></li>
         <li><a href="https://chromewebstore.google.com/detail/nomieaphhhhhikklfhmhhjcdgicaikgn" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">Add to Chrome (Free)</a></li>
       </ul>
     </div>
@@ -145,9 +145,9 @@
   <!-- Main Article -->
   <main class="container guide-article">
     <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-      <a href="index.html">Home</a>
+      <a href="/">Home</a>
       <span class="breadcrumb-separator" aria-hidden="true">/</span>
-      <a href="blog.html">Blog &amp; Guides</a>
+      <a href="/blog">Blog &amp; Guides</a>
       <span class="breadcrumb-separator" aria-hidden="true">/</span>
       <span style="color: #94a3b8;">Cloudflare 403 &amp; RFC 8484 DoH</span>
     </nav>
@@ -250,11 +250,11 @@
     <div class="container footer-bottom">
       <p style="margin: 0;">© 2026 Bookmark Health Master (BHM-PRO) by L.D. Studio. All rights reserved. 100% Local-First Architecture.</p>
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <a href="index.html" style="color: var(--text-muted); text-decoration: none;">Home</a>
-        <a href="blog.html" style="color: var(--text-muted); text-decoration: none;">Blog &amp; Guides</a>
-        <a href="terms.html" style="color: var(--text-muted); text-decoration: none;">Terms</a>
-        <a href="privacy.html" style="color: var(--text-muted); text-decoration: none;">Privacy</a>
-        <a href="refund.html" style="color: var(--text-muted); text-decoration: none;">Refunds</a>
+        <a href="/" style="color: var(--text-muted); text-decoration: none;">Home</a>
+        <a href="/blog" style="color: var(--text-muted); text-decoration: none;">Blog &amp; Guides</a>
+        <a href="/terms" style="color: var(--text-muted); text-decoration: none;">Terms</a>
+        <a href="/privacy" style="color: var(--text-muted); text-decoration: none;">Privacy</a>
+        <a href="/refund" style="color: var(--text-muted); text-decoration: none;">Refunds</a>
       </div>
     </div>
   </footer>

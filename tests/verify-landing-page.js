@@ -32,8 +32,13 @@ for (const file of files) {
       continue;
     }
     const cleanRef = ref.split('?')[0];
-    const target = path.join(dir, cleanRef);
-    if (!fs.existsSync(target)) {
+    // Extensionless canonical URLs (/blog) map to blog.html on Cloudflare Pages.
+    const candidates = [cleanRef];
+    if (cleanRef && !path.extname(cleanRef) && !cleanRef.endsWith('/')) {
+      candidates.push(cleanRef + '.html');
+    }
+    const found = candidates.find(c => fs.existsSync(path.join(dir, c)));
+    if (!found) {
       console.error(`  ❌ [FAIL] in ${file}: missing -> ${cleanRef}`);
       totalErrors++;
     } else {
@@ -182,7 +187,7 @@ if (!fs.existsSync(sitemapPath)) {
   totalErrors++;
 } else {
   const sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
-  if (sitemapXml.includes('https://bhm.geoscore.help/') && !sitemapXml.includes('bhm-pro-ern.pages.dev') && sitemapXml.includes('terms.html') && sitemapXml.includes('privacy.html') && sitemapXml.includes('blog.html')) {
+  if (sitemapXml.includes('https://bhm.geoscore.help/') && !sitemapXml.includes('bhm-pro-ern.pages.dev') && sitemapXml.includes('/terms') && sitemapXml.includes('/privacy') && sitemapXml.includes('/blog')) {
     console.log(`  ✓ [PASS] sitemap.xml exists with valid URLs & hreflang links`);
   } else {
     console.error(`  ❌ [FAIL] sitemap.xml missing core pages`);

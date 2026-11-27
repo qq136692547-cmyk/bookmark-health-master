@@ -721,10 +721,10 @@ function applyLanguage(lang) {
 
   // Title & Meta (aware of legal subpages)
   const pathname = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : '';
-  const isTerms = pathname.includes('terms.html');
-  const isPrivacy = pathname.includes('privacy.html');
-  const isRefund = pathname.includes('refund.html');
-  const isBlog = pathname.includes('blog.html');
+  const isTerms = /\/(terms|terms\.html)(\/|$)/.test(pathname);
+  const isPrivacy = /\/(privacy|privacy\.html)(\/|$)/.test(pathname);
+  const isRefund = /\/(refund|refund\.html)(\/|$)/.test(pathname);
+  const isBlog = /\/(blog|blog\.html)(\/|$)/.test(pathname);
 
   if (typeof document !== 'undefined') {
     if (isTerms) {
